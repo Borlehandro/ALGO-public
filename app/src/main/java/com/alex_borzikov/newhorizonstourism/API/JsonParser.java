@@ -1,6 +1,4 @@
-package com.alex_borzikov.newhorizonstourism;
-
-import java.util.List;
+package com.alex_borzikov.newhorizonstourism.API;
 
 public class JsonParser {
 
