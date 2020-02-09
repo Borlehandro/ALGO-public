@@ -144,8 +144,8 @@ public class MainActivity extends AppCompatActivity {
             ListView questList = layout.findViewById(R.id.quest_view);
 
             ServerTask task = new ServerTask();
-            Map<String, ConnectionModes> params = new HashMap<>();
-            params.put("mode", ConnectionModes.GET_QUESTS_LIST);
+            Map<String, String> params = new HashMap<>();
+            params.put("mode", "GET_QUESTS_LIST");
             task.execute(params);
 
             ArrayList<String> questsNames = new ArrayList<>();
