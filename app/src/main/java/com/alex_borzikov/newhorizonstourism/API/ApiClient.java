@@ -71,6 +71,36 @@ public class ApiClient {
         return outputStringBuilder.toString();
     }
 
+    public static String login(String username, String password) throws IOException {
+        HttpURLConnection connection = connect();
+
+        OutputStream data = connection.getOutputStream();
+
+        BufferedWriter writer = new BufferedWriter(
+                new OutputStreamWriter(data, StandardCharsets.UTF_8));
+
+        writer.write("mode="+MODES.get("LOGIN"));
+        writer.write("&username="+username);
+        writer.write("&password="+password);
+        writer.flush();
+        writer.close();
+
+        InputStream content = connection.getInputStream();
+
+        // Todo REFACTOR! IT'S COPY-PASTE CODE!
+        String line;
+        //connection.
+        BufferedReader in = new BufferedReader(new InputStreamReader(content));
+        StringBuilder outputStringBuilder = new StringBuilder();
+
+        while ((line = in.readLine()) != null) {
+            outputStringBuilder.append(line);
+        }
+
+        Log.d(TAG, "Login Client must return: " + outputStringBuilder.toString());
+        return outputStringBuilder.toString();
+    }
+
     public static String register(String username, String password, String language) throws IOException {
 
         HttpURLConnection connection = connect();

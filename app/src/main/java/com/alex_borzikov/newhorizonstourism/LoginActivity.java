@@ -33,24 +33,26 @@ public class LoginActivity extends AppCompatActivity {
         switch (v.getId()) {
             case R.id.login_button:
                 Log.d(TAG, "Login");
-                if (loginUser.getText() != null && loginPassword != null) {
+                if (!loginUser.getText().toString().equals("") && !loginPassword.getText().toString().equals("")) {
                     ServerTask task = new ServerTask();
                     Map<String, String> params = new HashMap<>();
-                    params.put("mode", ConnectionModes.REGISTER.toString());
-                    params.put("login", loginUser.getText().toString());
+                    params.put("mode", "LOGIN");
+                    params.put("username", loginUser.getText().toString());
                     params.put("password", loginPassword.getText().toString());
                     task.execute(params);
                 }
                 break;
+
             case R.id.register_button:
+
                 Log.d(TAG, "Register");
                 if (!registerUser.getText().toString().equals("") && !registerPassword.getText().toString().equals("")
                         && registerConfirm.getText().toString().equals(registerPassword.getText().toString())) {
 
                     ServerTask task = new ServerTask();
                     Map<String, String> params = new HashMap<>();
-                    params.put("mode", ConnectionModes.REGISTER.toString());
-                    params.put("login", registerUser.getText().toString());
+                    params.put("mode", "REGISTER");
+                    params.put("username", registerUser.getText().toString());
                     params.put("password", registerPassword.getText().toString());
 
                     if (englishRadio.isChecked())
@@ -62,7 +64,6 @@ public class LoginActivity extends AppCompatActivity {
 
                     task.execute(params);
                 }
-                break;
         }
     }
 
@@ -87,27 +88,5 @@ public class LoginActivity extends AppCompatActivity {
 
         loginButton = findViewById(R.id.login_button);
         registerButton = findViewById(R.id.register_button);
-
-        registerButton.setOnClickListener((View v) -> {
-            Log.d(TAG, "Register");
-            if (!registerUser.getText().toString().equals("") && !registerPassword.getText().toString().equals("")
-                    && registerConfirm.getText().toString().equals(registerPassword.getText().toString())) {
-
-                ServerTask task = new ServerTask();
-                Map<String, String> params = new HashMap<>();
-                params.put("mode", ConnectionModes.REGISTER.toString());
-                params.put("login", registerUser.getText().toString());
-                params.put("password", registerPassword.getText().toString());
-
-                if (englishRadio.isChecked())
-                    params.put("language", "english");
-                else if (russianRadio.isChecked())
-                    params.put("language", "russian");
-                else
-                    params.put("language", "chinese");
-
-                task.execute(params);
-            }
-        });
     }
 }

@@ -27,7 +27,9 @@ public class ServerTask extends AsyncTask<Map<String, String>, Void, String> {
                     return ApiClient.register(params[0].get("username"), params[0].get("password"), params[0].get("language"));
 
                 case "LOGIN":
-                    break;
+                    Log.d(TAG, "It's login");
+                    return ApiClient.login(params[0].get("username"), params[0].get("password"));
+
             }
         } catch (IOException | NullPointerException e) {
             e.printStackTrace();
