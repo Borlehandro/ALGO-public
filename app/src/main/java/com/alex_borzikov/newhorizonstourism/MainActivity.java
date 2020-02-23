@@ -38,6 +38,12 @@ public class MainActivity extends AppCompatActivity {
 
     private final String TAG = "Borlehandro";
 
+    private String userName;
+    private String password;
+    private String language;
+
+    private int userId;
+
     private MapView mapView;
     private Button showButton;
     QuestListFragment fragment;
@@ -57,6 +63,17 @@ public class MainActivity extends AppCompatActivity {
 
         mapView = findViewById(R.id.mapview);
         showButton = findViewById(R.id.show_button);
+
+        // TODO Send password safety
+        userId = getIntent().getIntExtra("userId", 0);
+        userName = getIntent().getStringExtra("userName");
+        password = getIntent().getStringExtra("password");
+        language = getIntent().getStringExtra("language");
+
+        Log.d(TAG, "user " + userName);
+        Log.d(TAG, "id " + userId);
+        Log.d(TAG, "password " + password);
+        Log.d(TAG, "lang " + language);
 
         showButton.setOnClickListener((View v)->{
             FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();

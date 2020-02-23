@@ -7,8 +7,6 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.Objects;
 
-import static com.alex_borzikov.newhorizonstourism.API.ConnectionModes.GET_QUESTS_LIST;
-
 public class ServerTask extends AsyncTask<Map<String, String>, Void, String> {
 
     private static final String TAG = "Borlehandro";
