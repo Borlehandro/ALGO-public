@@ -1,6 +1,9 @@
 package com.alex_borzikov.newhorizonstourism.api;
 
+import com.alex_borzikov.newhorizonstourism.data.PointInfoItem;
+import com.alex_borzikov.newhorizonstourism.data.QuestInfoItem;
 import com.alex_borzikov.newhorizonstourism.data.QuestListItem;
+import com.alex_borzikov.newhorizonstourism.data.TaskInfoItem;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -19,10 +22,41 @@ public class JsonParser {
 
         for (int i = 0; i < array.length(); ++i) {
             JSONObject object = array.getJSONObject(i);
-            res.add(new QuestListItem(object.getString("id"), object.getString("name"), object.getString("short_description"), object.getString("points_count")));
+            res.add(new QuestListItem(object.getString("id"), object.getString("name"),
+                    object.getString("short_description"), object.getString("points_count")));
         }
 
         return res;
+    }
+
+    public static QuestInfoItem parseQuestInfo(String json) throws JSONException {
+
+        JSONObject info = new JSONObject(json);
+
+        return new QuestInfoItem(info.getString("name"), info.getString("short_description"),
+                info.getString("big_description"), info.getString("pic"),
+                info.getString("points_count"));
+
+
+    }
+
+    public static PointInfoItem parsePointInfo(String json) throws JSONException {
+
+        JSONObject info = new JSONObject(json);
+
+        return new PointInfoItem(info.getString("name"),info.getString("big_description"),
+                info.getString("pic"), info.getString("geolocation_x"),
+                info.getString("geolocation_y"), info.getString("point_task"));
+
+    }
+
+    public static TaskInfoItem parseTaskInfo(String json) throws JSONException {
+
+        JSONObject info = new JSONObject(json);
+
+        return new TaskInfoItem(info.getString("desc"), info.getString("pic"),
+                info.getString("chose1"), info.getString("chose2"), info.getString("chose3"));
+
     }
 
 }

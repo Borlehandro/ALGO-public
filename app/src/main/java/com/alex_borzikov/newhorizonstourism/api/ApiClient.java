@@ -12,6 +12,7 @@ import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.sql.SQLOutput;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -141,15 +142,90 @@ public class ApiClient {
     public static String getQuestInfo(String questId, String language) throws IOException {
 
         HttpURLConnection connection = connect();
+        connection.setDoOutput(true);
 
         OutputStream data = connection.getOutputStream();
 
         BufferedWriter writer = new BufferedWriter(
                 new OutputStreamWriter(data, StandardCharsets.UTF_8));
 
-        writer.write("mode=" + MODES.get("GET_GUEST_INFO"));
+        writer.write("mode=" + MODES.get("GET_QUEST_INFO"));
         writer.write("&language=" + language);
         writer.write("&quest_id=" + questId);
+        writer.flush();
+        writer.close();
+
+        InputStream content = connection.getInputStream();
+
+        // Todo REFACTOR! IT'S COPY-PASTE CODE!
+        String line;
+        //connection.
+        BufferedReader in = new BufferedReader(new InputStreamReader(content));
+        StringBuilder outputStringBuilder = new StringBuilder();
+
+        while ((line = in.readLine()) != null) {
+            outputStringBuilder.append(line);
+        }
+
+        Log.d(TAG, "Login Client must return: " + outputStringBuilder.toString());
+        return outputStringBuilder.toString();
+
+    }
+
+    public static String getPointInfo(String pointId, String language) throws IOException {
+
+        HttpURLConnection connection = connect();
+        connection.setDoOutput(true);
+
+        OutputStream data = connection.getOutputStream();
+
+        BufferedWriter writer = new BufferedWriter(
+                new OutputStreamWriter(data, StandardCharsets.UTF_8));
+
+        writer.write("mode=" + MODES.get("GET_POINT_INFO"));
+        writer.write("&language=" + language);
+        writer.write("&point_id=" + pointId);
+
+        writer.flush();
+        writer.close();
+
+        InputStream content = connection.getInputStream();
+
+        // Todo REFACTOR! IT'S COPY-PASTE CODE!
+        String line;
+        //connection.
+        BufferedReader in = new BufferedReader(new InputStreamReader(content));
+        StringBuilder outputStringBuilder = new StringBuilder();
+
+        while ((line = in.readLine()) != null) {
+            outputStringBuilder.append(line);
+        }
+
+        Log.d(TAG, "Login Client must return: " + outputStringBuilder.toString());
+        return outputStringBuilder.toString();
+
+    }
+
+    public static String getTaskInfo(String taskId, String language,
+                                     String username, String password) throws IOException {
+
+        HttpURLConnection connection = connect();
+        connection.setDoOutput(true);
+
+        OutputStream data = connection.getOutputStream();
+
+        BufferedWriter writer = new BufferedWriter(
+                new OutputStreamWriter(data, StandardCharsets.UTF_8));
+
+        writer.write("mode=" + MODES.get("GET_TASKS_INFO"));
+        writer.write("&language=" + language);
+        writer.write("&task=" + taskId);
+        writer.write("&username=" + username);
+        writer.write("&password=" + password);
+
+        System.out.println(MODES.get("GET_TASKS_INFO") + " " + language + " " + taskId
+                + " " + username + " " + password );
+
         writer.flush();
         writer.close();
 

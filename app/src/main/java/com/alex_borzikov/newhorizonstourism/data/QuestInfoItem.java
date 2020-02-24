@@ -1,7 +1,5 @@
 package com.alex_borzikov.newhorizonstourism.data;
 
-import com.alex_borzikov.newhorizonstourism.MainActivity;
-
 public class QuestInfoItem {
 
     private String name;
@@ -11,13 +9,13 @@ public class QuestInfoItem {
 
     private int pointsCount;
 
-    public QuestInfoItem(String name, String descriptionShort, String descriptionName, String pictureName, int pointsCount) {
+    public QuestInfoItem(String name, String descriptionShort, String descriptionName, String pictureName, String pointsCount) {
 
         this.name = name;
         this.descriptionName = descriptionName;
         this.descriptionShort = descriptionShort;
         this.pictureName = pictureName;
-        this.pointsCount = pointsCount;
+        this.pointsCount = Integer.parseInt(pointsCount);
 
     }
 

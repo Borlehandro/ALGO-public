@@ -1,4 +1,4 @@
-package com.alex_borzikov.newhorizonstourism;
+package com.alex_borzikov.newhorizonstourism.activities;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -16,13 +16,14 @@ import android.widget.ListView;
 
 import org.json.JSONException;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
+import com.alex_borzikov.newhorizonstourism.QuestListAdapter;
+import com.alex_borzikov.newhorizonstourism.R;
 import com.alex_borzikov.newhorizonstourism.api.JsonParser;
 import com.alex_borzikov.newhorizonstourism.api.ServerTask;
 import com.alex_borzikov.newhorizonstourism.data.QuestListItem;

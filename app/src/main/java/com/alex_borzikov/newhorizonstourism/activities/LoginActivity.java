@@ -1,4 +1,4 @@
-package com.alex_borzikov.newhorizonstourism;
+package com.alex_borzikov.newhorizonstourism.activities;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.alex_borzikov.newhorizonstourism.R;
 import com.alex_borzikov.newhorizonstourism.api.ServerTask;
 
 import java.util.HashMap;

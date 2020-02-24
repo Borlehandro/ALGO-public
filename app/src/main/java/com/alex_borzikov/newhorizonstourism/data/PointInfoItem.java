@@ -11,14 +11,14 @@ public class PointInfoItem {
 
     private int taskId;
 
-    public PointInfoItem(String name, String descriptionName, String pictureName, Double locationX, Double locationY, int taskId) {
+    public PointInfoItem(String name, String descriptionName, String pictureName, String locationX, String locationY, String taskId) {
 
         this.name = name;
         this.descriptionName = descriptionName;
         this.pictureName = pictureName;
-        this.locationX = locationX;
-        this.locationY = locationY;
-        this.taskId = taskId;
+        this.locationX = Double.valueOf(locationX);
+        this.locationY = Double.valueOf(locationY);
+        this.taskId = Integer.parseInt(taskId);
     }
 
     public String getName() {

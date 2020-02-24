@@ -1,10 +1,12 @@
-package com.alex_borzikov.newhorizonstourism;
+package com.alex_borzikov.newhorizonstourism.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+
+import com.alex_borzikov.newhorizonstourism.R;
 
 public class LanguageActivity extends AppCompatActivity {
 
