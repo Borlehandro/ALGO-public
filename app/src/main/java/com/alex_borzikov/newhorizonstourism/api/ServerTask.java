@@ -1,4 +1,4 @@
-package com.alex_borzikov.newhorizonstourism.API;
+package com.alex_borzikov.newhorizonstourism.api;
 
 import android.os.AsyncTask;
 import android.util.Log;
@@ -15,10 +15,16 @@ public class ServerTask extends AsyncTask<Map<String, String>, Void, String> {
     @Override
     protected final String doInBackground(Map<String, String>... params) {
         try {
-            switch (Objects.requireNonNull(params[0].get("mode"))){
+            switch (Objects.requireNonNull(params[0].get("mode"))) {
+
                 case "GET_QUESTS_LIST":
-                    Log.d(TAG, "It's quest");
-                    return ApiClient.getGuestList();
+                    System.out.println("It's quest list with lang " + params[0].get("language"));
+                    Log.d(TAG, "It's quest list with lang " + params[0].get("language"));
+                    return ApiClient.getGuestList(params[0].get("language"));
+
+                case "GET_QUEST_INFO":
+                    Log.d(TAG, "It's quest info");
+                    return ApiClient.getQuestInfo(params[0].get("questId"),params[0].get("language"));
 
                 case "REGISTER":
                     Log.d(TAG, "It's registration");

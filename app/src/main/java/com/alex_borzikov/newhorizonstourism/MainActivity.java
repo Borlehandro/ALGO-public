@@ -10,20 +10,22 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 
-import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
+import java.util.stream.Collectors;
 
-import com.alex_borzikov.newhorizonstourism.API.ConnectionModes;
-import com.alex_borzikov.newhorizonstourism.API.ServerTask;
+import com.alex_borzikov.newhorizonstourism.api.JsonParser;
+import com.alex_borzikov.newhorizonstourism.api.ServerTask;
+import com.alex_borzikov.newhorizonstourism.data.QuestListItem;
 import com.yandex.mapkit.Animation;
 import com.yandex.mapkit.MapKitFactory;
 import com.yandex.mapkit.geometry.Point;
@@ -34,13 +36,15 @@ import com.yandex.mapkit.location.LocationStatus;
 import com.yandex.mapkit.map.CameraPosition;
 import com.yandex.mapkit.mapview.MapView;
 
+
+
 public class MainActivity extends AppCompatActivity {
 
-    private final String TAG = "Borlehandro";
+    private static final String TAG = "Borlehandro";
 
     private String userName;
     private String password;
-    private String language;
+    public String language;
 
     private int userId;
 
@@ -157,28 +161,32 @@ public class MainActivity extends AppCompatActivity {
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
             View layout = inflater.inflate(R.layout.activity_main, container, false);
+
             // Inflate the layout for this fragment
             ListView questList = layout.findViewById(R.id.quest_view);
 
-            ServerTask task = new ServerTask();
-            Map<String, String> params = new HashMap<>();
-            params.put("mode", "GET_QUESTS_LIST");
-            task.execute(params);
+            ServerTask getListTask = new ServerTask();
+            Map<String, String> questListParams = new HashMap<>();
+            questListParams.put("mode", "GET_QUESTS_LIST");
+            questListParams.put("language", ((MainActivity)getActivity()).language);
 
-            ArrayList<String> questsNames = new ArrayList<>();
-            ArrayList<String> questsDescriptions = new ArrayList<>();
+            getListTask.execute(questListParams);
 
             try {
                 // TODO: Don't call get() method!
-                JSONArray array = new JSONArray(task.get());
-                for (int i = 0; i < array.length(); ++i) {
-                    JSONObject object = array.getJSONObject(i);
-                    questsNames.add(object.getString("name"));
-                    questsDescriptions.add(object.getString("short_description"));
-                }
+
+                String result = getListTask.get();
+
+                Log.d(TAG, "Activity get " + result);
+
+                List<QuestListItem> parsingResult = JsonParser.parseQuestList(result);
+
+                List<String> questsNames = parsingResult.stream().map(QuestListItem::getName).collect(Collectors.toList());
+                List<String> questsDescriptions = parsingResult.stream().map(QuestListItem::getDescriptionShort).collect(Collectors.toList());
+                List<Integer> questsId = parsingResult.stream().map(QuestListItem::getId).collect(Collectors.toList());
 
                 for(String item : questsNames) {
-                    Log.d("Borlehandro", item);
+                    Log.d(TAG, item);
                 }
 
                 //ArrayAdapter<String> adapter = new ArrayAdapter<>(getApplicationContext(), R.layout.quest_list_layout, questsNames);
@@ -186,6 +194,22 @@ public class MainActivity extends AppCompatActivity {
                         R.layout.quest_list_layout, questsNames, questsDescriptions);
 
                 questList.setAdapter(adapter);
+
+                questList.setOnItemClickListener((AdapterView<?> parent, View view,
+                                                  int position, long id) ->{
+
+                    Log.d(TAG, "Click on " + position);
+
+                    ServerTask getQuestTask = new ServerTask();
+                    Map<String, String> getQuestparams = new HashMap<>();
+
+                    getQuestparams.put("mode", "GET_QUESTS_INFO");
+                    getQuestparams.put("language", ((MainActivity)getActivity()).language);
+                    getQuestparams.put("questId", String.valueOf(questsId.get(position)));
+
+                    getQuestTask.execute(getQuestparams);
+
+                });
 
             } catch (ExecutionException | InterruptedException | JSONException e) {
                 e.printStackTrace();

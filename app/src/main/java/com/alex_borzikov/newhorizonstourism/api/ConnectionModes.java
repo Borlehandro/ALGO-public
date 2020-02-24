@@ -1,4 +1,4 @@
-package com.alex_borzikov.newhorizonstourism.API;
+package com.alex_borzikov.newhorizonstourism.api;
 
 public enum ConnectionModes {
 

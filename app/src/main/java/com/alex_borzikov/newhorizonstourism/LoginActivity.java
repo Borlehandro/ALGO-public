@@ -9,11 +9,8 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
 
-import com.alex_borzikov.newhorizonstourism.API.ConnectionModes;
-import com.alex_borzikov.newhorizonstourism.API.ServerTask;
+import com.alex_borzikov.newhorizonstourism.api.ServerTask;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -40,6 +37,7 @@ public class LoginActivity extends AppCompatActivity {
             case R.id.login_button:
                 Log.d(TAG, "Login");
                 if (!loginUser.getText().toString().equals("") && !loginPassword.getText().toString().equals("")) {
+
                     ServerTask task = new ServerTask();
                     Map<String, String> params = new HashMap<>();
 
@@ -50,12 +48,16 @@ public class LoginActivity extends AppCompatActivity {
                     params.put("username", userName);
                     params.put("password", password);
                     int userId;
-
                     try {
-                        if((userId = Integer.parseInt(task.execute(params).get(30, TimeUnit.SECONDS)))!= 0){
+
+                        task.execute(params);
+                        String s = task.get();
+
+                        Log.d(TAG, "!!!" + s);
+                        if ((userId = Integer.parseInt(s)) != -1) {
                             startMain(userId, userName, password);
                         }
-                    } catch (ExecutionException | InterruptedException | TimeoutException e) {
+                    } catch (InterruptedException | ExecutionException e) {
                         e.printStackTrace();
                     }
                 }
@@ -83,7 +85,7 @@ public class LoginActivity extends AppCompatActivity {
                     int userId;
 
                     try {
-                        if((userId = Integer.parseInt(task.execute(params).get(30, TimeUnit.SECONDS)))!= -1){
+                        if ((userId = Integer.parseInt(task.execute(params).get(30, TimeUnit.SECONDS))) != -1) {
                             startMain(userId, userName, password);
                         }
                     } catch (ExecutionException | InterruptedException | TimeoutException e) {
@@ -124,8 +126,8 @@ public class LoginActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        if(resultCode == RESULT_OK && data != null){
-                language = data.getStringExtra("language");
+        if (resultCode == RESULT_OK && data != null) {
+            language = data.getStringExtra("language");
         } else {
             Log.e(TAG, "Can't get language");
         }

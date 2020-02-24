@@ -1,4 +1,4 @@
-package com.alex_borzikov.newhorizonstourism.API;
+package com.alex_borzikov.newhorizonstourism.api;
 
 import android.util.Log;
 
@@ -10,15 +10,11 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.ProtocolException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-
-import static com.alex_borzikov.newhorizonstourism.API.ConnectionModes.GET_QUESTS_LIST;
 
 public class ApiClient {
 
@@ -39,23 +35,31 @@ public class ApiClient {
         MODES = Collections.unmodifiableMap(proxyMap);
     }
 
-    private static final String url = "https://new-horizons-tourism.herokuapp.com/";
+    private static final String url = "https://algo-project.herokuapp.com/";
 
-    public static String getGuestList() throws IOException {
+    public static String getGuestList(String language) throws IOException {
 
         HttpURLConnection connection = connect();
+
+        connection.setDoOutput(true);
 
         OutputStream data = connection.getOutputStream();
 
         BufferedWriter writer = new BufferedWriter(
                 new OutputStreamWriter(data, StandardCharsets.UTF_8));
 
-        writer.write("mode="+MODES.get("GET_GUESTS_LIST"));
+        writer.write("mode=" + MODES.get("GET_QUESTS_LIST"));
+        writer.write("&language=" + language);
+
+        Log.d(TAG, "Send lang " + language);
+        System.out.println( "Send lang " + language);
+        System.out.println("Send mode " + MODES.get("GET_QUESTS_LIST"));
+        Log.d(TAG, "Send mode " + MODES.get("GET_QUESTS_LIST"));
+
         writer.flush();
         writer.close();
 
         InputStream content = connection.getInputStream();
-
 
         // Todo REFACTOR! IT'S COPY-PASTE CODE!
         String line;
@@ -68,6 +72,7 @@ public class ApiClient {
         }
 
         Log.d(TAG, "Login Client must return: " + outputStringBuilder.toString());
+        System.out.println("Login Client must return: " + outputStringBuilder.toString());
         return outputStringBuilder.toString();
     }
 
@@ -79,9 +84,9 @@ public class ApiClient {
         BufferedWriter writer = new BufferedWriter(
                 new OutputStreamWriter(data, StandardCharsets.UTF_8));
 
-        writer.write("mode="+MODES.get("LOGIN"));
-        writer.write("&username="+username);
-        writer.write("&password="+password);
+        writer.write("mode=" + MODES.get("LOGIN"));
+        writer.write("&username=" + username);
+        writer.write("&password=" + password);
         writer.flush();
         writer.close();
 
@@ -110,10 +115,10 @@ public class ApiClient {
         BufferedWriter writer = new BufferedWriter(
                 new OutputStreamWriter(data, StandardCharsets.UTF_8));
 
-        writer.write("mode="+MODES.get("REGISTER"));
-        writer.write("&username="+username);
-        writer.write("&password="+password);
-        writer.write("&language="+language);
+        writer.write("mode=" + MODES.get("REGISTER"));
+        writer.write("&username=" + username);
+        writer.write("&password=" + password);
+        writer.write("&language=" + language);
         writer.flush();
         writer.close();
 
@@ -131,6 +136,38 @@ public class ApiClient {
 
         Log.d(TAG, "Login Client must return: " + outputStringBuilder.toString());
         return outputStringBuilder.toString();
+    }
+
+    public static String getQuestInfo(String questId, String language) throws IOException {
+
+        HttpURLConnection connection = connect();
+
+        OutputStream data = connection.getOutputStream();
+
+        BufferedWriter writer = new BufferedWriter(
+                new OutputStreamWriter(data, StandardCharsets.UTF_8));
+
+        writer.write("mode=" + MODES.get("GET_GUEST_INFO"));
+        writer.write("&language=" + language);
+        writer.write("&quest_id=" + questId);
+        writer.flush();
+        writer.close();
+
+        InputStream content = connection.getInputStream();
+
+        // Todo REFACTOR! IT'S COPY-PASTE CODE!
+        String line;
+        //connection.
+        BufferedReader in = new BufferedReader(new InputStreamReader(content));
+        StringBuilder outputStringBuilder = new StringBuilder();
+
+        while ((line = in.readLine()) != null) {
+            outputStringBuilder.append(line);
+        }
+
+        Log.d(TAG, "Login Client must return: " + outputStringBuilder.toString());
+        return outputStringBuilder.toString();
+
     }
 
     private static HttpURLConnection connect() throws IOException {
