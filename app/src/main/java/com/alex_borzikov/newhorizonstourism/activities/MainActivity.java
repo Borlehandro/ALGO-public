@@ -5,11 +5,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.TranslateAnimation;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
@@ -36,8 +38,6 @@ import com.yandex.mapkit.location.LocationManager;
 import com.yandex.mapkit.location.LocationStatus;
 import com.yandex.mapkit.map.CameraPosition;
 import com.yandex.mapkit.mapview.MapView;
-
-
 
 public class MainActivity extends AppCompatActivity {
 
@@ -92,7 +92,7 @@ public class MainActivity extends AppCompatActivity {
         super.onResumeFragments();
 
         mapView.getMap().move(
-                new CameraPosition(new Point(55.751574, 37.573856), 11.0f, 0.0f, 0.0f),
+                new CameraPosition(new Point(52.539303, 85.223677), 15.0f, 0.0f, 0.0f),
                 new Animation(Animation.Type.SMOOTH, 0),
                 null);
     }
@@ -103,7 +103,7 @@ public class MainActivity extends AppCompatActivity {
         Log.d(TAG, "Resume");
 
         mapView.getMap().move(
-                new CameraPosition(new Point(55.751574, 37.573856), 11.0f, 0.0f, 0.0f),
+                new CameraPosition(new Point(52.539303, 85.223677), 15.0f, 0.0f, 0.0f),
                 new Animation(Animation.Type.SMOOTH, 0),
                 null);
     }
@@ -182,9 +182,14 @@ public class MainActivity extends AppCompatActivity {
 
                 List<QuestListItem> parsingResult = JsonParser.parseQuestList(result);
 
-                List<String> questsNames = parsingResult.stream().map(QuestListItem::getName).collect(Collectors.toList());
-                List<String> questsDescriptions = parsingResult.stream().map(QuestListItem::getDescriptionShort).collect(Collectors.toList());
-                List<Integer> questsId = parsingResult.stream().map(QuestListItem::getId).collect(Collectors.toList());
+                List<String> questsNames = parsingResult.stream().map(QuestListItem::getName)
+                        .collect(Collectors.toList());
+
+                List<String> questsDescriptions = parsingResult.stream()
+                        .map(QuestListItem::getDescriptionShort).collect(Collectors.toList());
+
+                List<Integer> questsId = parsingResult.stream().map(QuestListItem::getId)
+                        .collect(Collectors.toList());
 
                 for(String item : questsNames) {
                     Log.d(TAG, item);
@@ -197,18 +202,19 @@ public class MainActivity extends AppCompatActivity {
                 questList.setAdapter(adapter);
 
                 questList.setOnItemClickListener((AdapterView<?> parent, View view,
-                                                  int position, long id) ->{
+                                                  int position, long id) -> {
 
                     Log.d(TAG, "Click on " + position);
 
-                    ServerTask getQuestTask = new ServerTask();
-                    Map<String, String> getQuestparams = new HashMap<>();
+                    Intent toQuestInfo = new Intent(getActivity().getApplicationContext(),
+                            QuestActivity.class);
 
-                    getQuestparams.put("mode", "GET_QUESTS_INFO");
-                    getQuestparams.put("language", ((MainActivity)getActivity()).language);
-                    getQuestparams.put("questId", String.valueOf(questsId.get(position)));
+                    Log.d(TAG, "onCreateView: get ID:" + questsId.get(position));
 
-                    getQuestTask.execute(getQuestparams);
+                    toQuestInfo.putExtra("language", ((MainActivity)getActivity()).language);
+                    toQuestInfo.putExtra("questId", String.valueOf(questsId.get(position)));
+
+                    startActivityForResult(toQuestInfo, 1);
 
                 });
 
@@ -219,4 +225,35 @@ public class MainActivity extends AppCompatActivity {
             return layout;
         }
     }
+
+    /**
+     * Interesting code for animation
+     */
+
+    // slide the view from below itself to the current position
+    public void slideUp(View view){
+        view.setVisibility(View.VISIBLE);
+        TranslateAnimation animate = new TranslateAnimation(
+                0,  // fromXDelta
+                0,  // toXDelta
+                view.getHeight(),  // fromYDelta
+                0);  // toYDelta
+        animate.setDuration(500);
+        animate.setFillAfter(true);
+        view.startAnimation(animate);
+    }
+
+    // slide the view from its current position to below itself
+    public void slideDown(View view){
+        TranslateAnimation animate = new TranslateAnimation(
+                0,  // fromXDelta
+                0,  // toXDelta
+                0,  // fromYDelta
+                view.getHeight());  // toYDelta
+        animate.setDuration(500);
+        animate.setFillAfter(true);
+        view.startAnimation(animate);
+    }
+
+
 }

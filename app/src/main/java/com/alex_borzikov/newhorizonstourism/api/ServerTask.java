@@ -36,7 +36,8 @@ public class ServerTask extends AsyncTask<Map<String, String>, Void, String> {
 
             }
         } catch (IOException | NullPointerException e) {
-            e.printStackTrace();
+            Log.e(TAG, "doInBackground: " + e.getMessage());
+            // e.printStackTrace();
         }
         return null;
     }

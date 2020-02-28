@@ -1,5 +1,7 @@
 package com.alex_borzikov.newhorizonstourism.api;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.util.Log;
 
 import java.io.BufferedReader;
@@ -12,7 +14,6 @@ import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.sql.SQLOutput;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -36,11 +37,11 @@ public class ApiClient {
         MODES = Collections.unmodifiableMap(proxyMap);
     }
 
-    private static final String url = "https://algo-project.herokuapp.com/";
+    private static final String SERVER_URL = "https://algo-project.herokuapp.com/";
 
     public static String getGuestList(String language) throws IOException {
 
-        HttpURLConnection connection = connect();
+        HttpURLConnection connection = connectPost();
 
         connection.setDoOutput(true);
 
@@ -78,7 +79,7 @@ public class ApiClient {
     }
 
     public static String login(String username, String password) throws IOException {
-        HttpURLConnection connection = connect();
+        HttpURLConnection connection = connectPost();
 
         OutputStream data = connection.getOutputStream();
 
@@ -109,7 +110,7 @@ public class ApiClient {
 
     public static String register(String username, String password, String language) throws IOException {
 
-        HttpURLConnection connection = connect();
+        HttpURLConnection connection = connectPost();
 
         OutputStream data = connection.getOutputStream();
 
@@ -141,7 +142,7 @@ public class ApiClient {
 
     public static String getQuestInfo(String questId, String language) throws IOException {
 
-        HttpURLConnection connection = connect();
+        HttpURLConnection connection = connectPost();
         connection.setDoOutput(true);
 
         OutputStream data = connection.getOutputStream();
@@ -174,7 +175,7 @@ public class ApiClient {
 
     public static String getPointInfo(String pointId, String language) throws IOException {
 
-        HttpURLConnection connection = connect();
+        HttpURLConnection connection = connectPost();
         connection.setDoOutput(true);
 
         OutputStream data = connection.getOutputStream();
@@ -209,7 +210,7 @@ public class ApiClient {
     public static String getTaskInfo(String taskId, String language,
                                      String username, String password) throws IOException {
 
-        HttpURLConnection connection = connect();
+        HttpURLConnection connection = connectPost();
         connection.setDoOutput(true);
 
         OutputStream data = connection.getOutputStream();
@@ -246,10 +247,33 @@ public class ApiClient {
 
     }
 
-    private static HttpURLConnection connect() throws IOException {
+    public static Bitmap getImage(String dir) throws IOException{
+
+        HttpURLConnection connection = connectGet(dir);
+        connection.setDoOutput(true);
+
+        InputStream content = connection.getInputStream();
+
+        Bitmap inputBitmap = BitmapFactory.decodeStream(content);
+
+        Log.d(TAG, "Login Client must return: " + inputBitmap);
+
+        return inputBitmap;
+    }
+
+    private static HttpURLConnection connectPost() throws IOException {
         Log.d(TAG, "Execute client");
-        HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
+
+        HttpURLConnection connection = (HttpURLConnection) new URL(SERVER_URL).openConnection();
         connection.setRequestMethod("POST");
+        return connection;
+    }
+
+    private static HttpURLConnection connectGet(String dir) throws IOException {
+        Log.d(TAG, "Execute client");
+
+        HttpURLConnection connection = (HttpURLConnection) new URL(SERVER_URL + dir).openConnection();
+        connection.setRequestMethod("GET");
         return connection;
     }
 }
