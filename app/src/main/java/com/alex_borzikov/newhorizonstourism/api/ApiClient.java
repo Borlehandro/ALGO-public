@@ -247,6 +247,75 @@ public class ApiClient {
 
     }
 
+    public static int checkPointCode(String code) throws IOException {
+
+        HttpURLConnection connection = connectPost();
+        connection.setDoOutput(true);
+
+        OutputStream data = connection.getOutputStream();
+
+        BufferedWriter writer = new BufferedWriter(
+                new OutputStreamWriter(data, StandardCharsets.UTF_8));
+
+        writer.write("mode=" + MODES.get("CHECK_POINT_CODE"));
+        writer.write("&code=" + code);
+
+        writer.flush();
+        writer.close();
+
+        InputStream content = connection.getInputStream();
+
+        // Todo REFACTOR! IT'S COPY-PASTE CODE!
+        String line;
+        //connection.
+        BufferedReader in = new BufferedReader(new InputStreamReader(content));
+        StringBuilder outputStringBuilder = new StringBuilder();
+
+        while ((line = in.readLine()) != null) {
+            outputStringBuilder.append(line);
+        }
+
+        Log.d(TAG, "Login Client must return: " + outputStringBuilder.toString());
+
+        return Integer.parseInt(outputStringBuilder.toString());
+    }
+
+    public static boolean checkTaskAnswer(int answerIndex, int taskId, String username, String password) throws IOException {
+        HttpURLConnection connection = connectPost();
+        connection.setDoOutput(true);
+        connection.setDoInput(true);
+        OutputStream data = connection.getOutputStream();
+
+        BufferedWriter writer = new BufferedWriter(
+                new OutputStreamWriter(data, StandardCharsets.UTF_8));
+
+        writer.write("mode=" + MODES.get("CHECK_ANSWER"));
+        writer.write("&answer=" + answerIndex);
+        writer.write("&task=" + taskId);
+        writer.write("&username=" + username);
+        writer.write("&password=" + password);
+
+        writer.flush();
+        writer.close();
+
+        InputStream content = connection.getInputStream();
+
+        // Todo REFACTOR! IT'S COPY-PASTE CODE!
+        String line;
+        //connection.
+        BufferedReader in = new BufferedReader(new InputStreamReader(content));
+        StringBuilder outputStringBuilder = new StringBuilder();
+
+        while ((line = in.readLine()) != null) {
+            outputStringBuilder.append(line);
+        }
+
+        Log.d(TAG, "Login Client must return: " + outputStringBuilder.toString());
+
+        // Todo change it!
+        return (outputStringBuilder.toString().equals("1"));
+    }
+
     public static Bitmap getImage(String dir) throws IOException {
 
         HttpURLConnection connection = connectGet(dir);

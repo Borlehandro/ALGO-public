@@ -7,6 +7,7 @@ import com.alex_borzikov.newhorizonstourism.data.QuestListItem;
 import com.alex_borzikov.newhorizonstourism.data.TaskInfoItem;
 
 import org.json.JSONException;
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -82,5 +83,16 @@ public class InfoTest {
         System.out.println(info.getDescriptionShort() + " " + info.getPictureName() + " "
                 + info.getChoice1() + " " + info.getChoice2() + " " + info.getChoice3());
 
+    }
+
+    @Test
+    public void checkPointCodeTest() throws IOException {
+        Assert.assertEquals(
+                ApiClient.checkPointCode("zuXF1aa8A9CjNyZ4E91GPNo8UoYm0ES5l75i3BCmZ9slwXpwxOb4Yj9vNU1FnyLYRy94dAmqNPxBqUBhxsD3afFPbjlx7gfYE3DE"), 3);
+    }
+
+    @Test
+    public void checkAnswerTest() throws IOException {
+        Assert.assertTrue(ApiClient.checkTaskAnswer(3, 2, "algoTest", "12345"));
     }
 }
