@@ -15,6 +15,7 @@ import android.view.animation.TranslateAnimation;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import org.json.JSONException;
 
@@ -49,8 +50,10 @@ public class MainActivity extends AppCompatActivity {
 
     private int userId;
 
+    public static String pointCode;
+
     private MapView mapView;
-    private Button showButton;
+    private Button showButton, codeScanButton;
     QuestListFragment fragment;
 
     @Override
@@ -68,6 +71,7 @@ public class MainActivity extends AppCompatActivity {
 
         mapView = findViewById(R.id.mapview);
         showButton = findViewById(R.id.showButton);
+        codeScanButton = findViewById(R.id.scanCodeButton);
 
         // TODO Send password safety
         userId = getIntent().getIntExtra("userId", 0);
@@ -80,10 +84,14 @@ public class MainActivity extends AppCompatActivity {
         Log.d(TAG, "password " + password);
         Log.d(TAG, "lang " + language);
 
-        showButton.setOnClickListener((View v)->{
+        showButton.setOnClickListener((View v) -> {
             FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
             fragmentTransaction.add(R.id.main_layout, fragment);
             fragmentTransaction.commit();
+        });
+
+        codeScanButton.setOnClickListener((View v) -> {
+            startActivity(new Intent(getApplicationContext(), CodeScanActivity.class));
         });
     }
 
@@ -110,8 +118,13 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onRestart() {
-        Log.d(TAG, "Restart");
         super.onRestart();
+        Log.d(TAG, "Restart");
+
+        // Todo Make code using better
+        if (pointCode != null)
+            Toast.makeText(getApplicationContext(), "Get code: " + pointCode, Toast.LENGTH_LONG).show();
+
     }
 
     @Override
@@ -137,23 +150,23 @@ public class MainActivity extends AppCompatActivity {
     }
 
     // Todo Use it for location listening
-    private void updateLocation(){
-        Log.d(TAG,"updateLocation");
+    private void updateLocation() {
+        Log.d(TAG, "updateLocation");
         LocationManager manager = MapKitFactory.getInstance().createLocationManager();
-        Log.d(TAG,manager.toString());
+        Log.d(TAG, manager.toString());
         LocationListener listener = new LocationListener() {
             @Override
             public void onLocationUpdated(@NonNull Location location) {
-                Log.i(TAG,"UPDATED");
+                Log.i(TAG, "UPDATED");
             }
 
             @Override
             public void onLocationStatusUpdated(@NonNull LocationStatus locationStatus) {
-                Log.i(TAG,"STATUS UPDATED");
+                Log.i(TAG, "STATUS UPDATED");
             }
         };
 
-        Log.d(TAG,listener.toString());
+        Log.d(TAG, listener.toString());
         manager.requestSingleUpdate(listener);
     }
 
@@ -169,7 +182,7 @@ public class MainActivity extends AppCompatActivity {
             InfoTask getListTask = new InfoTask();
             Map<String, String> questListParams = new HashMap<>();
             questListParams.put("mode", "GET_QUESTS_LIST");
-            questListParams.put("language", ((MainActivity)getActivity()).language);
+            questListParams.put("language", ((MainActivity) getActivity()).language);
 
             getListTask.execute(questListParams);
 
@@ -191,7 +204,7 @@ public class MainActivity extends AppCompatActivity {
                 List<Integer> questsId = parsingResult.stream().map(QuestListItem::getId)
                         .collect(Collectors.toList());
 
-                for(String item : questsNames) {
+                for (String item : questsNames) {
                     Log.d(TAG, item);
                 }
 
@@ -211,7 +224,7 @@ public class MainActivity extends AppCompatActivity {
 
                     Log.d(TAG, "onCreateView: get ID:" + questsId.get(position));
 
-                    toQuestInfo.putExtra("language", ((MainActivity)getActivity()).language);
+                    toQuestInfo.putExtra("language", ((MainActivity) getActivity()).language);
                     toQuestInfo.putExtra("questId", String.valueOf(questsId.get(position)));
 
                     startActivityForResult(toQuestInfo, 1);
@@ -231,7 +244,7 @@ public class MainActivity extends AppCompatActivity {
      */
 
     // slide the view from below itself to the current position
-    public void slideUp(View view){
+    public void slideUp(View view) {
         view.setVisibility(View.VISIBLE);
         TranslateAnimation animate = new TranslateAnimation(
                 0,  // fromXDelta
@@ -244,7 +257,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     // slide the view from its current position to below itself
-    public void slideDown(View view){
+    public void slideDown(View view) {
         TranslateAnimation animate = new TranslateAnimation(
                 0,  // fromXDelta
                 0,  // toXDelta

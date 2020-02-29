@@ -24,17 +24,23 @@ android {
     testOptions {
         unitTests.returnDefaultValues = true
     }
-
-
 }
 
 dependencies {
 
     //dependencies for non-instrumented unit tests
-    implementation 'com.google.android.material:material:1.0.0'
+    implementation 'com.google.android.material:material:1.1.0'
     implementation 'androidx.annotation:annotation:1.1.0'
     implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
     testImplementation 'junit:junit:4.13'
+
+    implementation 'com.google.android.gms:play-services-auth:11.6.2'
+    implementation 'me.dm7.barcodescanner:zxing:1.9'
+
+    // QR code API
+    // Todo Check SDK versions!
+    implementation 'com.google.android.gms:play-services:11.6.2'
+
     // this will override the Android org.json classes in order to use these classes in unit tests
     testImplementation 'org.json:json:20140107'
 

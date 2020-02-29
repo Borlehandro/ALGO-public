@@ -37,7 +37,8 @@ public class LoginActivity extends AppCompatActivity {
         switch (v.getId()) {
             case R.id.login_button:
                 Log.d(TAG, "Login");
-                if (!loginUser.getText().toString().equals("") && !loginPassword.getText().toString().equals("")) {
+                if (!loginUser.getText().toString().equals("")
+                        && !loginPassword.getText().toString().equals("")) {
 
                     InfoTask task = new InfoTask();
                     Map<String, String> params = new HashMap<>();
