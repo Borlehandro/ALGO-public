@@ -247,9 +247,10 @@ public class ApiClient {
 
     }
 
-    public static Bitmap getImage(String dir) throws IOException{
+    public static Bitmap getImage(String dir) throws IOException {
 
         HttpURLConnection connection = connectGet(dir);
+        connection.setDoInput(true);
         connection.setDoOutput(true);
 
         InputStream content = connection.getInputStream();
@@ -257,12 +258,33 @@ public class ApiClient {
         Bitmap inputBitmap = BitmapFactory.decodeStream(content);
 
         Log.d(TAG, "Login Client must return: " + inputBitmap);
-
+        Log.d("Borlehandro", String.valueOf(inputBitmap==null));
         return inputBitmap;
     }
 
+    public static StringBuffer getDescription(String dir) throws IOException {
+
+        HttpURLConnection connection = connectGet(dir);
+        connection.setDoInput(true);
+        connection.setDoOutput(true);
+        Log.d(TAG, "getDescription: Connection " + connection);
+
+        BufferedReader content = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+
+        StringBuffer sb = new StringBuffer();
+        String str;
+
+        while((str = content.readLine())!= null){
+            sb.append(str);
+        }
+
+        Log.d(TAG, "Login Client must return: " + sb.toString());
+
+        return sb;
+    }
+
     private static HttpURLConnection connectPost() throws IOException {
-        Log.d(TAG, "Execute client");
+        Log.d(TAG, "Execute POST");
 
         HttpURLConnection connection = (HttpURLConnection) new URL(SERVER_URL).openConnection();
         connection.setRequestMethod("POST");
@@ -270,10 +292,11 @@ public class ApiClient {
     }
 
     private static HttpURLConnection connectGet(String dir) throws IOException {
-        Log.d(TAG, "Execute client");
-
+        Log.d(TAG, "Execute GET");
+        System.out.println(SERVER_URL + dir);
         HttpURLConnection connection = (HttpURLConnection) new URL(SERVER_URL + dir).openConnection();
         connection.setRequestMethod("GET");
+        System.out.println(connection);
         return connection;
     }
 }

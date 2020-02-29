@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.Objects;
 
-public class ServerTask extends AsyncTask<Map<String, String>, Void, String> {
+public class InfoTask extends AsyncTask<Map<String, String>, Void, String> {
 
     private static final String TAG = "Borlehandro";
 

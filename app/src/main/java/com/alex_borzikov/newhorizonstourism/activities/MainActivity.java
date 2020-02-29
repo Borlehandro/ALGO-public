@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
 import com.alex_borzikov.newhorizonstourism.QuestListAdapter;
 import com.alex_borzikov.newhorizonstourism.R;
 import com.alex_borzikov.newhorizonstourism.api.JsonParser;
-import com.alex_borzikov.newhorizonstourism.api.ServerTask;
+import com.alex_borzikov.newhorizonstourism.api.InfoTask;
 import com.alex_borzikov.newhorizonstourism.data.QuestListItem;
 import com.yandex.mapkit.Animation;
 import com.yandex.mapkit.MapKitFactory;
@@ -67,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
         fragment = new QuestListFragment();
 
         mapView = findViewById(R.id.mapview);
-        showButton = findViewById(R.id.show_button);
+        showButton = findViewById(R.id.showButton);
 
         // TODO Send password safety
         userId = getIntent().getIntExtra("userId", 0);
@@ -166,7 +166,7 @@ public class MainActivity extends AppCompatActivity {
             // Inflate the layout for this fragment
             ListView questList = layout.findViewById(R.id.quest_view);
 
-            ServerTask getListTask = new ServerTask();
+            InfoTask getListTask = new InfoTask();
             Map<String, String> questListParams = new HashMap<>();
             questListParams.put("mode", "GET_QUESTS_LIST");
             questListParams.put("language", ((MainActivity)getActivity()).language);

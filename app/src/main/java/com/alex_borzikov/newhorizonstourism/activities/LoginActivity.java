@@ -11,7 +11,7 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.alex_borzikov.newhorizonstourism.R;
-import com.alex_borzikov.newhorizonstourism.api.ServerTask;
+import com.alex_borzikov.newhorizonstourism.api.InfoTask;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -39,7 +39,7 @@ public class LoginActivity extends AppCompatActivity {
                 Log.d(TAG, "Login");
                 if (!loginUser.getText().toString().equals("") && !loginPassword.getText().toString().equals("")) {
 
-                    ServerTask task = new ServerTask();
+                    InfoTask task = new InfoTask();
                     Map<String, String> params = new HashMap<>();
 
                     String userName = loginUser.getText().toString();
@@ -70,7 +70,7 @@ public class LoginActivity extends AppCompatActivity {
                 if (!registerUser.getText().toString().equals("") && !registerPassword.getText().toString().equals("")
                         && registerConfirm.getText().toString().equals(registerPassword.getText().toString())) {
 
-                    ServerTask task = new ServerTask();
+                    InfoTask task = new InfoTask();
                     Map<String, String> params = new HashMap<>();
 
                     String userName = registerUser.getText().toString();
@@ -127,6 +127,7 @@ public class LoginActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK && data != null) {
             language = data.getStringExtra("language");
         } else {
