@@ -15,6 +15,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".activities.PointsQueueActivity"></activity>
         <activity android:name=".activities.CodeScanActivity" />
         <activity android:name=".activities.TestActivity" />
         <activity android:name=".activities.TaskActivity" />

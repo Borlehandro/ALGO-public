@@ -3,6 +3,8 @@ package com.alex_borzikov.newhorizonstourism.api;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.google.android.gms.common.api.Api;
+
 import java.io.IOException;
 import java.util.Map;
 import java.util.Objects;
@@ -24,7 +26,15 @@ public class InfoTask extends AsyncTask<Map<String, String>, Void, String> {
 
                 case "GET_QUEST_INFO":
                     Log.d(TAG, "It's quest info");
-                    return ApiClient.getQuestInfo(params[0].get("questId"),params[0].get("language"));
+                    return ApiClient.getQuestInfo(params[0].get("questId"), params[0].get("language"));
+
+                case "GET_POINTS_QUEUE":
+                    Log.d(TAG, "It's points queue");
+                    return ApiClient.getPointsQueue(params[0].get("questId"), params[0].get("language"));
+
+                case "GET_POINT_INFO":
+                    Log.d(TAG, "It's point info");
+                    return ApiClient.getPointInfo(params[0].get("pointId"), params[0].get("language"));
 
                 case "REGISTER":
                     Log.d(TAG, "It's registration");
@@ -33,6 +43,18 @@ public class InfoTask extends AsyncTask<Map<String, String>, Void, String> {
                 case "LOGIN":
                     Log.d(TAG, "It's login");
                     return ApiClient.login(params[0].get("username"), params[0].get("password"));
+
+                case "CHECK_CODE":
+                    Log.d(TAG, "It's code checking");
+                    return ApiClient.checkPointCode(params[0].get("code"));
+
+                case "CHECK_ANSWER":
+                    Log.d(TAG, "It's answer checking");
+                    return ApiClient.checkTaskAnswer(params[0].get("answerIndex"),
+                            params[0].get("taskId"),
+                            params[0].get("username"),
+                            params[0].get("password"));
+
 
             }
         } catch (IOException | NullPointerException e) {

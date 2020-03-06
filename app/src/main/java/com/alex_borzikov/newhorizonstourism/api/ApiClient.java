@@ -34,6 +34,8 @@ public class ApiClient {
         proxyMap.put("CHECK_POINT_CODE", 6);
         proxyMap.put("GET_TASKS_INFO", 7);
         proxyMap.put("CHECK_ANSWER", 8);
+        proxyMap.put("GET_POINTS_QUEUE", 9);
+
         MODES = Collections.unmodifiableMap(proxyMap);
     }
 
@@ -173,6 +175,51 @@ public class ApiClient {
 
     }
 
+    public static String getPointsQueue(String questId, String language) throws IOException {
+
+        HttpURLConnection connection = connectPost();
+
+        connection.setDoOutput(true);
+
+        OutputStream data = connection.getOutputStream();
+
+        BufferedWriter writer = new BufferedWriter(
+                new OutputStreamWriter(data, StandardCharsets.UTF_8));
+
+        writer.write("mode=" + MODES.get("GET_POINTS_QUEUE"));
+        writer.write("&language=" + language);
+        writer.write("&quest_id=" + questId);
+
+        Log.d(TAG, "Send lang " + language);
+        System.out.println( "Send lang " + language);
+
+        Log.d(TAG, "Send questId " + questId);
+        System.out.println( "Send questId " + questId);
+
+        System.out.println("Send mode " + MODES.get("GET_QUESTS_LIST"));
+        Log.d(TAG, "Send mode " + MODES.get("GET_QUESTS_LIST"));
+
+        writer.flush();
+        writer.close();
+
+        InputStream content = connection.getInputStream();
+
+        // Todo REFACTOR! IT'S COPY-PASTE CODE!
+        String line;
+        //connection.
+        BufferedReader in = new BufferedReader(new InputStreamReader(content));
+        StringBuilder outputStringBuilder = new StringBuilder();
+
+        while ((line = in.readLine()) != null) {
+            outputStringBuilder.append(line);
+        }
+
+        Log.d(TAG, "Login Client must return: " + outputStringBuilder.toString());
+        System.out.println("Login Client must return: " + outputStringBuilder.toString());
+        return outputStringBuilder.toString();
+    }
+
+
     public static String getPointInfo(String pointId, String language) throws IOException {
 
         HttpURLConnection connection = connectPost();
@@ -247,7 +294,7 @@ public class ApiClient {
 
     }
 
-    public static int checkPointCode(String code) throws IOException {
+    public static String checkPointCode(String code) throws IOException {
 
         HttpURLConnection connection = connectPost();
         connection.setDoOutput(true);
@@ -277,10 +324,10 @@ public class ApiClient {
 
         Log.d(TAG, "Login Client must return: " + outputStringBuilder.toString());
 
-        return Integer.parseInt(outputStringBuilder.toString());
+        return outputStringBuilder.toString();
     }
 
-    public static boolean checkTaskAnswer(int answerIndex, int taskId, String username, String password) throws IOException {
+    public static String checkTaskAnswer(String answerIndex, String taskId, String username, String password) throws IOException {
         HttpURLConnection connection = connectPost();
         connection.setDoOutput(true);
         connection.setDoInput(true);
@@ -313,7 +360,7 @@ public class ApiClient {
         Log.d(TAG, "Login Client must return: " + outputStringBuilder.toString());
 
         // Todo change it!
-        return (outputStringBuilder.toString().equals("1"));
+        return outputStringBuilder.toString();
     }
 
     public static Bitmap getImage(String dir) throws IOException {

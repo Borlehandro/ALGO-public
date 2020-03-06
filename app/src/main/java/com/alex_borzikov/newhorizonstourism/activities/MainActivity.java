@@ -49,6 +49,7 @@ public class MainActivity extends AppCompatActivity {
     public String language;
 
     private int userId;
+    String pointId;
 
     public static String pointCode;
 
@@ -122,9 +123,32 @@ public class MainActivity extends AppCompatActivity {
         Log.d(TAG, "Restart");
 
         // Todo Make code using better
-        if (pointCode != null)
+        if (pointCode != null) {
             Toast.makeText(getApplicationContext(), "Get code: " + pointCode, Toast.LENGTH_LONG).show();
 
+            InfoTask codeTask = new InfoTask();
+
+            Map<String, String> codeParams = new HashMap<>();
+            codeParams.put("mode", "CHECK_CODE");
+            codeParams.put("code", pointCode);
+
+            codeTask.execute(codeParams);
+
+            try {
+                pointId = codeTask.get();
+                Log.d(TAG, "onRestart: get pointId: " + pointId);
+                // Todo check pointId == currentQuestPoint
+                Intent toPoint = new Intent(getApplicationContext(), PointActivity.class);
+                toPoint.putExtra("pointId", pointId);
+                toPoint.putExtra("language", language);
+                // It can not repeat!
+                pointCode = null;
+                startActivity(toPoint);
+
+            } catch (ExecutionException | InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     @Override

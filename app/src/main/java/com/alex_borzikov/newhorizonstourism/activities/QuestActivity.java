@@ -5,6 +5,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -28,6 +30,7 @@ public class QuestActivity extends AppCompatActivity {
     private String language, questId;
     ImageView image;
     TextView description, questName;
+    Button questShowButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,9 +38,10 @@ public class QuestActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_quest);
 
-        image = findViewById(R.id.questImage);
-        description = findViewById(R.id.questDescription);
-        questName = findViewById(R.id.questName);
+        image = findViewById(R.id.pointImage);
+        description = findViewById(R.id.pointDescription);
+        questName = findViewById(R.id.pointName);
+        questShowButton = findViewById(R.id.pointTaskShowButton);
 
         Log.d(TAG, "onCreate");
 
@@ -84,6 +88,12 @@ public class QuestActivity extends AppCompatActivity {
         } catch (ExecutionException | InterruptedException | JSONException e) {
             e.printStackTrace();
         }
+
+        questShowButton.setOnClickListener((View v)-> {
+
+            // Todo go to PointQueueActivity
+
+        });
 
     }
 }

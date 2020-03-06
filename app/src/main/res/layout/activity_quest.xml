@@ -15,7 +15,7 @@
             android:layout_height="wrap_content">
 
             <TextView
-                android:id="@+id/questDescription"
+                android:id="@+id/pointDescription"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
@@ -24,11 +24,11 @@
                 android:textColor="@color/common_google_signin_btn_text_dark_focused"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/questImage"
+                app:layout_constraintTop_toBottomOf="@+id/pointImage"
                 tools:text="Просто текст для демлонстрациии. На самом деле, очень важно, чтобы в зависимоти от экрана устройства он вёл себя особенным образом. Просто текст для демлонстрациии. На самом деле, очень важно, чтобы в зависимоти от экрана устройства он вёл себя особенным образом. Просто текст для демлонстрациии. На самом деле, очень важно, чтобы в зависимоти от экрана устройства он вёл себя особенным образом. Просто текст для демлонстрациии. На самом деле, очень важно, чтобы в зависимоти от экрана устройства он вёл себя особенным образом. Просто текст для демлонстрациии. На самом деле, очень важно, чтобы в зависимоти от экрана устройства он вёл себя особенным образом. Просто текст для демлонстрациии. На самом деле, очень важно, чтобы в зависимоти от экрана устройства он вёл себя особенным образом. Просто текст для демлонстрациии. На самом деле, очень важно, чтобы в зависимоти от экрана устройства он вёл себя особенным образом. Просто текст для демлонстрациии." />
 
             <TextView
-                android:id="@+id/questName"
+                android:id="@+id/pointName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
@@ -39,24 +39,24 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <Button
-                android:id="@+id/questShowButton"
+                android:id="@+id/pointTaskShowButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:text="Show"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/questDescription" />
+                app:layout_constraintTop_toBottomOf="@+id/pointDescription" />
 
             <ImageView
-                android:id="@+id/questImage"
+                android:id="@+id/pointImage"
                 android:layout_width="179dp"
                 android:layout_height="182dp"
                 android:layout_marginTop="8dp"
                 android:src="@mipmap/ic_launcher"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/questName" />
+                app:layout_constraintTop_toBottomOf="@+id/pointName" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
 
