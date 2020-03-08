@@ -1,31 +1,35 @@
-package com.alex_borzikov.newhorizonstourism;
+package com.alex_borzikov.newhorizonstourism.adapters;
 
-import android.app.Activity;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.alex_borzikov.newhorizonstourism.R;
+
 import java.util.List;
 
-public class QuestListAdapter extends ArrayAdapter<String> {
+public class PointsQueueAdapter extends ArrayAdapter<String> {
+
 
     private final Context context;
     private final List<String> names;
-    private final List<String> descriptions;
+    private final List<Bitmap> pictures;
 
-    public QuestListAdapter(Context context, int id, List<String> names, List<String> descriptions) {
+    public PointsQueueAdapter(Context context, int id, List<String> names, List<Bitmap> pictures) {
 
         super(context, id, names);
 
         this.context = context;
         this.names = names;
-        this.descriptions = descriptions;
+        this.pictures = pictures;
 
     }
 
@@ -34,14 +38,17 @@ public class QuestListAdapter extends ArrayAdapter<String> {
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
 
         LayoutInflater inflater = LayoutInflater.from(context);
-        View item = inflater.inflate(R.layout.quest_list_layout, null, true);
+        View item = inflater.inflate(R.layout.points_queue_item, null, true);
 
-        TextView nameView = item.findViewById(R.id.quest_name_text);
-        TextView descriptionView = item.findViewById(R.id.quest_description_text);
+        TextView nameView = item.findViewById(R.id.pointName);
+        ImageView imageView = item.findViewById(R.id.pointImage);
 
         nameView.setText(names.get(position));
-        descriptionView.setText(descriptions.get(position));
+        imageView.setImageBitmap(pictures.get(position));
 
         return item;
     }
+
+
+
 }

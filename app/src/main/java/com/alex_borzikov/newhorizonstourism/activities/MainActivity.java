@@ -25,7 +25,7 @@ import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
-import com.alex_borzikov.newhorizonstourism.QuestListAdapter;
+import com.alex_borzikov.newhorizonstourism.adapters.QuestListAdapter;
 import com.alex_borzikov.newhorizonstourism.R;
 import com.alex_borzikov.newhorizonstourism.api.JsonParser;
 import com.alex_borzikov.newhorizonstourism.api.InfoTask;

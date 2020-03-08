@@ -2,6 +2,7 @@ package com.alex_borzikov.newhorizonstourism.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Log;
@@ -53,6 +54,8 @@ public class QuestActivity extends AppCompatActivity {
 
         Log.d(TAG, "onCreate: questId = " + questId);
 
+        QuestInfoItem info;
+
         InfoTask getQuestInfoTask = new InfoTask();
         Map<String, String> getQuestparams = new HashMap<>();
 
@@ -68,7 +71,7 @@ public class QuestActivity extends AppCompatActivity {
 
             Log.d(TAG, "Quest info : " + result);
 
-            QuestInfoItem info = JsonParser.parseQuestInfo(result);
+            info = JsonParser.parseQuestInfo(result);
 
             questName.setText(info.getName());
 
@@ -91,7 +94,10 @@ public class QuestActivity extends AppCompatActivity {
 
         questShowButton.setOnClickListener((View v)-> {
 
-            // Todo go to PointQueueActivity
+            Intent toPointsQueue = new Intent(this, PointsQueueActivity.class);
+            toPointsQueue.putExtra("questId", questId);
+            toPointsQueue.putExtra("language", language);
+            startActivity(toPointsQueue);
 
         });
 

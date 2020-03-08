@@ -1,5 +1,6 @@
 package com.alex_borzikov.newhorizonstourism.api;
 
+import com.alex_borzikov.newhorizonstourism.activities.PointsQueueActivity;
 import com.alex_borzikov.newhorizonstourism.data.PointInfoItem;
 import com.alex_borzikov.newhorizonstourism.data.QuestInfoItem;
 import com.alex_borzikov.newhorizonstourism.data.QuestListItem;
@@ -57,6 +58,22 @@ public class JsonParser {
         return new TaskInfoItem(info.getString("desc"), info.getString("pic"),
                 info.getString("chose1"), info.getString("chose2"), info.getString("chose3"));
 
+    }
+
+    public static List<PointInfoItem> parsePointsQueue(String json) throws JSONException {
+
+        List<PointInfoItem> res = new ArrayList<>();
+
+        JSONArray array = new JSONArray(json);
+
+        for (int i = 0; i < array.length(); ++i) {
+            JSONObject object = array.getJSONObject(i);
+            res.add(new PointInfoItem(object.getString("name"), null,
+                    object.getString("pic"), object.getString("geolocation_x"),
+                    object.getString("geolocation_y"), "0"));
+        }
+
+        return res;
     }
 
 }
