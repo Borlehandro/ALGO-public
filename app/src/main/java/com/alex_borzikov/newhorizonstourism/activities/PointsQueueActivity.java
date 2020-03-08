@@ -64,8 +64,7 @@ public class PointsQueueActivity extends AppCompatActivity {
                     .collect(Collectors.toList());
 
             // Todo CAN WE ADD SHORT POINT DESCRIPTION
-            /*List<String> questsDescriptions = queue.stream()
-                    .map(PointInfoItem::getDescriptionShort).collect(Collectors.toList());*/
+
             Log.d(TAG, "onCreate. Points names: ");
             for (String item : pointsNames) {
                 Log.d(TAG, item);
@@ -83,9 +82,6 @@ public class PointsQueueActivity extends AppCompatActivity {
                 pictures.add(pictureTask.get());
 
             }
-
-            /*ArrayAdapter<String> adapter = new ArrayAdapter<>(getApplicationContext(),
-                    android.R.layout.simple_list_item_1, pointsNames);*/
 
            PointsQueueAdapter adapter = new PointsQueueAdapter(getApplicationContext(),
                     R.layout.points_queue_item, pointsNames, pictures);

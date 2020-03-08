@@ -68,9 +68,9 @@ public class JsonParser {
 
         for (int i = 0; i < array.length(); ++i) {
             JSONObject object = array.getJSONObject(i);
-            res.add(new PointInfoItem(object.getString("name"), null,
+            res.add(new PointInfoItem(object.getString("name"),object.getString("big_description"),
                     object.getString("pic"), object.getString("geolocation_x"),
-                    object.getString("geolocation_y"), "0"));
+                    object.getString("geolocation_y"), object.getString("point_task")));
         }
 
         return res;
