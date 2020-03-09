@@ -138,6 +138,9 @@ public class LoginActivity extends AppCompatActivity {
 
     private void startMain(int userId, String userName, String password) {
         Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+
+        intent.putExtra("uid", "login");
+
         // TODO Send password safety
         intent.putExtra("language", language);
         intent.putExtra("userId", userId);

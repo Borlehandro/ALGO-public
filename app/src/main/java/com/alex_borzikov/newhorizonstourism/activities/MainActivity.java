@@ -6,6 +6,8 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.PointF;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -29,18 +31,28 @@ import com.alex_borzikov.newhorizonstourism.adapters.QuestListAdapter;
 import com.alex_borzikov.newhorizonstourism.R;
 import com.alex_borzikov.newhorizonstourism.api.JsonParser;
 import com.alex_borzikov.newhorizonstourism.api.InfoTask;
+import com.alex_borzikov.newhorizonstourism.data.PointInfoItem;
 import com.alex_borzikov.newhorizonstourism.data.QuestListItem;
 import com.yandex.mapkit.Animation;
+import com.yandex.mapkit.MapKit;
 import com.yandex.mapkit.MapKitFactory;
 import com.yandex.mapkit.geometry.Point;
+import com.yandex.mapkit.layers.ObjectEvent;
 import com.yandex.mapkit.location.Location;
 import com.yandex.mapkit.location.LocationListener;
 import com.yandex.mapkit.location.LocationManager;
 import com.yandex.mapkit.location.LocationStatus;
 import com.yandex.mapkit.map.CameraPosition;
+import com.yandex.mapkit.map.CompositeIcon;
+import com.yandex.mapkit.map.IconStyle;
+import com.yandex.mapkit.map.RotationType;
 import com.yandex.mapkit.mapview.MapView;
+import com.yandex.mapkit.user_location.UserLocationLayer;
+import com.yandex.mapkit.user_location.UserLocationObjectListener;
+import com.yandex.mapkit.user_location.UserLocationView;
+import com.yandex.runtime.image.ImageProvider;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements UserLocationObjectListener {
 
     private static final String TAG = "Borlehandro";
 
@@ -52,25 +64,39 @@ public class MainActivity extends AppCompatActivity {
     String pointId;
 
     public static String pointCode;
+    public static List<PointInfoItem> currentPointsQueue;
 
     private MapView mapView;
     private Button showButton, codeScanButton;
     QuestListFragment fragment;
 
+    private UserLocationLayer userLocationLayer;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
 
         Log.d(TAG, "Create");
 
         MapKitFactory.setApiKey("445832db-f7b3-4d5b-ba6a-f8a60f790ba0");
         MapKitFactory.initialize(this);
 
+        super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        mapView = findViewById(R.id.mapview);
+
+        mapView.getMap().setRotateGesturesEnabled(false);
+        mapView.getMap().move(new CameraPosition(new Point(52.5391, 85.2230), 14, 0, 0));
+
+        MapKit mapKit = MapKitFactory.getInstance();
+        userLocationLayer = mapKit.createUserLocationLayer(mapView.getMapWindow());
+        userLocationLayer.setVisible(true);
+        userLocationLayer.setHeadingEnabled(true);
+
+        userLocationLayer.setObjectListener(this);
 
         fragment = new QuestListFragment();
 
-        mapView = findViewById(R.id.mapview);
         showButton = findViewById(R.id.showButton);
         codeScanButton = findViewById(R.id.scanCodeButton);
 
@@ -85,6 +111,9 @@ public class MainActivity extends AppCompatActivity {
         Log.d(TAG, "password " + password);
         Log.d(TAG, "lang " + language);
 
+        if(currentPointsQueue!=null)
+            Log.d(TAG, "onCreate: GET POINTS QUEUE: " + currentPointsQueue.get(0).getName());
+
         showButton.setOnClickListener((View v) -> {
             FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
             fragmentTransaction.add(R.id.main_layout, fragment);
@@ -95,6 +124,8 @@ public class MainActivity extends AppCompatActivity {
             startActivity(new Intent(getApplicationContext(), CodeScanActivity.class));
         });
     }
+
+
 
     @Override
     protected void onResumeFragments() {
@@ -167,10 +198,10 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onStop() {
-        super.onStop();
         Log.d(TAG, "On Stop Activity");
         mapView.onStop();
         MapKitFactory.getInstance().onStop();
+        super.onStop();
     }
 
     // Todo Use it for location listening
@@ -192,6 +223,50 @@ public class MainActivity extends AppCompatActivity {
 
         Log.d(TAG, listener.toString());
         manager.requestSingleUpdate(listener);
+    }
+
+    @Override
+    public void onObjectAdded(@NonNull UserLocationView userLocationView) {
+
+        userLocationLayer.setAnchor(
+                new PointF((float)(mapView.getWidth() * 0.5), (float)(mapView.getHeight() * 0.5)),
+                new PointF((float)(mapView.getWidth() * 0.5), (float)(mapView.getHeight() * 0.83)));
+
+        userLocationView.getArrow().setIcon(ImageProvider.fromResource(
+                this, R.drawable.user_arrow));
+
+        CompositeIcon pinIcon = userLocationView.getPin().useCompositeIcon();
+
+        pinIcon.setIcon(
+                "icon",
+                ImageProvider.fromResource(this, R.drawable.icon),
+                new IconStyle().setAnchor(new PointF(0f, 0f))
+                        .setRotationType(RotationType.ROTATE)
+                        .setZIndex(0f)
+                        .setScale(1f)
+        );
+
+        pinIcon.setIcon(
+                "pin",
+                ImageProvider.fromResource(this, R.drawable.search_result),
+                new IconStyle().setAnchor(new PointF(0.5f, 0.5f))
+                        .setRotationType(RotationType.ROTATE)
+                        .setZIndex(1f)
+                        .setScale(0.5f)
+        );
+
+        userLocationView.getAccuracyCircle().setFillColor(Color.BLUE);
+
+    }
+
+    @Override
+    public void onObjectRemoved(@NonNull UserLocationView userLocationView) {
+
+    }
+
+    @Override
+    public void onObjectUpdated(@NonNull UserLocationView userLocationView, @NonNull ObjectEvent objectEvent) {
+
     }
 
     public static class QuestListFragment extends Fragment {

@@ -2,10 +2,13 @@ package com.alex_borzikov.newhorizonstourism.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 
 import com.alex_borzikov.newhorizonstourism.R;
@@ -33,6 +36,7 @@ public class PointsQueueActivity extends AppCompatActivity {
     private String questId, language;
 
     ListView pointsQueueView;
+    Button questGoButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +44,7 @@ public class PointsQueueActivity extends AppCompatActivity {
         setContentView(R.layout.activity_points_queue);
 
         pointsQueueView = findViewById(R.id.pointsQueueView);
+        questGoButton = findViewById(R.id.questGoButton);
 
         questId = getIntent().getStringExtra("questId");
         language = getIntent().getStringExtra("language");
@@ -88,7 +93,24 @@ public class PointsQueueActivity extends AppCompatActivity {
 
            pointsQueueView.setAdapter(adapter);
 
-            // Todo add button for quest start
+            questGoButton.setOnClickListener((View v) -> {
+
+                Intent toMain = new Intent(this, MainActivity.class);
+
+                toMain.putExtra("language", language);
+                toMain.putExtra("questId", questId);
+
+                toMain.putExtra("uid", "queue");
+
+                // Todo Fix it, it's bad idea!
+
+                MainActivity.currentPointsQueue = queue;
+
+                startActivity(toMain);
+
+            });
+
+
 
         } catch (ExecutionException | InterruptedException | JSONException e) {
             e.printStackTrace();
