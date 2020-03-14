@@ -2,13 +2,18 @@ package com.alex_borzikov.newhorizonstourism.activities;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.alex_borzikov.newhorizonstourism.R;
 import com.alex_borzikov.newhorizonstourism.api.InfoTask;
@@ -24,6 +29,13 @@ public class LoginActivity extends AppCompatActivity {
     private String language;
 
     private static final String TAG = "Borlehandro";
+
+    private static int userId;
+    private static String userName;
+    private static String password;
+
+    static final int REQUEST_COARSE_RESULT = 0;
+    static final int REQUEST_FINE_RESULT = 1;
 
     EditText loginUser, loginPassword,
             registerUser, registerPassword, registerConfirm;
@@ -43,22 +55,23 @@ public class LoginActivity extends AppCompatActivity {
                     InfoTask task = new InfoTask();
                     Map<String, String> params = new HashMap<>();
 
-                    String userName = loginUser.getText().toString();
-                    String password = loginPassword.getText().toString();
+                    userName = loginUser.getText().toString();
+                    password = loginPassword.getText().toString();
 
                     params.put("mode", "LOGIN");
                     params.put("username", userName);
                     params.put("password", password);
-                    int userId;
+
                     try {
 
                         task.execute(params);
                         String s = task.get();
 
                         Log.d(TAG, "!!!" + s);
-                        if ((userId = Integer.parseInt(s)) != -1) {
-                            startMain(userId, userName, password);
-                        }
+
+                        if ((userId = Integer.parseInt(s)) != -1)
+                            checkLocationPermission();
+
                     } catch (InterruptedException | ExecutionException e) {
                         e.printStackTrace();
                     }
@@ -68,7 +81,9 @@ public class LoginActivity extends AppCompatActivity {
             case R.id.register_button:
 
                 Log.d(TAG, "Register");
-                if (!registerUser.getText().toString().equals("") && !registerPassword.getText().toString().equals("")
+
+                if (!registerUser.getText().toString().equals("")
+                        && !registerPassword.getText().toString().equals("")
                         && registerConfirm.getText().toString().equals(registerPassword.getText().toString())) {
 
                     InfoTask task = new InfoTask();
@@ -84,11 +99,10 @@ public class LoginActivity extends AppCompatActivity {
                     params.put("language", language);
 
                     Log.d(TAG, "Language set to :" + language);
-                    int userId;
 
                     try {
                         if ((userId = Integer.parseInt(task.execute(params).get(30, TimeUnit.SECONDS))) != -1) {
-                            startMain(userId, userName, password);
+                            checkLocationPermission();
                         }
                     } catch (ExecutionException | InterruptedException | TimeoutException e) {
                         e.printStackTrace();
@@ -136,7 +150,67 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
-    private void startMain(int userId, String userName, String password) {
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String[] permissions, int[] grantResults) {
+
+
+//            case REQUEST_COARSE_RESULT: {
+//                // If request is cancelled, the result arrays are empty.
+//                if (grantResults.length > 0
+//                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+//
+//                    Log.d(TAG, "onRequestPermissionsResult: User allow coarse!");
+//
+//                } else {
+//                    Log.d(TAG, "onRequestPermissionsResult: User not allow coarse");
+//                    finish();
+//                    // permission denied, boo! Disable the
+//                    // functionality that depends on this permission.
+//                }
+//                return;
+//            }
+
+            if(requestCode == REQUEST_FINE_RESULT) {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                    Log.d(TAG, "onRequestPermissionsResult: User allow fine");
+                    startMain();
+                } else {
+                    Log.d(TAG, "onRequestPermissionsResult: User not allow fine");
+                    finish();
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+                }
+            }
+        }
+
+    private void checkLocationPermission() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            Log.d(TAG, "onCreate: FINE DENIED!");
+
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                    Manifest.permission.ACCESS_FINE_LOCATION)) {
+
+                Toast.makeText(getApplicationContext(), "You should allow FINE",
+                        Toast.LENGTH_LONG).show();
+            }
+
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                    REQUEST_FINE_RESULT);
+        } else {
+            Log.d(TAG, "onCreate: FINE OK");
+            startMain();
+        }
+    }
+
+    private void startMain() {
+
         Intent intent = new Intent(getApplicationContext(), MainActivity.class);
 
         intent.putExtra("uid", "login");
