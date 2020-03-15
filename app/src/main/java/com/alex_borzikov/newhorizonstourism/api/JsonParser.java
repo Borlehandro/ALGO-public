@@ -1,6 +1,5 @@
 package com.alex_borzikov.newhorizonstourism.api;
 
-import com.alex_borzikov.newhorizonstourism.activities.PointsQueueActivity;
 import com.alex_borzikov.newhorizonstourism.data.PointInfoItem;
 import com.alex_borzikov.newhorizonstourism.data.QuestInfoItem;
 import com.alex_borzikov.newhorizonstourism.data.QuestListItem;
@@ -11,6 +10,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 public class JsonParser {
@@ -60,9 +60,9 @@ public class JsonParser {
 
     }
 
-    public static List<PointInfoItem> parsePointsQueue(String json) throws JSONException {
+    public static LinkedList<PointInfoItem> parsePointsQueue(String json) throws JSONException {
 
-        List<PointInfoItem> res = new ArrayList<>();
+        LinkedList<PointInfoItem> res = new LinkedList<>();
 
         JSONArray array = new JSONArray(json);
 
@@ -75,5 +75,4 @@ public class JsonParser {
 
         return res;
     }
-
 }

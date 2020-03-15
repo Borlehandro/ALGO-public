@@ -27,6 +27,8 @@ import org.json.JSONException;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
@@ -49,6 +51,8 @@ import com.yandex.mapkit.directions.driving.DrivingRoute;
 import com.yandex.mapkit.directions.driving.DrivingRouter;
 import com.yandex.mapkit.directions.driving.DrivingSession;
 import com.yandex.mapkit.geometry.Point;
+import com.yandex.mapkit.geometry.Polyline;
+import com.yandex.mapkit.geometry.SubpolylineHelper;
 import com.yandex.mapkit.layers.ObjectEvent;
 import com.yandex.mapkit.location.FilteringMode;
 import com.yandex.mapkit.location.Location;
@@ -59,8 +63,18 @@ import com.yandex.mapkit.map.CameraPosition;
 import com.yandex.mapkit.map.CompositeIcon;
 import com.yandex.mapkit.map.IconStyle;
 import com.yandex.mapkit.map.MapObjectCollection;
+import com.yandex.mapkit.map.PolylineMapObject;
 import com.yandex.mapkit.map.RotationType;
 import com.yandex.mapkit.mapview.MapView;
+import com.yandex.mapkit.transport.TransportFactory;
+import com.yandex.mapkit.transport.masstransit.MasstransitOptions;
+import com.yandex.mapkit.transport.masstransit.MasstransitRouter;
+import com.yandex.mapkit.transport.masstransit.Route;
+import com.yandex.mapkit.transport.masstransit.Section;
+import com.yandex.mapkit.transport.masstransit.SectionMetadata;
+import com.yandex.mapkit.transport.masstransit.Session;
+import com.yandex.mapkit.transport.masstransit.TimeOptions;
+import com.yandex.mapkit.transport.masstransit.Transport;
 import com.yandex.mapkit.user_location.UserLocationLayer;
 import com.yandex.mapkit.user_location.UserLocationObjectListener;
 import com.yandex.mapkit.user_location.UserLocationView;
@@ -69,8 +83,7 @@ import com.yandex.runtime.image.ImageProvider;
 import com.yandex.runtime.network.NetworkError;
 import com.yandex.runtime.network.RemoteError;
 
-public class MainActivity extends AppCompatActivity
-        implements DrivingSession.DrivingRouteListener {
+public class MainActivity extends AppCompatActivity implements Session.RouteListener {
 
     private static final String TAG = "Borlehandro";
 
@@ -82,7 +95,7 @@ public class MainActivity extends AppCompatActivity
     String pointId;
 
     public static String pointCode;
-    public static List<PointInfoItem> currentPointsQueue;
+    public static LinkedList<PointInfoItem> currentPointsQueue;
 
     private MapView mapView;
     private Button showButton, codeScanButton;
@@ -91,17 +104,38 @@ public class MainActivity extends AppCompatActivity
     private UserLocationLayer userLocationLayer;
 
     private LocationManager locationManager;
-
-
     private MapObjectCollection mapObjects;
-    private DrivingRouter drivingRouter;
-    private DrivingSession drivingSession;
+    private MasstransitRouter mtRouter;
+
+    private PolylineMapObject lastLine;
 
     private final LocationListener locationListener = new LocationListener() {
+
         @Override
         public void onLocationUpdated(@NonNull Location location) {
+
             Log.d(TAG, "onLocationUpdated: " + location.getPosition().getLatitude() + ";"
                     + location.getPosition().getLongitude());
+
+            if(currentPointsQueue!=null && currentPointsQueue.size()>0) {
+
+                Log.d(TAG, "onLocationUpdated: Try to build drivingRouter with it `|` ");
+
+                // Todo Make it pedestrians only!
+                MasstransitOptions options = new MasstransitOptions(
+                        new ArrayList<String>(),
+                        new ArrayList<String>(),
+                        new TimeOptions());
+
+                List<RequestPoint> points = new ArrayList<RequestPoint>();
+                points.add(new RequestPoint(location.getPosition(), RequestPointType.WAYPOINT, null));
+
+                points.add(new RequestPoint(new Point(currentPointsQueue.peek().getLocationX(),
+                        currentPointsQueue.peek().getLocationY()), RequestPointType.WAYPOINT, null));
+
+                mtRouter.requestRoutes(points, options, MainActivity.this);
+
+            }
         }
 
         @Override
@@ -172,14 +206,15 @@ public class MainActivity extends AppCompatActivity
         Log.d(TAG, "onCreate: ");
 
         MapKitFactory.initialize(this);
-        DirectionsFactory.initialize(this);
+        TransportFactory.initialize(this);
 
         MapKit mapKit = MapKitFactory.getInstance();
 
 
         locationManager = mapKit.createLocationManager();
 
-        locationManager.subscribeForLocationUpdates(0.0d, 0, 0.0d, false,
+        // Todo set normal value
+        locationManager.subscribeForLocationUpdates(0.0d, 100, 0.0d, false,
                 FilteringMode.OFF, locationListener);
 
         mapView = findViewById(R.id.mapview);
@@ -192,8 +227,9 @@ public class MainActivity extends AppCompatActivity
 
         userLocationLayer.setObjectListener(userLocationObjectListener);
 
-        drivingRouter = DirectionsFactory.getInstance().createDrivingRouter();
         mapObjects = mapView.getMap().getMapObjects().addCollection();
+
+        mtRouter = TransportFactory.getInstance().createMasstransitRouter();
 
         fragment = new QuestListFragment();
 
@@ -220,9 +256,8 @@ public class MainActivity extends AppCompatActivity
             fragmentTransaction.commit();
         });
 
-        codeScanButton.setOnClickListener((View v) -> {
-            startActivity(new Intent(getApplicationContext(), CodeScanActivity.class));
-        });
+        codeScanButton.setOnClickListener((View v) ->
+                startActivity(new Intent(getApplicationContext(), CodeScanActivity.class)));
 
         // Check permissions
         /*if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
@@ -261,7 +296,6 @@ public class MainActivity extends AppCompatActivity
                 new Animation(Animation.Type.SMOOTH, 0),
                 null);
     }
-
 
     @Override
     protected void onRestart() {
@@ -302,10 +336,8 @@ public class MainActivity extends AppCompatActivity
         Log.d(TAG, "onStart: ");
         super.onStart();
         mapView.onStart();
-        // locationManager.resume();
         MapKitFactory.getInstance().onStart();
     }
-
 
     @Override
     protected void onPause() {
@@ -322,26 +354,107 @@ public class MainActivity extends AppCompatActivity
         super.onStop();
     }
 
-
     @Override
-    public void onDrivingRoutes(@NonNull List<DrivingRoute> list) {
-        for (DrivingRoute route : list) {
-            mapObjects.addPolyline(route.getGeometry());
+    public void onMasstransitRoutes(List<Route> routes) {
+        // In this example we consider first alternative only
+        if (routes.size() > 0) {
+            for (Section section : routes.get(0).getSections()) {
+                drawSection(
+                        section.getMetadata().getData(),
+                        SubpolylineHelper.subpolyline(
+                                routes.get(0).getGeometry(), section.getGeometry()));
+            }
         }
     }
 
     @Override
-    public void onDrivingRoutesError(@NonNull Error error) {
-
-        String errorMessage = "Error message";
+    public void onMasstransitRoutesError(Error error) {
+        String errorMessage = "unknown_error_message";
         if (error instanceof RemoteError) {
-            errorMessage = "Error message";
+            errorMessage = "remote_error_message";
         } else if (error instanceof NetworkError) {
-            errorMessage = "Error message";
+            errorMessage = "network_error_message";
         }
 
         Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT).show();
+    }
 
+    private void drawSection(SectionMetadata.SectionData data,
+                             Polyline geometry) {
+        // Draw a section polyline on a map
+        // Set its color depending on the information which the section contains
+        PolylineMapObject polylineMapObject = mapObjects.addPolyline(geometry);
+
+        // Masstransit route section defines exactly one on the following
+        // 1. Wait until public transport unit arrives
+        // 2. Walk
+        // 3. Transfer to a nearby stop (typically transfer to a connected
+        //    underground station)
+        // 4. Ride on a public transport
+        // Check the corresponding object for null to get to know which
+        // kind of section it is
+        if (data.getTransports() != null) {
+            // A ride on a public transport section contains information about
+            // all known public transport lines which can be used to travel from
+            // the start of the section to the end of the section without transfers
+            // along a similar geometry
+            for (Transport transport : data.getTransports()) {
+                // Some public transport lines may have a color associated with them
+                // Typically this is the case of underground lines
+                if (transport.getLine().getStyle() != null) {
+                    polylineMapObject.setStrokeColor(
+                            // The color is in RRGGBB 24-bit format
+                            // Convert it to AARRGGBB 32-bit format, set alpha to 255 (opaque)
+                            transport.getLine().getStyle().getColor() | 0xFF000000
+                    );
+                    // return;
+                }
+            }
+            // Let us draw bus lines in green and tramway lines in red
+            // Draw any other public transport lines in blue
+            HashSet<String> knownVehicleTypes = new HashSet<>();
+            knownVehicleTypes.add("bus");
+            knownVehicleTypes.add("tramway");
+            for (Transport transport : data.getTransports()) {
+                String sectionVehicleType = getVehicleType(transport, knownVehicleTypes);
+                if (sectionVehicleType.equals("bus")) {
+                    polylineMapObject.setStrokeColor(0xFF00FF00);  // Green
+                    // return;
+                } else if (sectionVehicleType.equals("tramway")) {
+                    polylineMapObject.setStrokeColor(0xFFFF0000);  // Red
+                    // return;
+                }
+            }
+            polylineMapObject.setStrokeColor(0xFF0000FF);  // Blue
+        } else {
+            // This is not a public transport ride section
+            // In this example let us draw it in black
+            polylineMapObject.setStrokeColor(0xFF000000);  // Black
+        }
+
+        // Todo MAKE IT BETTER!
+        if(lastLine!=null)
+            mapObjects.remove(lastLine);
+
+        lastLine = polylineMapObject;
+    }
+
+    private String getVehicleType(Transport transport, HashSet<String> knownVehicleTypes) {
+        // A public transport line may have a few 'vehicle types' associated with it
+        // These vehicle types are sorted from more specific (say, 'histroic_tram')
+        // to more common (say, 'tramway').
+        // Your application does not know the list of all vehicle types that occur in the data
+        // (because this list is expanding over time), therefore to get the vehicle type of
+        // a public line you should iterate from the more specific ones to more common ones
+        // until you get a vehicle type which you can process
+        // Some examples of vehicle types:
+        // "bus", "minibus", "trolleybus", "tramway", "underground", "railway"
+        for (String type : transport.getLine().getVehicleTypes()) {
+            if (knownVehicleTypes.contains(type)) {
+                return type;
+            }
+        }
+        return null;
     }
 
     public static class QuestListFragment extends Fragment {
@@ -412,23 +525,6 @@ public class MainActivity extends AppCompatActivity
             return layout;
         }
     }
-
-    /*private void submitRequest(Point start, Point end) {
-
-        Log.d(TAG, "submitRequest: start: " + start.getLatitude() + ";" + start.getLongitude());
-
-        DrivingOptions options = new DrivingOptions();
-        ArrayList<RequestPoint> requestPoints = new ArrayList<>();
-        requestPoints.add(new RequestPoint(
-                start,
-                RequestPointType.WAYPOINT,
-                null));
-        requestPoints.add(new RequestPoint(
-                end,
-                RequestPointType.WAYPOINT,
-                null));
-        drivingSession = drivingRouter.requestRoutes(requestPoints, options, this);
-    }*/
 
     /**
      * Interesting code for animation

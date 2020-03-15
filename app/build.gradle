@@ -56,11 +56,11 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.1.0'
 
     // Основная библиотека MapKit.
-    implementation 'com.yandex.android:mapkit:3.4.0'
+    implementation 'com.yandex.android:mapkit:3.5.0'
     // Дополнительные модули MapKit.
     // Удалите зависимости если ваше приложение не использует их.
-    implementation 'com.yandex.android:directions:3.4.0'
-    implementation 'com.yandex.android:places:3.4.0'
-    implementation 'com.yandex.android:search:3.4.0'
-    implementation 'com.yandex.android:transport:3.4.0'
+    implementation 'com.yandex.android:directions:3.5.0'
+    implementation 'com.yandex.android:places:3.5.0'
+    implementation 'com.yandex.android:search:3.5.0'
+    implementation 'com.yandex.android:transport:3.5.0'
 }

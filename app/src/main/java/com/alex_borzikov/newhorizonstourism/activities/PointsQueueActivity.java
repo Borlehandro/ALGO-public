@@ -25,6 +25,7 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
@@ -63,7 +64,7 @@ public class PointsQueueActivity extends AppCompatActivity {
 
             Log.d(TAG, "Activity get " + json);
 
-            List<PointInfoItem> queue = JsonParser.parsePointsQueue(json);
+            LinkedList<PointInfoItem> queue = JsonParser.parsePointsQueue(json);
 
             List<String> pointsNames = queue.stream().map(PointInfoItem::getName)
                     .collect(Collectors.toList());
