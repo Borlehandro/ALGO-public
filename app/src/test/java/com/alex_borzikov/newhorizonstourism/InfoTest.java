@@ -1,4 +1,5 @@
 package com.alex_borzikov.newhorizonstourism;
+
 import com.alex_borzikov.newhorizonstourism.api.ApiClient;
 import com.alex_borzikov.newhorizonstourism.api.JsonParser;
 import com.alex_borzikov.newhorizonstourism.data.PointInfoItem;
@@ -13,7 +14,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 public class InfoTest {
 

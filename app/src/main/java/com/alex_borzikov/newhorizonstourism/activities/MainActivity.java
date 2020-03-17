@@ -2,14 +2,11 @@ package com.alex_borzikov.newhorizonstourism.activities;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.viewpager.widget.ViewPager;
 
-import android.Manifest;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.PointF;
 import android.os.Bundle;
@@ -20,6 +17,7 @@ import android.view.ViewGroup;
 import android.view.animation.TranslateAnimation;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -36,20 +34,23 @@ import java.util.stream.Collectors;
 
 import com.alex_borzikov.newhorizonstourism.adapters.QuestListAdapter;
 import com.alex_borzikov.newhorizonstourism.R;
+import com.alex_borzikov.newhorizonstourism.adapters.TabAdapter;
 import com.alex_borzikov.newhorizonstourism.api.JsonParser;
 import com.alex_borzikov.newhorizonstourism.api.InfoTask;
 import com.alex_borzikov.newhorizonstourism.data.PointInfoItem;
 import com.alex_borzikov.newhorizonstourism.data.QuestListItem;
+
+import com.alex_borzikov.newhorizonstourism.fragments.BottomTabFragment;
+import com.alex_borzikov.newhorizonstourism.fragments.QuestListTabFragment;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
+
+import com.google.android.material.tabs.TabLayout;
 import com.yandex.mapkit.Animation;
 import com.yandex.mapkit.MapKit;
 import com.yandex.mapkit.MapKitFactory;
 import com.yandex.mapkit.RequestPoint;
 import com.yandex.mapkit.RequestPointType;
-import com.yandex.mapkit.directions.DirectionsFactory;
-import com.yandex.mapkit.directions.driving.DrivingOptions;
-import com.yandex.mapkit.directions.driving.DrivingRoute;
-import com.yandex.mapkit.directions.driving.DrivingRouter;
-import com.yandex.mapkit.directions.driving.DrivingSession;
 import com.yandex.mapkit.geometry.Point;
 import com.yandex.mapkit.geometry.Polyline;
 import com.yandex.mapkit.geometry.SubpolylineHelper;
@@ -98,8 +99,12 @@ public class MainActivity extends AppCompatActivity implements Session.RouteList
     public static LinkedList<PointInfoItem> currentPointsQueue;
 
     private MapView mapView;
+
+    // Todo you need more action buttons
     private Button showButton, codeScanButton;
-    QuestListFragment fragment;
+    private FloatingActionButton anchorButton;
+
+    BottomTabFragment fragment;
 
     private UserLocationLayer userLocationLayer;
 
@@ -109,6 +114,9 @@ public class MainActivity extends AppCompatActivity implements Session.RouteList
 
     private PolylineMapObject lastLine;
 
+    private boolean focused;
+
+    // Todo Stop after quest finish
     private final LocationListener locationListener = new LocationListener() {
 
         @Override
@@ -117,7 +125,19 @@ public class MainActivity extends AppCompatActivity implements Session.RouteList
             Log.d(TAG, "onLocationUpdated: " + location.getPosition().getLatitude() + ";"
                     + location.getPosition().getLongitude());
 
-            if(currentPointsQueue!=null && currentPointsQueue.size()>0) {
+            if (!focused) {
+
+                Log.d(TAG, "onLocationUpdated: Wanna focus");
+
+                mapView.getMap().move(
+                        new CameraPosition(location.getPosition(), 18.0f, 0.0f, 0.0f),
+                        new Animation(Animation.Type.SMOOTH, 5),
+                        null);
+
+                focused = true;
+            }
+
+            if (currentPointsQueue != null && currentPointsQueue.size() > 0) {
 
                 Log.d(TAG, "onLocationUpdated: Try to build drivingRouter with it `|` ");
 
@@ -147,14 +167,9 @@ public class MainActivity extends AppCompatActivity implements Session.RouteList
 
     private final UserLocationObjectListener userLocationObjectListener
             = new UserLocationObjectListener() {
+
         @Override
         public void onObjectAdded(@NonNull UserLocationView userLocationView) {
-            userLocationLayer.setAnchor(
-                    new PointF((float) (mapView.getWidth() * 0.5),
-                            (float) (mapView.getHeight() * 0.5)),
-
-                    new PointF((float) (mapView.getWidth() * 0.5),
-                            (float) (mapView.getHeight() * 0.83)));
 
             userLocationView.getArrow().setIcon(ImageProvider.fromResource(
                     getApplicationContext(), R.drawable.user_arrow));
@@ -170,8 +185,6 @@ public class MainActivity extends AppCompatActivity implements Session.RouteList
                             .setScale(1f)
             );
 
-            // 2020-03-14 17:52:57.385
-
             pinIcon.setIcon(
                     "pin",
                     ImageProvider.fromResource(getApplicationContext(), R.drawable.mark),
@@ -182,6 +195,7 @@ public class MainActivity extends AppCompatActivity implements Session.RouteList
             );
 
             userLocationView.getAccuracyCircle().setFillColor(Color.BLUE);
+
         }
 
         @Override
@@ -210,16 +224,13 @@ public class MainActivity extends AppCompatActivity implements Session.RouteList
 
         MapKit mapKit = MapKitFactory.getInstance();
 
-
-        locationManager = mapKit.createLocationManager();
-
-        // Todo set normal value
-        locationManager.subscribeForLocationUpdates(0.0d, 100, 0.0d, false,
-                FilteringMode.OFF, locationListener);
-
         mapView = findViewById(R.id.mapview);
 
         mapView.getMap().setRotateGesturesEnabled(false);
+
+        mapView.setNoninteractive(false);
+
+        locationManager = mapKit.createLocationManager();
 
         userLocationLayer = mapKit.createUserLocationLayer(mapView.getMapWindow());
         userLocationLayer.setVisible(true);
@@ -231,10 +242,11 @@ public class MainActivity extends AppCompatActivity implements Session.RouteList
 
         mtRouter = TransportFactory.getInstance().createMasstransitRouter();
 
-        fragment = new QuestListFragment();
+        // fragment = new QuestListFragment();
 
         showButton = findViewById(R.id.showButton);
         codeScanButton = findViewById(R.id.scanCodeButton);
+        anchorButton = findViewById(R.id.anchorActionButton);
 
         // TODO Send password safety
         userId = getIntent().getIntExtra("userId", 0);
@@ -247,10 +259,52 @@ public class MainActivity extends AppCompatActivity implements Session.RouteList
         Log.d(TAG, "password " + password);
         Log.d(TAG, "lang " + language);
 
-        if (currentPointsQueue != null)
+        if (!focused && currentPointsQueue == null)
+            locationManager.requestSingleUpdate(locationListener);
+
+        if (currentPointsQueue != null) {
             Log.d(TAG, "onCreate: GET POINTS QUEUE: " + currentPointsQueue.get(0).getName());
 
+            // Todo set normal value
+            locationManager.subscribeForLocationUpdates(0.0d, 100, 0.0d, false,
+                    FilteringMode.OFF, locationListener);
+        }
+
         showButton.setOnClickListener((View v) -> {
+
+//            BottomTabFragment fragment = BottomTabFragment.newInstance();
+//            fragment.show(getSupportFragmentManager(), "bottom_sheet_fragment");
+
+//            BottomSheetDialog dialog = new BottomSheetDialog(MainActivity.this);
+//
+//            View dialogView = LayoutInflater.from(MainActivity.this).inflate(
+//                R.layout.buttom_sheet_layout, (LinearLayout)findViewById(R.id.bottomSheetContainer)
+//            );
+//
+//            dialog.setContentView(dialogView);
+//
+//            TabAdapter tabAdapter = new TabAdapter(dialog.get);
+//            TabLayout tabLayout = dialog.findViewById(R.id.tabLayout);
+//            ViewPager viewPager = dialog.findViewById(R.id.viewPager);
+//
+//            Log.w(TAG, "onCreate: View pager " + viewPager);
+//
+//            tabAdapter.addFragment(new QuestListTabFragment(), "Tab 1");
+//
+//            viewPager.setAdapter(tabAdapter);
+//            tabLayout.setupWithViewPager(viewPager);
+//
+//            Log.w(TAG, "onCreate: Set adapter and pager");
+//
+//            dialog.show();
+
+            Log.w(TAG, "Shown!");
+
+            // Check it is movable
+//            if(mapView.getScreenshot()==null)
+//                Log.w(TAG, "onCreate: IT'S NOT MOVABLE");
+//            else Log.w(TAG, "onCreate: IT'S MOVABLE");
+
             FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
             fragmentTransaction.add(R.id.main_layout, fragment);
             fragmentTransaction.commit();
@@ -258,6 +312,26 @@ public class MainActivity extends AppCompatActivity implements Session.RouteList
 
         codeScanButton.setOnClickListener((View v) ->
                 startActivity(new Intent(getApplicationContext(), CodeScanActivity.class)));
+
+        anchorButton.setOnClickListener((View v) -> {
+            if (!userLocationLayer.isAnchorEnabled()) {
+
+                Log.d(TAG, "onCreate: Anchor button enabled");
+
+                userLocationLayer.setAnchor(
+                        new PointF((float) (mapView.getWidth() * 0.5),
+                                (float) (mapView.getHeight() * 0.5)),
+
+                        new PointF((float) (mapView.getWidth() * 0.5),
+                                (float) (mapView.getHeight() * 0.83)));
+
+                anchorButton.setImageResource(android.R.drawable.ic_menu_compass);
+
+            } else {
+                userLocationLayer.resetAnchor();
+                anchorButton.setImageResource(android.R.drawable.ic_menu_mylocation);
+            }
+        });
 
         // Check permissions
         /*if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
@@ -289,18 +363,14 @@ public class MainActivity extends AppCompatActivity implements Session.RouteList
 
     @Override
     protected void onResumeFragments() {
+        Log.d(TAG, "onResumeFragments: ");
         super.onResumeFragments();
-
-        mapView.getMap().move(
-                new CameraPosition(new Point(52.539303, 85.223677), 15.0f, 0.0f, 0.0f),
-                new Animation(Animation.Type.SMOOTH, 0),
-                null);
     }
 
     @Override
     protected void onRestart() {
-        super.onRestart();
         Log.d(TAG, "On restart");
+        super.onRestart();
 
         // Todo Make code using better
         if (pointCode != null) {
@@ -433,7 +503,7 @@ public class MainActivity extends AppCompatActivity implements Session.RouteList
         }
 
         // Todo MAKE IT BETTER!
-        if(lastLine!=null)
+        if (lastLine != null)
             mapObjects.remove(lastLine);
 
         lastLine = polylineMapObject;
@@ -457,74 +527,20 @@ public class MainActivity extends AppCompatActivity implements Session.RouteList
         return null;
     }
 
-    public static class QuestListFragment extends Fragment {
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                                 Bundle savedInstanceState) {
-            View layout = inflater.inflate(R.layout.activity_main, container, false);
-
-            // Inflate the layout for this fragment
-            ListView questList = layout.findViewById(R.id.quest_view);
-
-            InfoTask getListTask = new InfoTask();
-            Map<String, String> questListParams = new HashMap<>();
-            questListParams.put("mode", "GET_QUESTS_LIST");
-            questListParams.put("language", ((MainActivity) getActivity()).language);
-
-            getListTask.execute(questListParams);
-
-            try {
-                // TODO: Don't call get() method!
-
-                String result = getListTask.get();
-
-                Log.d(TAG, "Activity get " + result);
-
-                List<QuestListItem> parsingResult = JsonParser.parseQuestList(result);
-
-                List<String> questsNames = parsingResult.stream().map(QuestListItem::getName)
-                        .collect(Collectors.toList());
-
-                List<String> questsDescriptions = parsingResult.stream()
-                        .map(QuestListItem::getDescriptionShort).collect(Collectors.toList());
-
-                List<Integer> questsId = parsingResult.stream().map(QuestListItem::getId)
-                        .collect(Collectors.toList());
-
-                for (String item : questsNames) {
-                    Log.d(TAG, item);
-                }
-
-                //ArrayAdapter<String> adapter = new ArrayAdapter<>(getApplicationContext(), R.layout.quest_list_layout, questsNames);
-                QuestListAdapter adapter = new QuestListAdapter(getContext(),
-                        R.layout.quest_list_layout, questsNames, questsDescriptions);
-
-                questList.setAdapter(adapter);
-
-                questList.setOnItemClickListener((AdapterView<?> parent, View view,
-                                                  int position, long id) -> {
-
-                    Log.d(TAG, "Click on " + position);
-
-                    Intent toQuestInfo = new Intent(getActivity().getApplicationContext(),
-                            QuestActivity.class);
-
-                    Log.d(TAG, "onCreateView: get ID:" + questsId.get(position));
-
-                    toQuestInfo.putExtra("language", ((MainActivity) getActivity()).language);
-                    toQuestInfo.putExtra("questId", String.valueOf(questsId.get(position)));
-
-                    startActivityForResult(toQuestInfo, 1);
-
-                });
-
-            } catch (ExecutionException | InterruptedException | JSONException e) {
-                e.printStackTrace();
-            }
-
-            return layout;
-        }
-    }
+//    public static class QuestListFragment extends Fragment {
+//        @Override
+//        public View onCreateView(LayoutInflater inflater, ViewGroup container,
+//                                 Bundle savedInstanceState) {
+//
+//            Log.d(TAG, "onCreateView: ");
+//
+//            View layout = inflater.inflate(R.layout.activity_main, container, false);
+//
+//            // Inflate the layout for this fragment
+//
+//            return layout;
+//        }
+//    }
 
     /**
      * Interesting code for animation
