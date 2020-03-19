@@ -36,9 +36,15 @@ public class InfoTask extends AsyncTask<Map<String, String>, Void, String> {
                     Log.d(TAG, "It's point info");
                     return ApiClient.getPointInfo(params[0].get("pointId"), params[0].get("language"));
 
+                case "GET_TASK_INFO":
+                    Log.d(TAG, "It's task info");
+                    return ApiClient.getTaskInfo(params[0].get("taskId"), params[0].get("language"),
+                            params[0].get("userName"), params[0].get("password"));
+
                 case "REGISTER":
                     Log.d(TAG, "It's registration");
-                    return ApiClient.register(params[0].get("username"), params[0].get("password"), params[0].get("language"));
+                    return ApiClient.register(params[0].get("username"), params[0].get("password"),
+                            params[0].get("language"));
 
                 case "LOGIN":
                     Log.d(TAG, "It's login");
@@ -52,10 +58,8 @@ public class InfoTask extends AsyncTask<Map<String, String>, Void, String> {
                     Log.d(TAG, "It's answer checking");
                     return ApiClient.checkTaskAnswer(params[0].get("answerIndex"),
                             params[0].get("taskId"),
-                            params[0].get("username"),
+                            params[0].get("userName"),
                             params[0].get("password"));
-
-
             }
         } catch (IOException | NullPointerException e) {
             Log.e(TAG, "doInBackground: " + e.getMessage());

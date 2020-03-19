@@ -1,10 +1,13 @@
 package com.alex_borzikov.newhorizonstourism.activities;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -28,11 +31,13 @@ public class PointActivity extends AppCompatActivity {
 
     private static final String TAG = "Borlehandro";
     private String language;
-    private String pointId;
+    private String pointId, userName, password;
 
-    TextView descriptionView, nameView;
-    ImageView imageView;
-    Button showTaskButton;
+    private TextView descriptionView, nameView;
+    private ImageView imageView;
+    private Button showTaskButton;
+
+    private PointInfoItem info;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +52,8 @@ public class PointActivity extends AppCompatActivity {
 
         pointId = getIntent().getStringExtra("pointId");
         language = getIntent().getStringExtra("language");
+        userName = getIntent().getStringExtra("userName");
+        password = getIntent().getStringExtra("password");
 
         Log.d(TAG, "onCreate: id in Point " + pointId);
         Log.d(TAG, "onCreate: lang in Point " + language);
@@ -61,11 +68,10 @@ public class PointActivity extends AppCompatActivity {
             infoParams.put("language", language);
 
             pointInfoTask.execute(infoParams);
-
             try {
 
                 String json = pointInfoTask.get();
-                PointInfoItem info = JsonParser.parsePointInfo(json);
+                info = JsonParser.parsePointInfo(json);
 
                 nameView.setText(info.getName());
 
@@ -90,5 +96,36 @@ public class PointActivity extends AppCompatActivity {
             Log.e(TAG, "onCreate: ERROR POINT_ID == -1");
             finish();
         }
+
+        showTaskButton.setOnClickListener((View v) -> {
+
+            Intent toTask = new Intent(this, TaskActivity.class);
+
+            Log.d(TAG, "onCreate: Point: " + info.getTaskId());
+
+            toTask.putExtra("language", language);
+            toTask.putExtra("taskId", String.valueOf(info.getTaskId()));
+            toTask.putExtra("userName", userName);
+            toTask.putExtra("password", password);
+
+            startActivityForResult(toTask, 1);
+        });
+
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        Log.d(TAG, "onActivityResult: point " + resultCode);
+        setResult(resultCode);
+        finish();
+    }
+
+    @Override
+    public void onBackPressed() {
+        setResult(0);
+        Log.d(TAG, "onBackPressed");
+        finish();
+        super.onBackPressed();
     }
 }

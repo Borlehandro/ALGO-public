@@ -1,6 +1,7 @@
 package com.alex_borzikov.newhorizonstourism.activities;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
@@ -14,12 +15,14 @@ import android.view.animation.TranslateAnimation;
 import android.widget.Toast;
 
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 import com.alex_borzikov.newhorizonstourism.MainViewModel;
 import com.alex_borzikov.newhorizonstourism.R;
 import com.alex_borzikov.newhorizonstourism.api.InfoTask;
+import com.alex_borzikov.newhorizonstourism.data.PointInfoItem;
 import com.alex_borzikov.newhorizonstourism.data.UserInfo;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 
@@ -147,12 +150,32 @@ public class MainActivity extends AppCompatActivity {
                 Intent toPoint = new Intent(getApplicationContext(), PointActivity.class);
                 toPoint.putExtra("pointId", pointId);
                 toPoint.putExtra("language", userInfo.getLanguage());
+                toPoint.putExtra("userName", userInfo.getName());
+                toPoint.putExtra("password", userInfo.getPassword());
                 // It can not repeat!
                 pointCode = null;
-                startActivity(toPoint);
+                startActivityForResult(toPoint, 1);
 
             } catch (ExecutionException | InterruptedException e) {
                 e.printStackTrace();
+            }
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        Log.d(TAG, "onActivityResult: in main " + requestCode + " res: " + resultCode);
+
+        if(requestCode == 1 && resultCode == 1) {
+
+            LinkedList<PointInfoItem> points = viewModel.getPointsQueue().getValue();
+
+            if(points!=null && points.size()!=0)
+                points.pop();
+            else {
+                Toast.makeText(MainActivity.this, "That's all!",
+                        Toast.LENGTH_LONG).show();
             }
         }
     }

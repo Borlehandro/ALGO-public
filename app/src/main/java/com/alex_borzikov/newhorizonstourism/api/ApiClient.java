@@ -271,8 +271,8 @@ public class ApiClient {
         writer.write("&username=" + username);
         writer.write("&password=" + password);
 
-        System.out.println(MODES.get("GET_TASKS_INFO") + " " + language + " " + taskId
-                + " " + username + " " + password );
+        Log.d(TAG, (MODES.get("GET_TASKS_INFO") + " " + language + " " + taskId
+                + " " + username + " " + password ));
 
         writer.flush();
         writer.close();
@@ -332,6 +332,9 @@ public class ApiClient {
         connection.setDoOutput(true);
         connection.setDoInput(true);
         OutputStream data = connection.getOutputStream();
+
+        Log.d(TAG, "checkTaskAnswer: " + MODES.get("CHECK_ANSWER")  + " " +answerIndex + " "
+                + taskId + " " + username + " " + password);
 
         BufferedWriter writer = new BufferedWriter(
                 new OutputStreamWriter(data, StandardCharsets.UTF_8));
