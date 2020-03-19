@@ -73,18 +73,6 @@ public class MainActivity extends AppCompatActivity {
                 sheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
             }
         });
-
-        viewModel.getQuestStarted().observe(this, (started) -> {
-            viewModel.setShowOpened(false);
-
-            Log.d(TAG, "onCreate: FIRST POINT IN "
-                    + viewModel.getPointsQueue().getValue().get(0).getLocationX() + ";"
-                    + viewModel.getPointsQueue().getValue().get(0).getLocationY());
-
-            // Todo draw way to the first point
-            //  YOU MUST DO IT IN MAP FRAGMENT!
-        });
-
     }
 
     @Override

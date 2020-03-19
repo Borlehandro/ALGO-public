@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel;
 import com.alex_borzikov.newhorizonstourism.data.PointInfoItem;
 import com.alex_borzikov.newhorizonstourism.data.UserInfo;
 
+import java.util.LinkedList;
 import java.util.List;
 
 public class MainViewModel extends ViewModel {
@@ -15,7 +16,7 @@ public class MainViewModel extends ViewModel {
     private final MutableLiveData<Boolean> showOpened = new MutableLiveData<>();
     private final MutableLiveData<Boolean> questStarted = new MutableLiveData<>();
     private final MutableLiveData<String> questId = new MutableLiveData<>();
-    private final MutableLiveData<List<PointInfoItem>> pointsQueue = new MutableLiveData<>();
+    private final MutableLiveData<LinkedList<PointInfoItem>> pointsQueue = new MutableLiveData<>();
 
     public void setUserInfo(UserInfo item) {
         userInfo.setValue(item);
@@ -49,11 +50,11 @@ public class MainViewModel extends ViewModel {
         questStarted.setValue(item);
     }
 
-    public MutableLiveData<List<PointInfoItem>> getPointsQueue() {
+    public MutableLiveData<LinkedList<PointInfoItem>> getPointsQueue() {
         return pointsQueue;
     }
 
-    public void setPointsQueue(List<PointInfoItem> item) {
+    public void setPointsQueue(LinkedList<PointInfoItem> item) {
         pointsQueue.setValue(item);
     }
 

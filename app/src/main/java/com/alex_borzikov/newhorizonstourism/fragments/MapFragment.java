@@ -238,14 +238,6 @@ public class MapFragment extends Fragment implements Session.RouteListener {
         if (!focused && currentPointsQueue == null)
             locationManager.requestSingleUpdate(locationListener);
 
-        if (currentPointsQueue != null) {
-            Log.d(TAG, "onCreate: GET POINTS QUEUE: " + currentPointsQueue.get(0).getName());
-
-            // Todo set normal value
-            locationManager.subscribeForLocationUpdates(0.0d, 100, 0.0d, false,
-                    FilteringMode.OFF, locationListener);
-        }
-
         showButton.setOnClickListener((View v) -> {
 
             viewModel.setShowOpened(true);
@@ -297,6 +289,25 @@ public class MapFragment extends Fragment implements Session.RouteListener {
                 Log.d(TAG, "onActivityCreated: OPENED IN MAP");
             else
                 Log.d(TAG, "onActivityCreated: NOT OPEN IN MAP");
+        });
+
+        viewModel.getQuestStarted().observe(getViewLifecycleOwner(), (started) -> {
+            viewModel.setShowOpened(false);
+
+            Log.d(TAG, "onCreate: FIRST POINT IN "
+                    + viewModel.getPointsQueue().getValue().get(0).getLocationX() + ";"
+                    + viewModel.getPointsQueue().getValue().get(0).getLocationY());
+
+            currentPointsQueue = viewModel.getPointsQueue().getValue();
+
+            Log.d(TAG, "onCreate: GET POINTS QUEUE: " + currentPointsQueue.get(0).getName());
+
+            // Todo set normal value
+            locationManager.subscribeForLocationUpdates(0.0d, 100, 0.0d, false,
+                    FilteringMode.OFF, locationListener);
+
+            // Todo draw way to the first point
+            //  YOU MUST DO IT IN MAP FRAGMENT!
         });
 
     }

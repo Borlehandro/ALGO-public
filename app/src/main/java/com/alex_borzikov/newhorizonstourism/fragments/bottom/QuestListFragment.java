@@ -49,6 +49,28 @@ public class QuestListFragment extends Fragment {
 
         questList = view.findViewById(R.id.quest_view);
 
+        return view;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        controller = Navigation.findNavController(view);
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        Log.d(TAG, "onActivityCreated: set it to " + getView());
+
+        viewModel = new ViewModelProvider(getActivity()).get(MainViewModel.class);
+
+    }
+
+    @Override
+    public void onStart() {
+
         InfoTask getListTask = new InfoTask();
         Map<String, String> questListParams = new HashMap<>();
         questListParams.put("mode", "GET_QUESTS_LIST");
@@ -97,31 +119,6 @@ public class QuestListFragment extends Fragment {
         } catch (ExecutionException | InterruptedException | JSONException e) {
             e.printStackTrace();
         }
-
-        return view;
-    }
-
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        controller = Navigation.findNavController(view);
-    }
-
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-
-        Log.d(TAG, "onActivityCreated: set it to " + getView());
-
-        viewModel = new ViewModelProvider(getActivity()).get(MainViewModel.class);
-
-//        viewModel.getShowOpened().observe(getViewLifecycleOwner(), (opened) -> {
-//            if (opened){
-//                // Todo Get data and make list view!
-//            }
-//            else
-//                Log.d(TAG, "onActivityCreated: NOT OPEN IN BOTTOM");
-//        });
-
+        super.onStart();
     }
 }
