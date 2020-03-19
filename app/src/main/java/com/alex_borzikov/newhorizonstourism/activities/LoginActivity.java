@@ -34,7 +34,6 @@ public class LoginActivity extends AppCompatActivity {
     private static String userName;
     private static String password;
 
-    static final int REQUEST_COARSE_RESULT = 0;
     static final int REQUEST_FINE_RESULT = 1;
 
     EditText loginUser, loginPassword,
@@ -153,23 +152,6 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     public void onRequestPermissionsResult(int requestCode,
                                            String[] permissions, int[] grantResults) {
-
-
-//            case REQUEST_COARSE_RESULT: {
-//                // If request is cancelled, the result arrays are empty.
-//                if (grantResults.length > 0
-//                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-//
-//                    Log.d(TAG, "onRequestPermissionsResult: User allow coarse!");
-//
-//                } else {
-//                    Log.d(TAG, "onRequestPermissionsResult: User not allow coarse");
-//                    finish();
-//                    // permission denied, boo! Disable the
-//                    // functionality that depends on this permission.
-//                }
-//                return;
-//            }
 
             if(requestCode == REQUEST_FINE_RESULT) {
                 // If request is cancelled, the result arrays are empty.

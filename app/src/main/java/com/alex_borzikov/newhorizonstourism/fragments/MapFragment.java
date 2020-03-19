@@ -1,12 +1,16 @@
 package com.alex_borzikov.newhorizonstourism.fragments;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.PointF;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.Observer;
@@ -102,6 +106,8 @@ public class MapFragment extends Fragment implements Session.RouteListener {
     private MainViewModel viewModel;
 
     private boolean focused;
+
+    static final int REQUEST_CAMERA_RESULT = 1;
 
 
     // Todo Stop after quest finish
@@ -245,8 +251,13 @@ public class MapFragment extends Fragment implements Session.RouteListener {
 
         });
 
-        codeScanButton.setOnClickListener((View v) ->
-                startActivity(new Intent(getApplicationContext(), CodeScanActivity.class)));
+        codeScanButton.setOnClickListener((View v) -> {
+
+            checkLocationPermission();
+
+            // startActivity(new Intent(getApplicationContext(), CodeScanActivity.class));
+
+        });
 
         anchorButton.setOnClickListener((View v) -> {
 
@@ -418,6 +429,29 @@ public class MapFragment extends Fragment implements Session.RouteListener {
             }
         }
         return null;
+    }
+
+    private void checkLocationPermission() {
+
+        if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.CAMERA)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            Log.d(TAG, "onCreate: FINE DENIED!");
+
+            if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(),
+                    Manifest.permission.ACCESS_FINE_LOCATION)) {
+
+                Toast.makeText(getApplicationContext(), "You should allow CAMERA",
+                        Toast.LENGTH_LONG).show();
+            }
+
+            ActivityCompat.requestPermissions(getActivity(),
+                    new String[]{Manifest.permission.CAMERA},
+                    REQUEST_CAMERA_RESULT);
+        } else {
+            Log.d(TAG, "onCreate: CAMERA OK");
+            startActivity(new Intent(getApplicationContext(), CodeScanActivity.class));
+        }
     }
 
     @Override

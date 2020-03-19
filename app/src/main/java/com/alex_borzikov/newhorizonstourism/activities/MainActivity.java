@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -22,7 +23,11 @@ import com.alex_borzikov.newhorizonstourism.api.InfoTask;
 import com.alex_borzikov.newhorizonstourism.data.UserInfo;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 
+import static com.yandex.runtime.Runtime.getApplicationContext;
+
 public class MainActivity extends AppCompatActivity {
+
+    static final int REQUEST_CAMERA_RESULT = 1;
 
     private static final String TAG = "Borlehandro";
 
@@ -94,6 +99,27 @@ public class MainActivity extends AppCompatActivity {
 
         super.onResumeFragments();
     }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String[] permissions, int[] grantResults) {
+
+        if(requestCode == REQUEST_CAMERA_RESULT) {
+            // If request is cancelled, the result arrays are empty.
+            if (grantResults.length > 0
+                    && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                Log.d(TAG, "onRequestPermissionsResult: User allow camera");
+                startActivity(new Intent(getApplicationContext(), CodeScanActivity.class));
+
+            } else {
+                Log.d(TAG, "onRequestPermissionsResult: User not allow camera");
+                // permission denied, boo! Disable the
+                // functionality that depends on this permission.
+            }
+        }
+    }
+
 
     @Override
     protected void onRestart() {

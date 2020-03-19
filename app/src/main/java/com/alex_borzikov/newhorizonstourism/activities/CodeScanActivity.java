@@ -15,6 +15,7 @@ public class CodeScanActivity extends AppCompatActivity implements ZXingScannerV
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         scannerView = new ZXingScannerView(this);
 
         setContentView(scannerView);
