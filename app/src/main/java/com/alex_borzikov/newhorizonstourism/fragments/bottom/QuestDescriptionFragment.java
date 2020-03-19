@@ -36,26 +36,14 @@ public class QuestDescriptionFragment extends Fragment {
 
     private static final String TAG = "Borlehandro";
 
-    MainViewModel viewModel;
-    NavController controller;
+    private MainViewModel viewModel;
+    private NavController controller;
 
-    Button startButton;
-    TextView descriptionView, nameView;
-    ImageView questImage;
+    private Button startButton;
+    private TextView descriptionView, nameView;
+    private ImageView questImage;
 
-    String language, questId;
-
-    public QuestDescriptionFragment() {
-        // Required empty public constructor
-    }
-
-    public static QuestDescriptionFragment newInstance(String param1, String param2) {
-        QuestDescriptionFragment fragment = new QuestDescriptionFragment();
-        Bundle args = new Bundle();
-        fragment.setArguments(args);
-        return fragment;
-    }
-
+    private String language, questId;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -88,7 +76,6 @@ public class QuestDescriptionFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        // ok?
         viewModel = new ViewModelProvider(getActivity()).get(MainViewModel.class);
 
         questId = viewModel.getQuestId().getValue();
@@ -138,7 +125,6 @@ public class QuestDescriptionFragment extends Fragment {
         } catch (ExecutionException | InterruptedException | JSONException e) {
             e.printStackTrace();
         }
-
 
         super.onStart();
     }

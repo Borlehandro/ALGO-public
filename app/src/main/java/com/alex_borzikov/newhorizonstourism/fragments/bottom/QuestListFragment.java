@@ -1,6 +1,5 @@
 package com.alex_borzikov.newhorizonstourism.fragments.bottom;
 
-import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -19,13 +18,10 @@ import android.widget.ListView;
 
 import com.alex_borzikov.newhorizonstourism.MainViewModel;
 import com.alex_borzikov.newhorizonstourism.R;
-import com.alex_borzikov.newhorizonstourism.activities.MainActivity;
-import com.alex_borzikov.newhorizonstourism.activities.QuestActivity;
 import com.alex_borzikov.newhorizonstourism.adapters.QuestListAdapter;
 import com.alex_borzikov.newhorizonstourism.api.InfoTask;
 import com.alex_borzikov.newhorizonstourism.api.JsonParser;
 import com.alex_borzikov.newhorizonstourism.data.QuestListItem;
-import com.google.android.material.bottomsheet.BottomSheetBehavior;
 
 import org.json.JSONException;
 
@@ -37,37 +33,17 @@ import java.util.stream.Collectors;
 
 public class QuestListFragment extends Fragment {
 
-    BottomSheetBehavior sheetBehavior;
-
     private static final String TAG = "Borlehandro";
 
-    MainViewModel viewModel;
+    private MainViewModel viewModel;
 
-    ListView questList;
+    private ListView questList;
 
-    NavController controller;
-
-    public QuestListFragment() {
-        // Required empty public constructor
-    }
-
-    public static QuestListFragment newInstance(String param1) {
-        QuestListFragment fragment = new QuestListFragment();
-        Bundle args = new Bundle();
-        fragment.setArguments(args);
-        return fragment;
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-    }
+    private NavController controller;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
 
         View view = inflater.inflate(R.layout.fragment_quest_list, container, false);
 
@@ -76,7 +52,7 @@ public class QuestListFragment extends Fragment {
         InfoTask getListTask = new InfoTask();
         Map<String, String> questListParams = new HashMap<>();
         questListParams.put("mode", "GET_QUESTS_LIST");
-        questListParams.put("language", ((MainActivity)getActivity()).userInfo.getLanguage());
+        questListParams.put("language", viewModel.getUserInfo().getValue().getLanguage());
 
         getListTask.execute(questListParams);
 
@@ -102,7 +78,6 @@ public class QuestListFragment extends Fragment {
                 Log.d(TAG, item);
             }
 
-            //ArrayAdapter<String> adapter = new ArrayAdapter<>(getApplicationContext(), R.layout.quest_list_layout, questsNames);
             QuestListAdapter adapter = new QuestListAdapter(getActivity(),
                     R.layout.quest_list_layout, questsNames, questsDescriptions);
 
@@ -117,24 +92,11 @@ public class QuestListFragment extends Fragment {
 
                 controller.navigate(R.id.toDescription);
 
-//                Intent toQuestInfo = new Intent(getActivity(),
-//                        QuestActivity.class);
-//
-//                Log.d(TAG, "onCreateView: get ID:" + questsId.get(position));
-//
-//                toQuestInfo.putExtra("language",((MainActivity)getActivity()).userInfo.getLanguage());
-//                toQuestInfo.putExtra("questId", String.valueOf(questsId.get(position)));
-//
-//                startActivityForResult(toQuestInfo, 1);
-
             });
 
         } catch (ExecutionException | InterruptedException | JSONException e) {
             e.printStackTrace();
         }
-        // sheetBehavior = BottomSheetBehavior.from(view);
-
-        // Log.d(TAG, "onCreateView: " + sheetBehavior);
 
         return view;
     }
@@ -151,15 +113,15 @@ public class QuestListFragment extends Fragment {
 
         Log.d(TAG, "onActivityCreated: set it to " + getView());
 
-        // ok?
         viewModel = new ViewModelProvider(getActivity()).get(MainViewModel.class);
 
-        viewModel.getShowOpened().observe(getViewLifecycleOwner(), (opened) -> {
-            if (opened){
-                // Todo Get data and make list view!
-            }
-            else
-                Log.d(TAG, "onActivityCreated: NOT OPEN IN BOTTOM");
-        });
+//        viewModel.getShowOpened().observe(getViewLifecycleOwner(), (opened) -> {
+//            if (opened){
+//                // Todo Get data and make list view!
+//            }
+//            else
+//                Log.d(TAG, "onActivityCreated: NOT OPEN IN BOTTOM");
+//        });
+
     }
 }

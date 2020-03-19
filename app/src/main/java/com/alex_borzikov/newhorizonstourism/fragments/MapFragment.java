@@ -79,27 +79,17 @@ import static com.yandex.runtime.Runtime.getApplicationContext;
 
 public class MapFragment extends Fragment implements Session.RouteListener {
 
-    private static final String ARG_LANG = "language";
-
     private static final String TAG = "Borlehandro";
 
-    private String userName;
-    private String password;
-    public String language;
-
-    private int userId;
-    String pointId;
-
     public static String pointCode;
-    public static LinkedList<PointInfoItem> currentPointsQueue;
+
+    private static LinkedList<PointInfoItem> currentPointsQueue;
 
     private MapView mapView;
 
     // Todo you need more action buttons
     private Button showButton, codeScanButton;
     private FloatingActionButton anchorButton;
-
-    BottomTabFragment fragment;
 
     private UserLocationLayer userLocationLayer;
 
@@ -109,11 +99,10 @@ public class MapFragment extends Fragment implements Session.RouteListener {
 
     private PolylineMapObject lastLine;
 
-    MainViewModel viewModel;
+    private MainViewModel viewModel;
 
     private boolean focused;
 
-    BottomSheetBehavior sheetBehavior;
 
     // Todo Stop after quest finish
     private final LocationListener locationListener = new LocationListener() {
@@ -208,26 +197,6 @@ public class MapFragment extends Fragment implements Session.RouteListener {
         }
     };
 
-    public MapFragment() {
-        // Required empty public constructor
-    }
-
-    public static MapFragment newInstance(String param1) {
-        MapFragment fragment = new MapFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_LANG, param1);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            language = getArguments().getString(ARG_LANG);
-        }
-    }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -279,47 +248,9 @@ public class MapFragment extends Fragment implements Session.RouteListener {
 
         showButton.setOnClickListener((View v) -> {
 
-            // Todo Check view in the model and set bottom sheet param
-
             viewModel.setShowOpened(true);
             v.setVisibility(View.INVISIBLE);
 
-//            BottomTabFragment fragment = BottomTabFragment.newInstance();
-//            fragment.show(getSupportFragmentManager(), "bottom_sheet_fragment");
-
-//            BottomSheetDialog dialog = new BottomSheetDialog(MainActivity.this);
-//
-//            View dialogView = LayoutInflater.from(MainActivity.this).inflate(
-//                R.layout.buttom_sheet_layout, (LinearLayout)findViewById(R.id.bottomSheetContainer)
-//            );
-//
-//            dialog.setContentView(dialogView);
-//
-//            TabAdapter tabAdapter = new TabAdapter(dialog.get);
-//            TabLayout tabLayout = dialog.findViewById(R.id.tabLayout);
-//            ViewPager viewPager = dialog.findViewById(R.id.viewPager);
-//
-//            Log.w(TAG, "onCreate: View pager " + viewPager);
-//
-//            tabAdapter.addFragment(new QuestListTabFragment(), "Tab 1");
-//
-//            viewPager.setAdapter(tabAdapter);
-//            tabLayout.setupWithViewPager(viewPager);
-//
-//            Log.w(TAG, "onCreate: Set adapter and pager");
-//
-//            dialog.show();
-
-            Log.w(TAG, "Shown!");
-
-            // Check it is movable
-//            if(mapView.getScreenshot()==null)
-//                Log.w(TAG, "onCreate: IT'S NOT MOVABLE");
-//            else Log.w(TAG, "onCreate: IT'S MOVABLE");
-
-//            FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-//            fragmentTransaction.add(R.id.main_layout, fragment);
-//            fragmentTransaction.commit();
         });
 
         codeScanButton.setOnClickListener((View v) ->
@@ -354,9 +285,9 @@ public class MapFragment extends Fragment implements Session.RouteListener {
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+
         super.onActivityCreated(savedInstanceState);
 
-        // ok ?
         viewModel = new ViewModelProvider(getActivity()).get(MainViewModel.class);
 
         Log.d(TAG, "onActivityCreated: " + viewModel.getUserInfo().getValue().getLanguage());
@@ -480,14 +411,14 @@ public class MapFragment extends Fragment implements Session.RouteListener {
 
     @Override
     public void onResume() {
-        Log.d(TAG, "onResume: ");
+        Log.d(TAG, "onResume");
         super.onResume();
         locationManager.resume();
     }
 
     @Override
     public void onStart() {
-        Log.d(TAG, "onStart: ");
+        Log.d(TAG, "onStart");
         super.onStart();
         mapView.onStart();
         MapKitFactory.getInstance().onStart();
@@ -497,12 +428,12 @@ public class MapFragment extends Fragment implements Session.RouteListener {
     public void onPause() {
         locationManager.suspend();
         super.onPause();
-        Log.d(TAG, "Pause");
+        Log.d(TAG, "onPause");
     }
 
     @Override
     public void onStop() {
-        Log.d(TAG, "On Stop Activity");
+        Log.d(TAG, "onStop");
         mapView.onStop();
         MapKitFactory.getInstance().onStop();
         super.onStop();

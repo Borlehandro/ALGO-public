@@ -1,6 +1,5 @@
 package com.alex_borzikov.newhorizonstourism.fragments.bottom;
 
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 
@@ -20,7 +19,6 @@ import android.widget.ListView;
 
 import com.alex_borzikov.newhorizonstourism.MainViewModel;
 import com.alex_borzikov.newhorizonstourism.R;
-import com.alex_borzikov.newhorizonstourism.activities.MainActivity;
 import com.alex_borzikov.newhorizonstourism.adapters.PointsQueueAdapter;
 import com.alex_borzikov.newhorizonstourism.api.InfoTask;
 import com.alex_borzikov.newhorizonstourism.api.JsonParser;
@@ -49,17 +47,6 @@ public class PointsQueueFragment extends Fragment {
     ListView pointsQueueView;
     Button questGoButton;
 
-    public PointsQueueFragment() {
-        // Required empty public constructor
-    }
-
-    public static PointsQueueFragment newInstance(String param1, String param2) {
-        PointsQueueFragment fragment = new PointsQueueFragment();
-        Bundle args = new Bundle();
-        fragment.setArguments(args);
-        return fragment;
-    }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -80,9 +67,9 @@ public class PointsQueueFragment extends Fragment {
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+
         super.onActivityCreated(savedInstanceState);
 
-        // ok?
         viewModel = new ViewModelProvider(getActivity()).get(MainViewModel.class);
 
         questId = viewModel.getQuestId().getValue();
@@ -144,22 +131,7 @@ public class PointsQueueFragment extends Fragment {
                 viewModel.setPointsQueue(queue);
                 viewModel.setQuestStarted(true);
 
-//                Intent toMain = new Intent(this, MainActivity.class);
-//
-//                toMain.putExtra("language", language);
-//                toMain.putExtra("questId", questId);
-//
-//                toMain.putExtra("uid", "queue");
-//
-//                // Todo Fix it, it's bad idea!
-//
-//                MainActivity.currentPointsQueue = queue;
-//
-//                startActivity(toMain);
-
             });
-
-
 
         } catch (ExecutionException | InterruptedException | JSONException e) {
             e.printStackTrace();

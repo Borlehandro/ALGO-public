@@ -13,14 +13,12 @@ import android.view.animation.TranslateAnimation;
 import android.widget.Toast;
 
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 import com.alex_borzikov.newhorizonstourism.MainViewModel;
 import com.alex_borzikov.newhorizonstourism.R;
 import com.alex_borzikov.newhorizonstourism.api.InfoTask;
-import com.alex_borzikov.newhorizonstourism.data.PointInfoItem;
 import com.alex_borzikov.newhorizonstourism.data.UserInfo;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 
@@ -28,19 +26,16 @@ public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "Borlehandro";
 
-    // Todo make it private
-    public UserInfo userInfo;
+    private UserInfo userInfo;
 
-    String pointId;
+    private String pointId;
 
     public static String pointCode;
-    public static LinkedList<PointInfoItem> currentPointsQueue;
 
-    Fragment bottomFragment;
-    BottomSheetBehavior sheetBehavior;
+    private Fragment bottomFragment;
+    private BottomSheetBehavior sheetBehavior;
 
-    MainViewModel viewModel;
-    boolean bottomOpened;
+    private MainViewModel viewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,17 +46,6 @@ public class MainActivity extends AppCompatActivity {
         bottomFragment = getSupportFragmentManager().findFragmentById(R.id.bottomSheetNavFragment);
 
         Log.d(TAG, "onCreate: ");
-
-        // Check it is movable
-//            if(mapView.getScreenshot()==null)
-//                Log.w(TAG, "onCreate: IT'S NOT MOVABLE");
-//            else Log.w(TAG, "onCreate: IT'S MOVABLE");
-
-//        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-//        fragmentTransaction.add(R.id.main_layout, fragment);
-//        fragmentTransaction.commit();
-
-        Log.w(TAG, "Shown!");
 
         // TODO Send password safety
         userInfo = new UserInfo(
@@ -92,10 +76,13 @@ public class MainActivity extends AppCompatActivity {
 
         viewModel.getQuestStarted().observe(this, (started) -> {
             viewModel.setShowOpened(false);
+
             Log.d(TAG, "onCreate: FIRST POINT IN "
                     + viewModel.getPointsQueue().getValue().get(0).getLocationX() + ";"
                     + viewModel.getPointsQueue().getValue().get(0).getLocationY());
+
             // Todo draw way to the first point
+            //  YOU MUST DO IT IN MAP FRAGMENT!
         });
 
     }
@@ -104,9 +91,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onResumeFragments() {
 
         Log.d(TAG, "onResumeFragments: ");
-        Log.d(TAG, "onResumeFragments: " + bottomFragment.getView());
-
-        // Todo Hey, can you send it to map fragment?!
 
         sheetBehavior.addBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
             @Override
@@ -120,16 +104,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        if (bottomOpened) {
-            // Todo EXIST HALF_EXPANDED - CHECK IT!
-            Log.d(TAG, "onResumeFragments: set expanded");
-            sheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
-        } else {
-            Log.d(TAG, "onResumeFragments: set hidden");
-            sheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
-        }
-
-
         super.onResumeFragments();
     }
 
@@ -141,6 +115,7 @@ public class MainActivity extends AppCompatActivity {
         // Todo It's not onRestart()
         // Todo Make code using better
         if (pointCode != null) {
+
             Toast.makeText(getApplicationContext(), "Get code: " + pointCode, Toast.LENGTH_LONG).show();
 
             InfoTask codeTask = new InfoTask();
@@ -167,21 +142,6 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
-
-//    public static class QuestListFragment extends Fragment {
-//        @Override
-//        public View onCreateView(LayoutInflater inflater, ViewGroup container,
-//                                 Bundle savedInstanceState) {
-//
-//            Log.d(TAG, "onCreateView: ");
-//
-//            View layout = inflater.inflate(R.layout.activity_main, container, false);
-//
-//            // Inflate the layout for this fragment
-//
-//            return layout;
-//        }
-//    }
 
     /**
      * Interesting code for animation
