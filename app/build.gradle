@@ -65,6 +65,5 @@ dependencies {
     implementation 'com.yandex.android:places:3.5.0'
     implementation 'com.yandex.android:search:3.5.0'
     implementation 'com.yandex.android:transport:3.5.0'
-    androidTestImplementation 'org.junit.jupiter:junit-jupiter'
-    testImplementation 'org.junit.jupiter:junit-jupiter'
+
 }

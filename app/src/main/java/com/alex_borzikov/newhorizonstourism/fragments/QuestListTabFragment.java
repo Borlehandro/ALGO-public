@@ -45,7 +45,7 @@ public class QuestListTabFragment extends Fragment {
         InfoTask getListTask = new InfoTask();
         Map<String, String> questListParams = new HashMap<>();
         questListParams.put("mode", "GET_QUESTS_LIST");
-        questListParams.put("language", ((MainActivity)getActivity()).language);
+        questListParams.put("language", ((MainActivity)getActivity()).userInfo.getLanguage());
 
         getListTask.execute(questListParams);
 
@@ -87,7 +87,7 @@ public class QuestListTabFragment extends Fragment {
 
                 Log.d(TAG, "onCreateView: get ID:" + questsId.get(position));
 
-                toQuestInfo.putExtra("language",((MainActivity)getActivity()).language);
+                toQuestInfo.putExtra("language",((MainActivity)getActivity()).userInfo.getLanguage());
                 toQuestInfo.putExtra("questId", String.valueOf(questsId.get(position)));
 
                 startActivityForResult(toQuestInfo, 1);

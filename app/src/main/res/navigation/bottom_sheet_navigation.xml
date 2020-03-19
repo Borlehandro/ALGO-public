@@ -1,5 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto" android:id="@+id/bottom_sheet_navigation">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/bottom_sheet_navigation"
+    app:startDestination="@id/questListFragment">
 
+    <fragment
+        android:id="@+id/questListFragment"
+        android:name="com.alex_borzikov.newhorizonstourism.fragments.bottom.QuestListFragment"
+        android:label="fragment_quest_list"
+        tools:layout="@layout/fragment_quest_list" >
+
+        <action
+            android:id="@+id/action_questListFragment_to_questDescriptionFragment"
+            app:destination="@id/questDescriptionFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/questDescriptionFragment"
+        android:name="com.alex_borzikov.newhorizonstourism.fragments.bottom.QuestDescriptionFragment"
+        android:label="fragment_quest_description"
+        tools:layout="@layout/fragment_quest_description" >
+        <action
+            android:id="@+id/action_questDescriptionFragment_to_pointsQueueFragment"
+            app:destination="@id/pointsQueueFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/pointsQueueFragment"
+        android:name="com.alex_borzikov.newhorizonstourism.fragments.bottom.PointsQueueFragment"
+        android:label="fragment_points_queue"
+        tools:layout="@layout/fragment_points_queue" />
 </navigation>
