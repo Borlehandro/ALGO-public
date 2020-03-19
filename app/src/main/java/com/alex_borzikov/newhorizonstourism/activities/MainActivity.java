@@ -64,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
         Log.w(TAG, "Shown!");
 
         // TODO Send password safety
-        userInfo = new UserInfo (
+        userInfo = new UserInfo(
                 getIntent().getIntExtra("userId", 0),
                 getIntent().getStringExtra("userName"),
                 getIntent().getStringExtra("password"),
@@ -80,14 +80,24 @@ public class MainActivity extends AppCompatActivity {
         viewModel.setUserInfo(userInfo);
         viewModel.setShowOpened(false);
         sheetBehavior = BottomSheetBehavior.from(bottomFragment.getView());
+
         viewModel.getShowOpened().observe(this, (opened) -> {
             Log.d(TAG, "onCreate: observe : " + opened);
-            if(opened) {
+            if (opened) {
                 sheetBehavior.setState(BottomSheetBehavior.STATE_HALF_EXPANDED);
             } else {
                 sheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
             }
         });
+
+        viewModel.getQuestStarted().observe(this, (started) -> {
+            viewModel.setShowOpened(false);
+            Log.d(TAG, "onCreate: FIRST POINT IN "
+                    + viewModel.getPointsQueue().getValue().get(0).getLocationX() + ";"
+                    + viewModel.getPointsQueue().getValue().get(0).getLocationY());
+            // Todo draw way to the first point
+        });
+
     }
 
     @Override
@@ -110,7 +120,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        if(bottomOpened) {
+        if (bottomOpened) {
             // Todo EXIST HALF_EXPANDED - CHECK IT!
             Log.d(TAG, "onResumeFragments: set expanded");
             sheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);

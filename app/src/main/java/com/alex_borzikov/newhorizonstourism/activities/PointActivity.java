@@ -39,11 +39,11 @@ public class PointActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_point);
 
-        nameView = findViewById(R.id.pointName);
-        descriptionView = findViewById(R.id.pointDescription);
-        imageView = findViewById(R.id.pointImage);
+        nameView = findViewById(R.id.questName);
+        descriptionView = findViewById(R.id.questDescription);
+        imageView = findViewById(R.id.questImage);
 
-        showTaskButton = findViewById(R.id.pointTaskShowButton);
+        showTaskButton = findViewById(R.id.questPointsShowButton);
 
         pointId = getIntent().getStringExtra("pointId");
         language = getIntent().getStringExtra("language");

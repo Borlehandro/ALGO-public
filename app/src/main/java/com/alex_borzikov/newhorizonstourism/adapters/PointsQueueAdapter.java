@@ -40,8 +40,8 @@ public class PointsQueueAdapter extends ArrayAdapter<String> {
         LayoutInflater inflater = LayoutInflater.from(context);
         View item = inflater.inflate(R.layout.points_queue_item, null, true);
 
-        TextView nameView = item.findViewById(R.id.pointName);
-        ImageView imageView = item.findViewById(R.id.pointImage);
+        TextView nameView = item.findViewById(R.id.questName);
+        ImageView imageView = item.findViewById(R.id.questImage);
 
         nameView.setText(names.get(position));
         imageView.setImageBitmap(pictures.get(position));

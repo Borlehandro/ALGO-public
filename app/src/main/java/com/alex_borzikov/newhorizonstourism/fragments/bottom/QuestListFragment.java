@@ -7,6 +7,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -42,6 +44,8 @@ public class QuestListFragment extends Fragment {
     MainViewModel viewModel;
 
     ListView questList;
+
+    NavController controller;
 
     public QuestListFragment() {
         // Required empty public constructor
@@ -109,15 +113,19 @@ public class QuestListFragment extends Fragment {
 
                 Log.d(TAG, "Click on " + position);
 
-                Intent toQuestInfo = new Intent(getActivity(),
-                        QuestActivity.class);
+                viewModel.setQuestId(String.valueOf(questsId.get(position)));
 
-                Log.d(TAG, "onCreateView: get ID:" + questsId.get(position));
+                controller.navigate(R.id.toDescription);
 
-                toQuestInfo.putExtra("language",((MainActivity)getActivity()).userInfo.getLanguage());
-                toQuestInfo.putExtra("questId", String.valueOf(questsId.get(position)));
-
-                startActivityForResult(toQuestInfo, 1);
+//                Intent toQuestInfo = new Intent(getActivity(),
+//                        QuestActivity.class);
+//
+//                Log.d(TAG, "onCreateView: get ID:" + questsId.get(position));
+//
+//                toQuestInfo.putExtra("language",((MainActivity)getActivity()).userInfo.getLanguage());
+//                toQuestInfo.putExtra("questId", String.valueOf(questsId.get(position)));
+//
+//                startActivityForResult(toQuestInfo, 1);
 
             });
 
@@ -129,6 +137,12 @@ public class QuestListFragment extends Fragment {
         // Log.d(TAG, "onCreateView: " + sheetBehavior);
 
         return view;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        controller = Navigation.findNavController(view);
     }
 
     @Override

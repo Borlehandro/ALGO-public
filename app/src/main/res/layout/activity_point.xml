@@ -16,17 +16,17 @@
             android:layout_height="wrap_content">
 
             <Button
-                android:id="@+id/pointTaskShowButton"
+                android:id="@+id/questPointsShowButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:text="Task"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/pointDescription" />
+                app:layout_constraintTop_toBottomOf="@+id/questDescription" />
 
             <TextView
-                android:id="@+id/pointName"
+                android:id="@+id/questName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
@@ -37,17 +37,17 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <ImageView
-                android:id="@+id/pointImage"
+                android:id="@+id/questImage"
                 android:layout_width="179dp"
                 android:layout_height="182dp"
                 android:layout_marginTop="8dp"
                 android:src="@mipmap/ic_launcher"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/pointName" />
+                app:layout_constraintTop_toBottomOf="@+id/questName" />
 
             <TextView
-                android:id="@+id/pointDescription"
+                android:id="@+id/questDescription"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
@@ -55,7 +55,7 @@
                 android:layout_marginEnd="8dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/pointImage"
+                app:layout_constraintTop_toBottomOf="@+id/questImage"
                 tools:text="Просто текст для демлонстрациии. На самом деле, очень важно, чтобы в зависимоти от экрана устройства он вёл себя особенным образом. Просто текст для демлонстрациии. На самом деле, очень важно, чтобы в зависимоти от экрана устройства он вёл себя особенным образом. Просто текст для демлонстрациии. На самом деле, очень важно, чтобы в зависимоти от экрана устройства он вёл себя особенным образом. Просто текст для демлонстрациии. На самом деле, очень важно, чтобы в зависимоти от экрана устройства он вёл себя особенным образом. Просто текст для демлонстрациии. На самом деле, очень важно, чтобы в зависимоти от экрана устройства он вёл себя особенным образом. Просто текст для демлонстрациии. На самом деле, очень важно, чтобы в зависимоти от экрана устройства он вёл себя особенным образом. Просто текст для демлонстрациии. На самом деле, очень важно, чтобы в зависимоти от экрана устройства он вёл себя особенным образом. Просто текст для демлонстрациии." />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>

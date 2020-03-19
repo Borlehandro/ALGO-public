@@ -3,13 +3,18 @@ package com.alex_borzikov.newhorizonstourism.fragments;
 import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ListView;
 
 import com.alex_borzikov.newhorizonstourism.R;
@@ -31,6 +36,8 @@ import java.util.stream.Collectors;
 public class QuestListTabFragment extends Fragment {
 
     private static final String TAG = "Borlehandro";
+
+    NavController controller;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -82,15 +89,17 @@ public class QuestListTabFragment extends Fragment {
 
                 Log.d(TAG, "Click on " + position);
 
-                Intent toQuestInfo = new Intent(getActivity(),
-                        QuestActivity.class);
+                controller.navigate(R.id.toDescription);
 
-                Log.d(TAG, "onCreateView: get ID:" + questsId.get(position));
-
-                toQuestInfo.putExtra("language",((MainActivity)getActivity()).userInfo.getLanguage());
-                toQuestInfo.putExtra("questId", String.valueOf(questsId.get(position)));
-
-                startActivityForResult(toQuestInfo, 1);
+//                Intent toQuestInfo = new Intent(getActivity(),
+//                        QuestActivity.class);
+//
+//                Log.d(TAG, "onCreateView: get ID:" + questsId.get(position));
+//
+//                toQuestInfo.putExtra("language",((MainActivity)getActivity()).userInfo.getLanguage());
+//                toQuestInfo.putExtra("questId", String.valueOf(questsId.get(position)));
+//
+//                startActivityForResult(toQuestInfo, 1);
 
             });
 
@@ -101,4 +110,9 @@ public class QuestListTabFragment extends Fragment {
         return view;
     }
 
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        controller = Navigation.findNavController(view);
+    }
 }

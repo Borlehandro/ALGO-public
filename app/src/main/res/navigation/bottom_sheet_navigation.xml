@@ -12,7 +12,7 @@
         tools:layout="@layout/fragment_quest_list" >
 
         <action
-            android:id="@+id/action_questListFragment_to_questDescriptionFragment"
+            android:id="@+id/toDescription"
             app:destination="@id/questDescriptionFragment" />
     </fragment>
 
@@ -21,9 +21,11 @@
         android:name="com.alex_borzikov.newhorizonstourism.fragments.bottom.QuestDescriptionFragment"
         android:label="fragment_quest_description"
         tools:layout="@layout/fragment_quest_description" >
+
         <action
-            android:id="@+id/action_questDescriptionFragment_to_pointsQueueFragment"
+            android:id="@+id/toPointsQueue"
             app:destination="@id/pointsQueueFragment" />
+
     </fragment>
     <fragment
         android:id="@+id/pointsQueueFragment"

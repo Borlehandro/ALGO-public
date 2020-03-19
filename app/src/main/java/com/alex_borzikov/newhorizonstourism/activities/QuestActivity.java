@@ -39,10 +39,10 @@ public class QuestActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_quest);
 
-        image = findViewById(R.id.pointImage);
-        description = findViewById(R.id.pointDescription);
-        questName = findViewById(R.id.pointName);
-        questShowButton = findViewById(R.id.pointTaskShowButton);
+        image = findViewById(R.id.questImage);
+        description = findViewById(R.id.questDescription);
+        questName = findViewById(R.id.questName);
+        questShowButton = findViewById(R.id.questPointsShowButton);
 
         Log.d(TAG, "onCreate");
 
