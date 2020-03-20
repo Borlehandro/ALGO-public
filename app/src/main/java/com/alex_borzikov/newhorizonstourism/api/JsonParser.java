@@ -47,7 +47,8 @@ public class JsonParser {
 
         return new PointInfoItem(info.getString("name"),info.getString("big_description"),
                 info.getString("pic"), info.getString("geolocation_x"),
-                info.getString("geolocation_y"), info.getString("point_task"));
+                info.getString("geolocation_y"), info.getString("point_task"),
+                info.getString("id"));
 
     }
 
@@ -70,7 +71,8 @@ public class JsonParser {
             JSONObject object = array.getJSONObject(i);
             res.add(new PointInfoItem(object.getString("name"),object.getString("big_description"),
                     object.getString("pic"), object.getString("geolocation_x"),
-                    object.getString("geolocation_y"), object.getString("point_task")));
+                    object.getString("geolocation_y"), object.getString("point_task"),
+                    object.getString("id")));
         }
 
         return res;

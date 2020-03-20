@@ -24,13 +24,12 @@ import com.alex_borzikov.newhorizonstourism.R;
 import com.alex_borzikov.newhorizonstourism.api.InfoTask;
 import com.alex_borzikov.newhorizonstourism.data.PointInfoItem;
 import com.alex_borzikov.newhorizonstourism.data.UserInfo;
+import com.alex_borzikov.newhorizonstourism.dialogs.FinishDialog;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 
 import static com.yandex.runtime.Runtime.getApplicationContext;
 
 public class MainActivity extends AppCompatActivity {
-
-    static final int REQUEST_CAMERA_RESULT = 1;
 
     private static final String TAG = "Borlehandro";
 
@@ -104,27 +103,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode,
-                                           String[] permissions, int[] grantResults) {
-
-        if(requestCode == REQUEST_CAMERA_RESULT) {
-            // If request is cancelled, the result arrays are empty.
-            if (grantResults.length > 0
-                    && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-
-                Log.d(TAG, "onRequestPermissionsResult: User allow camera");
-                startActivity(new Intent(getApplicationContext(), CodeScanActivity.class));
-
-            } else {
-                Log.d(TAG, "onRequestPermissionsResult: User not allow camera");
-                // permission denied, boo! Disable the
-                // functionality that depends on this permission.
-            }
-        }
-    }
-
-
-    @Override
     protected void onRestart() {
         Log.d(TAG, "On restart");
         super.onRestart();
@@ -146,15 +124,19 @@ public class MainActivity extends AppCompatActivity {
             try {
                 pointId = codeTask.get();
                 Log.d(TAG, "onRestart: get pointId: " + pointId);
-                // Todo check pointId == currentQuestPoint
-                Intent toPoint = new Intent(getApplicationContext(), PointActivity.class);
-                toPoint.putExtra("pointId", pointId);
-                toPoint.putExtra("language", userInfo.getLanguage());
-                toPoint.putExtra("userName", userInfo.getName());
-                toPoint.putExtra("password", userInfo.getPassword());
-                // It can not repeat!
-                pointCode = null;
-                startActivityForResult(toPoint, 1);
+
+                if (Integer.parseInt(pointId) == viewModel.getPointsQueue().getValue()
+                        .peek().getId()) {
+
+                    Intent toPoint = new Intent(getApplicationContext(), PointActivity.class);
+                    toPoint.putExtra("pointId", pointId);
+                    toPoint.putExtra("language", userInfo.getLanguage());
+                    toPoint.putExtra("userName", userInfo.getName());
+                    toPoint.putExtra("password", userInfo.getPassword());
+                    // It can not repeat!
+                    pointCode = null;
+                    startActivityForResult(toPoint, 1);
+                }
 
             } catch (ExecutionException | InterruptedException e) {
                 e.printStackTrace();
@@ -167,16 +149,23 @@ public class MainActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         Log.d(TAG, "onActivityResult: in main " + requestCode + " res: " + resultCode);
 
-        if(requestCode == 1 && resultCode == 1) {
+        if (requestCode == 1 && resultCode == 1) {
 
             LinkedList<PointInfoItem> points = viewModel.getPointsQueue().getValue();
 
-            if(points!=null && points.size()!=0)
+            if (points != null && points.size() != 1) {
                 points.pop();
-            else {
+            } else {
                 Toast.makeText(MainActivity.this, "That's all!",
                         Toast.LENGTH_LONG).show();
+                viewModel.setQuestFinished(true);
+
+                FinishDialog finish = new FinishDialog();
+                finish.show(getSupportFragmentManager(), "finish");
+
             }
+
+            viewModel.setPointsQueue(points);
         }
     }
 

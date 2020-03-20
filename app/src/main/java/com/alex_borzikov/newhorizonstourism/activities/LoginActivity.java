@@ -2,7 +2,6 @@ package com.alex_borzikov.newhorizonstourism.activities;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import android.Manifest;
@@ -13,12 +12,14 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import com.alex_borzikov.newhorizonstourism.R;
 import com.alex_borzikov.newhorizonstourism.api.InfoTask;
+import com.alex_borzikov.newhorizonstourism.dialogs.PermissionDialog;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -34,7 +35,7 @@ public class LoginActivity extends AppCompatActivity {
     private static String userName;
     private static String password;
 
-    static final int REQUEST_FINE_RESULT = 1;
+    static final int REQUEST_ALL_RESULT = 1;
 
     EditText loginUser, loginPassword,
             registerUser, registerPassword, registerConfirm;
@@ -69,7 +70,7 @@ public class LoginActivity extends AppCompatActivity {
                         Log.d(TAG, "!!!" + s);
 
                         if ((userId = Integer.parseInt(s)) != -1)
-                            checkLocationPermission();
+                            checkPermissions();
 
                     } catch (InterruptedException | ExecutionException e) {
                         e.printStackTrace();
@@ -101,7 +102,7 @@ public class LoginActivity extends AppCompatActivity {
 
                     try {
                         if ((userId = Integer.parseInt(task.execute(params).get(30, TimeUnit.SECONDS))) != -1) {
-                            checkLocationPermission();
+                            checkPermissions();
                         }
                     } catch (ExecutionException | InterruptedException | TimeoutException e) {
                         e.printStackTrace();
@@ -153,41 +154,48 @@ public class LoginActivity extends AppCompatActivity {
     public void onRequestPermissionsResult(int requestCode,
                                            String[] permissions, int[] grantResults) {
 
-            if(requestCode == REQUEST_FINE_RESULT) {
-                // If request is cancelled, the result arrays are empty.
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+        if (requestCode == REQUEST_ALL_RESULT) {
+            // Todo make it dynamic
+            if ((grantResults.length == 2 && grantResults[0] == PackageManager.PERMISSION_GRANTED
+                    && grantResults[1] == PackageManager.PERMISSION_GRANTED)
+                    || (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
 
-                    Log.d(TAG, "onRequestPermissionsResult: User allow fine");
-                    startMain();
-                } else {
-                    Log.d(TAG, "onRequestPermissionsResult: User not allow fine");
-                    finish();
-                    // permission denied, boo! Disable the
-                    // functionality that depends on this permission.
-                }
+                Log.d(TAG, "onRequestPermissionsResult: User allow fine");
+                startMain();
+            } else {
+                Log.d(TAG, "onRequestPermissionsResult: User not allow fine");
+                finish();
             }
         }
+    }
 
-    private void checkLocationPermission() {
+    private void checkPermissions() {
+
+        List<String> permissions = new ArrayList<>();
+
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
 
+            permissions.add(Manifest.permission.ACCESS_FINE_LOCATION);
+
             Log.d(TAG, "onCreate: FINE DENIED!");
 
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
-                    Manifest.permission.ACCESS_FINE_LOCATION)) {
+        }
 
-                Toast.makeText(getApplicationContext(), "You should allow FINE",
-                        Toast.LENGTH_LONG).show();
-            }
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
+                != PackageManager.PERMISSION_GRANTED) {
 
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                    REQUEST_FINE_RESULT);
-        } else {
+            permissions.add(Manifest.permission.CAMERA);
+
+            Log.d(TAG, "onCreate: CAMERA denied");
+        }
+
+        if (permissions.isEmpty()) {
             Log.d(TAG, "onCreate: FINE OK");
             startMain();
+        } else {
+            PermissionDialog dialog = new PermissionDialog(REQUEST_ALL_RESULT, permissions);
+            dialog.show(getSupportFragmentManager(), "permissions");
         }
     }
 

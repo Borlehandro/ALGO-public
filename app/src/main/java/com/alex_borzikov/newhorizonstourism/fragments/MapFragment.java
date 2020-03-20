@@ -3,6 +3,7 @@ package com.alex_borzikov.newhorizonstourism.fragments;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.PointF;
 import android.os.Bundle;
@@ -46,6 +47,7 @@ import com.yandex.mapkit.location.FilteringMode;
 import com.yandex.mapkit.location.Location;
 import com.yandex.mapkit.location.LocationListener;
 import com.yandex.mapkit.location.LocationManager;
+import com.yandex.mapkit.location.LocationManagerUtils;
 import com.yandex.mapkit.location.LocationStatus;
 import com.yandex.mapkit.map.CameraPosition;
 import com.yandex.mapkit.map.CompositeIcon;
@@ -85,10 +87,6 @@ public class MapFragment extends Fragment implements Session.RouteListener {
 
     private static final String TAG = "Borlehandro";
 
-    public static String pointCode;
-
-    private static LinkedList<PointInfoItem> currentPointsQueue;
-
     private MapView mapView;
 
     // Todo you need more action buttons
@@ -106,9 +104,6 @@ public class MapFragment extends Fragment implements Session.RouteListener {
     private MainViewModel viewModel;
 
     private boolean focused;
-
-    static final int REQUEST_CAMERA_RESULT = 1;
-
 
     // Todo Stop after quest finish
     private final LocationListener locationListener = new LocationListener() {
@@ -131,13 +126,25 @@ public class MapFragment extends Fragment implements Session.RouteListener {
                 focused = true;
             }
 
+            LinkedList<PointInfoItem> currentPointsQueue = viewModel.getPointsQueue().getValue();
+
             if (currentPointsQueue != null && currentPointsQueue.size() > 0) {
 
                 Log.d(TAG, "onLocationUpdated: Try to build drivingRouter with it `|` ");
 
+                // "bus", "minibus", "trolleybus", "tramway", "underground", "railway"
+
+                ArrayList<String> avoidTransport = new ArrayList<>();
+                avoidTransport.add("bus");
+                avoidTransport.add("minibus");
+                avoidTransport.add("trolleybus");
+                avoidTransport.add("tramway");
+                avoidTransport.add("underground");
+                avoidTransport.add("railway");
+
                 // Todo Make it pedestrians only!
                 MasstransitOptions options = new MasstransitOptions(
-                        new ArrayList<String>(),
+                        avoidTransport,
                         new ArrayList<String>(),
                         new TimeOptions());
 
@@ -166,29 +173,25 @@ public class MapFragment extends Fragment implements Session.RouteListener {
         public void onObjectAdded(@NonNull UserLocationView userLocationView) {
 
             userLocationView.getArrow().setIcon(ImageProvider.fromResource(
-                    getApplicationContext(), R.drawable.user_arrow));
+                    getApplicationContext(), R.drawable.user_arrow),
+                    new IconStyle().setAnchor(new PointF(0.5f, 0.5f))
+                            .setRotationType(RotationType.ROTATE)
+                            .setZIndex(1f)
+                            .setScale(0.5f));
 
             CompositeIcon pinIcon = userLocationView.getPin().useCompositeIcon();
 
             pinIcon.setIcon(
-                    "icon",
-                    ImageProvider.fromResource(getApplicationContext(), R.drawable.search_result),
-                    new IconStyle().setAnchor(new PointF(0f, 0f))
-                            .setRotationType(RotationType.ROTATE)
-                            .setZIndex(0f)
-                            .setScale(1f)
-            );
-
-            pinIcon.setIcon(
                     "pin",
-                    ImageProvider.fromResource(getApplicationContext(), R.drawable.mark),
+                    ImageProvider.fromResource(getApplicationContext(), R.drawable.user_arrow),
                     new IconStyle().setAnchor(new PointF(0.5f, 0.5f))
                             .setRotationType(RotationType.ROTATE)
                             .setZIndex(1f)
                             .setScale(0.5f)
             );
 
-            userLocationView.getAccuracyCircle().setFillColor(Color.BLUE);
+            userLocationView.getAccuracyCircle().setFillColor(ContextCompat.getColor(getActivity(),
+                    R.color.colorLocationArea));
 
         }
 
@@ -241,7 +244,8 @@ public class MapFragment extends Fragment implements Session.RouteListener {
         codeScanButton = fragment.findViewById(R.id.scanCodeButton);
         anchorButton = fragment.findViewById(R.id.anchorActionButton);
 
-        if (!focused && currentPointsQueue == null)
+
+        if (!focused)
             locationManager.requestSingleUpdate(locationListener);
 
         showButton.setOnClickListener((View v) -> {
@@ -253,9 +257,7 @@ public class MapFragment extends Fragment implements Session.RouteListener {
 
         codeScanButton.setOnClickListener((View v) -> {
 
-            checkLocationPermission();
-
-            // startActivity(new Intent(getApplicationContext(), CodeScanActivity.class));
+            startActivity(new Intent(getApplicationContext(), CodeScanActivity.class));
 
         });
 
@@ -263,23 +265,13 @@ public class MapFragment extends Fragment implements Session.RouteListener {
 
             //Todo  Just focus in user! Not set anchor!
 
-            if (!userLocationLayer.isAnchorEnabled()) {
+            Log.d(TAG, "onCreate: Anchor button enabled");
 
-                Log.d(TAG, "onCreate: Anchor button enabled");
-
-                userLocationLayer.setAnchor(
-                        new PointF((float) (mapView.getWidth() * 0.5),
-                                (float) (mapView.getHeight() * 0.5)),
-
-                        new PointF((float) (mapView.getWidth() * 0.5),
-                                (float) (mapView.getHeight() * 0.83)));
-
-                anchorButton.setImageResource(android.R.drawable.ic_menu_compass);
-
-            } else {
-                userLocationLayer.resetAnchor();
-                anchorButton.setImageResource(android.R.drawable.ic_menu_mylocation);
-            }
+            mapView.getMap().move(
+                    new CameraPosition(LocationManagerUtils.getLastKnownLocation().getPosition(),
+                            18.0f, 0.0f, 0.0f),
+                    new Animation(Animation.Type.SMOOTH, 2),
+                    null);
         });
 
         return fragment;
@@ -290,6 +282,7 @@ public class MapFragment extends Fragment implements Session.RouteListener {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
 
         super.onActivityCreated(savedInstanceState);
+
 
         viewModel = new ViewModelProvider(getActivity()).get(MainViewModel.class);
 
@@ -304,23 +297,27 @@ public class MapFragment extends Fragment implements Session.RouteListener {
 
         viewModel.getQuestStarted().observe(getViewLifecycleOwner(), (started) -> {
             viewModel.setShowOpened(false);
+            viewModel.setQuestFinished(false);
 
             Log.d(TAG, "onCreate: FIRST POINT IN "
                     + viewModel.getPointsQueue().getValue().get(0).getLocationX() + ";"
                     + viewModel.getPointsQueue().getValue().get(0).getLocationY());
 
-            currentPointsQueue = viewModel.getPointsQueue().getValue();
+            LinkedList<PointInfoItem> currentPointsQueue = viewModel.getPointsQueue().getValue();
 
             Log.d(TAG, "onCreate: GET POINTS QUEUE: " + currentPointsQueue.get(0).getName());
 
             // Todo set normal value
             locationManager.subscribeForLocationUpdates(0.0d, 100, 0.0d, false,
                     FilteringMode.OFF, locationListener);
-
-            // Todo draw way to the first point
-            //  YOU MUST DO IT IN MAP FRAGMENT!
         });
 
+        viewModel.getQuestFinished().observe(getViewLifecycleOwner(), (finished) -> {
+            if (finished) {
+                locationManager.unsubscribe(locationListener);
+                mapObjects.clear();
+            }
+        });
     }
 
     @Override
@@ -333,10 +330,17 @@ public class MapFragment extends Fragment implements Session.RouteListener {
         // In this example we consider first alternative only
         if (routes.size() > 0) {
             for (Section section : routes.get(0).getSections()) {
-                drawSection(
-                        section.getMetadata().getData(),
-                        SubpolylineHelper.subpolyline(
+
+                PolylineMapObject polylineMapObject = mapObjects.addPolyline(SubpolylineHelper.subpolyline(
                                 routes.get(0).getGeometry(), section.getGeometry()));
+
+                polylineMapObject.setStrokeColor(ContextCompat.getColor(getActivity(),
+                        R.color.colorWay));
+
+//                drawSection(
+//                        section.getMetadata().getData(),
+//                        SubpolylineHelper.subpolyline(
+//                                routes.get(0).getGeometry(), section.getGeometry()));
             }
         }
     }
@@ -357,6 +361,7 @@ public class MapFragment extends Fragment implements Session.RouteListener {
                              Polyline geometry) {
         // Draw a section polyline on a map
         // Set its color depending on the information which the section contains
+
         PolylineMapObject polylineMapObject = mapObjects.addPolyline(geometry);
 
         // Masstransit route section defines exactly one on the following
@@ -367,7 +372,12 @@ public class MapFragment extends Fragment implements Session.RouteListener {
         // 4. Ride on a public transport
         // Check the corresponding object for null to get to know which
         // kind of section it is
+
         if (data.getTransports() != null) {
+
+            Log.d(TAG, "drawSection: " + data.getTransports().get(0).toString()
+                    + " " + data.getTransports().get(1).toString());
+
             // A ride on a public transport section contains information about
             // all known public transport lines which can be used to travel from
             // the start of the section to the end of the section without transfers
@@ -384,20 +394,17 @@ public class MapFragment extends Fragment implements Session.RouteListener {
                     // return;
                 }
             }
+
             // Let us draw bus lines in green and tramway lines in red
             // Draw any other public transport lines in blue
             HashSet<String> knownVehicleTypes = new HashSet<>();
-            knownVehicleTypes.add("bus");
-            knownVehicleTypes.add("tramway");
             for (Transport transport : data.getTransports()) {
+
                 String sectionVehicleType = getVehicleType(transport, knownVehicleTypes);
-                if (sectionVehicleType.equals("bus")) {
-                    polylineMapObject.setStrokeColor(0xFF00FF00);  // Green
-                    // return;
-                } else if (sectionVehicleType.equals("tramway")) {
-                    polylineMapObject.setStrokeColor(0xFFFF0000);  // Red
-                    // return;
-                }
+                Log.d(TAG, "drawSection: " + sectionVehicleType);
+
+                polylineMapObject.setStrokeColor(0xFF00FF00);  // Green
+
             }
             polylineMapObject.setStrokeColor(0xFF0000FF);  // Blue
         } else {
@@ -429,29 +436,6 @@ public class MapFragment extends Fragment implements Session.RouteListener {
             }
         }
         return null;
-    }
-
-    private void checkLocationPermission() {
-
-        if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.CAMERA)
-                != PackageManager.PERMISSION_GRANTED) {
-
-            Log.d(TAG, "onCreate: FINE DENIED!");
-
-            if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(),
-                    Manifest.permission.ACCESS_FINE_LOCATION)) {
-
-                Toast.makeText(getApplicationContext(), "You should allow CAMERA",
-                        Toast.LENGTH_LONG).show();
-            }
-
-            ActivityCompat.requestPermissions(getActivity(),
-                    new String[]{Manifest.permission.CAMERA},
-                    REQUEST_CAMERA_RESULT);
-        } else {
-            Log.d(TAG, "onCreate: CAMERA OK");
-            startActivity(new Intent(getApplicationContext(), CodeScanActivity.class));
-        }
     }
 
     @Override
