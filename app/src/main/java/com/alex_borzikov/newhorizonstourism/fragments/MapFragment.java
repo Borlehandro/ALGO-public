@@ -1,38 +1,25 @@
 package com.alex_borzikov.newhorizonstourism.fragments;
 
-import android.Manifest;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.content.res.Resources;
-import android.graphics.Color;
 import android.graphics.PointF;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.lifecycle.ViewModelProviders;
 
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.Toast;
 
 import com.alex_borzikov.newhorizonstourism.MainViewModel;
 import com.alex_borzikov.newhorizonstourism.R;
 import com.alex_borzikov.newhorizonstourism.activities.CodeScanActivity;
-import com.alex_borzikov.newhorizonstourism.activities.MainActivity;
-import com.alex_borzikov.newhorizonstourism.activities.PointActivity;
-import com.alex_borzikov.newhorizonstourism.api.InfoTask;
 import com.alex_borzikov.newhorizonstourism.data.PointInfoItem;
-import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.yandex.mapkit.Animation;
 import com.yandex.mapkit.MapKit;
@@ -58,7 +45,7 @@ import com.yandex.mapkit.map.RotationType;
 import com.yandex.mapkit.mapview.MapView;
 import com.yandex.mapkit.transport.TransportFactory;
 import com.yandex.mapkit.transport.masstransit.MasstransitOptions;
-import com.yandex.mapkit.transport.masstransit.MasstransitRouter;
+import com.yandex.mapkit.transport.masstransit.PedestrianRouter;
 import com.yandex.mapkit.transport.masstransit.Route;
 import com.yandex.mapkit.transport.masstransit.Section;
 import com.yandex.mapkit.transport.masstransit.SectionMetadata;
@@ -74,12 +61,9 @@ import com.yandex.runtime.network.NetworkError;
 import com.yandex.runtime.network.RemoteError;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ExecutionException;
 
 import static com.yandex.runtime.Runtime.getApplicationContext;
 
@@ -90,14 +74,13 @@ public class MapFragment extends Fragment implements Session.RouteListener {
     private MapView mapView;
 
     // Todo you need more action buttons
-    private Button showButton, codeScanButton;
-    private FloatingActionButton anchorButton;
+    private FloatingActionButton anchorButton, showButton, codeScanButton;
 
     private UserLocationLayer userLocationLayer;
 
     private LocationManager locationManager;
     private MapObjectCollection mapObjects;
-    private MasstransitRouter mtRouter;
+    private PedestrianRouter router;
 
     private PolylineMapObject lastLine;
 
@@ -143,10 +126,6 @@ public class MapFragment extends Fragment implements Session.RouteListener {
                 avoidTransport.add("railway");
 
                 // Todo Make it pedestrians only!
-                MasstransitOptions options = new MasstransitOptions(
-                        avoidTransport,
-                        new ArrayList<String>(),
-                        new TimeOptions());
 
                 List<RequestPoint> points = new ArrayList<RequestPoint>();
                 points.add(new RequestPoint(location.getPosition(), RequestPointType.WAYPOINT, null));
@@ -154,7 +133,7 @@ public class MapFragment extends Fragment implements Session.RouteListener {
                 points.add(new RequestPoint(new Point(currentPointsQueue.peek().getLocationX(),
                         currentPointsQueue.peek().getLocationY()), RequestPointType.WAYPOINT, null));
 
-                mtRouter.requestRoutes(points, options, MapFragment.this);
+                router.requestRoutes(points, new TimeOptions(), MapFragment.this);
 
             }
         }
@@ -238,7 +217,7 @@ public class MapFragment extends Fragment implements Session.RouteListener {
 
         mapObjects = mapView.getMap().getMapObjects().addCollection();
 
-        mtRouter = TransportFactory.getInstance().createMasstransitRouter();
+        router = TransportFactory.getInstance().createPedestrianRouter();
 
         showButton = fragment.findViewById(R.id.showButton);
         codeScanButton = fragment.findViewById(R.id.scanCodeButton);
@@ -263,20 +242,17 @@ public class MapFragment extends Fragment implements Session.RouteListener {
 
         anchorButton.setOnClickListener((View v) -> {
 
-            //Todo  Just focus in user! Not set anchor!
-
             Log.d(TAG, "onCreate: Anchor button enabled");
 
             mapView.getMap().move(
                     new CameraPosition(LocationManagerUtils.getLastKnownLocation().getPosition(),
                             18.0f, 0.0f, 0.0f),
-                    new Animation(Animation.Type.SMOOTH, 2),
+                    new Animation(Animation.Type.SMOOTH, 3),
                     null);
         });
 
         return fragment;
     }
-
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
@@ -291,8 +267,10 @@ public class MapFragment extends Fragment implements Session.RouteListener {
         viewModel.getShowOpened().observe(getViewLifecycleOwner(), (opened) -> {
             if (opened)
                 Log.d(TAG, "onActivityCreated: OPENED IN MAP");
-            else
+            else {
+                showButton.setVisibility(View.VISIBLE);
                 Log.d(TAG, "onActivityCreated: NOT OPEN IN MAP");
+            }
         });
 
         viewModel.getQuestStarted().observe(getViewLifecycleOwner(), (started) -> {
@@ -327,7 +305,7 @@ public class MapFragment extends Fragment implements Session.RouteListener {
 
     @Override
     public void onMasstransitRoutes(List<Route> routes) {
-        // In this example we consider first alternative only
+
         if (routes.size() > 0) {
             for (Section section : routes.get(0).getSections()) {
 
@@ -337,10 +315,11 @@ public class MapFragment extends Fragment implements Session.RouteListener {
                 polylineMapObject.setStrokeColor(ContextCompat.getColor(getActivity(),
                         R.color.colorWay));
 
-//                drawSection(
-//                        section.getMetadata().getData(),
-//                        SubpolylineHelper.subpolyline(
-//                                routes.get(0).getGeometry(), section.getGeometry()));
+                // Todo MAKE IT BETTER!
+                if (lastLine != null)
+                    mapObjects.remove(lastLine);
+
+                lastLine = polylineMapObject;
             }
         }
     }
@@ -355,87 +334,6 @@ public class MapFragment extends Fragment implements Session.RouteListener {
         }
 
         Toast.makeText(getApplicationContext(), errorMessage, Toast.LENGTH_SHORT).show();
-    }
-
-    private void drawSection(SectionMetadata.SectionData data,
-                             Polyline geometry) {
-        // Draw a section polyline on a map
-        // Set its color depending on the information which the section contains
-
-        PolylineMapObject polylineMapObject = mapObjects.addPolyline(geometry);
-
-        // Masstransit route section defines exactly one on the following
-        // 1. Wait until public transport unit arrives
-        // 2. Walk
-        // 3. Transfer to a nearby stop (typically transfer to a connected
-        //    underground station)
-        // 4. Ride on a public transport
-        // Check the corresponding object for null to get to know which
-        // kind of section it is
-
-        if (data.getTransports() != null) {
-
-            Log.d(TAG, "drawSection: " + data.getTransports().get(0).toString()
-                    + " " + data.getTransports().get(1).toString());
-
-            // A ride on a public transport section contains information about
-            // all known public transport lines which can be used to travel from
-            // the start of the section to the end of the section without transfers
-            // along a similar geometry
-            for (Transport transport : data.getTransports()) {
-                // Some public transport lines may have a color associated with them
-                // Typically this is the case of underground lines
-                if (transport.getLine().getStyle() != null) {
-                    polylineMapObject.setStrokeColor(
-                            // The color is in RRGGBB 24-bit format
-                            // Convert it to AARRGGBB 32-bit format, set alpha to 255 (opaque)
-                            transport.getLine().getStyle().getColor() | 0xFF000000
-                    );
-                    // return;
-                }
-            }
-
-            // Let us draw bus lines in green and tramway lines in red
-            // Draw any other public transport lines in blue
-            HashSet<String> knownVehicleTypes = new HashSet<>();
-            for (Transport transport : data.getTransports()) {
-
-                String sectionVehicleType = getVehicleType(transport, knownVehicleTypes);
-                Log.d(TAG, "drawSection: " + sectionVehicleType);
-
-                polylineMapObject.setStrokeColor(0xFF00FF00);  // Green
-
-            }
-            polylineMapObject.setStrokeColor(0xFF0000FF);  // Blue
-        } else {
-            // This is not a public transport ride section
-            // In this example let us draw it in black
-            polylineMapObject.setStrokeColor(0xFF000000);  // Black
-        }
-
-        // Todo MAKE IT BETTER!
-        if (lastLine != null)
-            mapObjects.remove(lastLine);
-
-        lastLine = polylineMapObject;
-    }
-
-    private String getVehicleType(Transport transport, HashSet<String> knownVehicleTypes) {
-        // A public transport line may have a few 'vehicle types' associated with it
-        // These vehicle types are sorted from more specific (say, 'histroic_tram')
-        // to more common (say, 'tramway').
-        // Your application does not know the list of all vehicle types that occur in the data
-        // (because this list is expanding over time), therefore to get the vehicle type of
-        // a public line you should iterate from the more specific ones to more common ones
-        // until you get a vehicle type which you can process
-        // Some examples of vehicle types:
-        // "bus", "minibus", "trolleybus", "tramway", "underground", "railway"
-        for (String type : transport.getLine().getVehicleTypes()) {
-            if (knownVehicleTypes.contains(type)) {
-                return type;
-            }
-        }
-        return null;
     }
 
     @Override

@@ -4,8 +4,10 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.TextView;
 
 import com.alex_borzikov.newhorizonstourism.R;
 import com.alex_borzikov.newhorizonstourism.fragments.pre_login.LanguageFragment;
@@ -25,6 +27,10 @@ public class PreLoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pre_login);
+        TextView text = findViewById(R.id.algoText);
+        Typeface typeface = Typeface.createFromAsset(getAssets(),
+                "font/config_rounded_black.otf");
+        text.setTypeface(typeface);
     }
 
     @Override

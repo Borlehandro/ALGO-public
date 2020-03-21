@@ -91,6 +91,11 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onStateChanged(@NonNull View bottomSheet, int newState) {
                 Log.d(TAG, "onStateChanged: " + newState);
+
+                if(newState==4) {
+                    viewModel.setShowOpened(false);
+                    sheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
+                }
             }
 
             @Override
@@ -107,7 +112,6 @@ public class MainActivity extends AppCompatActivity {
         Log.d(TAG, "On restart");
         super.onRestart();
 
-        // Todo It's not onRestart()
         // Todo Make code using better
         if (pointCode != null) {
 
@@ -167,34 +171,5 @@ public class MainActivity extends AppCompatActivity {
 
             viewModel.setPointsQueue(points);
         }
-    }
-
-    /**
-     * Interesting code for animation
-     */
-
-    // slide the view from below itself to the current position
-    public void slideUp(View view) {
-        view.setVisibility(View.VISIBLE);
-        TranslateAnimation animate = new TranslateAnimation(
-                0,  // fromXDelta
-                0,  // toXDelta
-                view.getHeight(),  // fromYDelta
-                0);  // toYDelta
-        animate.setDuration(500);
-        animate.setFillAfter(true);
-        view.startAnimation(animate);
-    }
-
-    // slide the view from its current position to below itself
-    public void slideDown(View view) {
-        TranslateAnimation animate = new TranslateAnimation(
-                0,  // fromXDelta
-                0,  // toXDelta
-                0,  // fromYDelta
-                view.getHeight());  // toYDelta
-        animate.setDuration(500);
-        animate.setFillAfter(true);
-        view.startAnimation(animate);
     }
 }
