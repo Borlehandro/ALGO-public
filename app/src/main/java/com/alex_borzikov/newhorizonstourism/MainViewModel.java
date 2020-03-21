@@ -14,6 +14,7 @@ public class MainViewModel extends ViewModel {
 
     private final MutableLiveData<UserInfo> userInfo = new MutableLiveData<>();
     private final MutableLiveData<Boolean> showOpened = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> needPointsQueue = new MutableLiveData<>();
     private final MutableLiveData<Boolean> questStarted = new MutableLiveData<>();
     private final MutableLiveData<Boolean> questFinished = new MutableLiveData<>();
     private final MutableLiveData<String> questId = new MutableLiveData<>();
@@ -66,4 +67,10 @@ public class MainViewModel extends ViewModel {
     public void setQuestFinished(boolean item) {
         questFinished.setValue(item);
     }
+
+    public MutableLiveData<Boolean> getNeedPointsQueue() {
+        return needPointsQueue;
+    }
+
+    public void setNeedPointsQueue(boolean item){needPointsQueue.setValue(item);}
 }

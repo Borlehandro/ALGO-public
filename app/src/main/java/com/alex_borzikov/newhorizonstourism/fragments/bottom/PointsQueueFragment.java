@@ -97,6 +97,9 @@ public class PointsQueueFragment extends Fragment {
 
             LinkedList<PointInfoItem> queue = JsonParser.parsePointsQueue(json);
 
+            viewModel.setPointsQueue(queue);
+            viewModel.setNeedPointsQueue(true);
+
             List<String> pointsNames = queue.stream().map(PointInfoItem::getName)
                     .collect(Collectors.toList());
 
@@ -106,7 +109,6 @@ public class PointsQueueFragment extends Fragment {
             for (String item : pointsNames) {
                 Log.d(TAG, item);
             }
-
 
             List<Bitmap> pictures = new ArrayList<>();
 

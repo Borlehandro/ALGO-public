@@ -8,6 +8,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.util.Log;
@@ -61,9 +62,11 @@ import com.yandex.runtime.network.NetworkError;
 import com.yandex.runtime.network.RemoteError;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.yandex.runtime.Runtime.getApplicationContext;
 
@@ -115,19 +118,7 @@ public class MapFragment extends Fragment implements Session.RouteListener {
 
                 Log.d(TAG, "onLocationUpdated: Try to build drivingRouter with it `|` ");
 
-                // "bus", "minibus", "trolleybus", "tramway", "underground", "railway"
-
-                ArrayList<String> avoidTransport = new ArrayList<>();
-                avoidTransport.add("bus");
-                avoidTransport.add("minibus");
-                avoidTransport.add("trolleybus");
-                avoidTransport.add("tramway");
-                avoidTransport.add("underground");
-                avoidTransport.add("railway");
-
-                // Todo Make it pedestrians only!
-
-                List<RequestPoint> points = new ArrayList<RequestPoint>();
+                List<RequestPoint> points = new ArrayList<>();
                 points.add(new RequestPoint(location.getPosition(), RequestPointType.WAYPOINT, null));
 
                 points.add(new RequestPoint(new Point(currentPointsQueue.peek().getLocationX(),
@@ -273,9 +264,46 @@ public class MapFragment extends Fragment implements Session.RouteListener {
             }
         });
 
+        viewModel.getNeedPointsQueue().observe(getViewLifecycleOwner(), need -> {
+            if(need) {
+
+                LinkedList<PointInfoItem> currentPointsQueue = viewModel.getPointsQueue().getValue();
+
+                List<RequestPoint> points = new ArrayList<>();
+
+                points.add(new RequestPoint(
+                        LocationManagerUtils.getLastKnownLocation().getPosition(),
+                        RequestPointType.WAYPOINT, null));
+
+                points.addAll(currentPointsQueue.stream()
+                        .map(i -> new RequestPoint(new Point(i.getLocationX(), i.getLocationY()),
+                                RequestPointType.WAYPOINT, null))
+                        .collect(Collectors.toList()));
+
+//                points.add(new RequestPoint(new Point(currentPointsQueue.peek().getLocationX(),
+//                        currentPointsQueue.peek().getLocationY()), RequestPointType.WAYPOINT,
+//                        null));
+
+                Log.d(TAG, "onActivityCreated: " + points.toString());
+
+                for (int i=0; i<points.size()-1; ++i) {
+
+                    Log.d(TAG, "onActivityCreated: way " +
+                            points.get(i).getPoint().getLatitude() + ";" + points.get(i).getPoint().getLongitude()
+                            + " to " + points.get(i+1).getPoint().getLatitude() + ";" + points.get(i+1).getPoint().getLongitude());
+
+                    router.requestRoutes(Arrays.asList(points.get(i), points.get(i+1)),
+                            new TimeOptions(), MapFragment.this);
+                }
+            }
+        });
+
         viewModel.getQuestStarted().observe(getViewLifecycleOwner(), (started) -> {
             viewModel.setShowOpened(false);
+            viewModel.setNeedPointsQueue(false);
             viewModel.setQuestFinished(false);
+
+            mapObjects.clear();
 
             Log.d(TAG, "onCreate: FIRST POINT IN "
                     + viewModel.getPointsQueue().getValue().get(0).getLocationX() + ";"
@@ -316,10 +344,12 @@ public class MapFragment extends Fragment implements Session.RouteListener {
                         R.color.colorWay));
 
                 // Todo MAKE IT BETTER!
-                if (lastLine != null)
-                    mapObjects.remove(lastLine);
+                if(!viewModel.getNeedPointsQueue().getValue()) {
+                    if (lastLine != null)
+                        mapObjects.remove(lastLine);
 
-                lastLine = polylineMapObject;
+                    lastLine = polylineMapObject;
+                }
             }
         }
     }
