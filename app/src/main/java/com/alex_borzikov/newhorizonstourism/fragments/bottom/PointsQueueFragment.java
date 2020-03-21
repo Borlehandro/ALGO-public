@@ -39,13 +39,13 @@ public class PointsQueueFragment extends Fragment {
 
     private static final String TAG = "Borlehandro";
 
-    MainViewModel viewModel;
-    NavController controller;
+    private MainViewModel viewModel;
+    private NavController controller;
 
     private String questId, language;
 
-    ListView pointsQueueView;
-    Button questGoButton;
+    private ListView pointsQueueView;
+    private Button questGoButton;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,

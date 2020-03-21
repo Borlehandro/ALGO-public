@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/login_navigation"
+    app:startDestination="@id/languageFragment">
+
+    <fragment
+        android:id="@+id/preLoginFragment"
+        android:name="com.alex_borzikov.newhorizonstourism.fragments.pre_login.PreLoginFragment"
+        android:label="fragment_pre_login"
+        tools:layout="@layout/fragment_pre_login" >
+
+        <action
+            android:id="@+id/toRegistration"
+            app:destination="@id/registrationFragment" />
+
+        <action
+            android:id="@+id/toLogin"
+            app:destination="@id/loginFragment" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/registrationFragment"
+        android:name="com.alex_borzikov.newhorizonstourism.fragments.pre_login.RegistrationFragment"
+        android:label="fragment_registration"
+        tools:layout="@layout/fragment_registration">
+
+        <argument android:name="language"/>
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/loginFragment"
+        android:name="com.alex_borzikov.newhorizonstourism.fragments.pre_login.LoginFragment"
+        android:label="fragment_login"
+        tools:layout="@layout/fragment_login" >
+
+        <argument android:name="language"/>
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/languageFragment"
+        android:name="com.alex_borzikov.newhorizonstourism.fragments.pre_login.LanguageFragment"
+        android:label="fragment_language"
+        tools:layout="@layout/fragment_language" >
+
+        <argument android:name="language"/>
+
+        <action
+            android:id="@+id/toPreLogin"
+            app:destination="@id/preLoginFragment" />
+
+    </fragment>
+</navigation>

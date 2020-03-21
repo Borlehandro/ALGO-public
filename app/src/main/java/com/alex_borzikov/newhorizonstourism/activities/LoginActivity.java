@@ -198,7 +198,6 @@ public class LoginActivity extends AppCompatActivity {
             dialog.show(getSupportFragmentManager(), "permissions");
         }
     }
-
     private void startMain() {
 
         Intent intent = new Intent(getApplicationContext(), MainActivity.class);
