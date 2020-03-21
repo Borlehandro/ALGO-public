@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
@@ -33,6 +34,7 @@ public class TaskActivity extends AppCompatActivity {
     private RadioGroup group;
     private RadioButton choice1, choice2, choice3;
     private Button checkButton;
+    private ProgressBar progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,7 +59,12 @@ public class TaskActivity extends AppCompatActivity {
 
         checkButton = findViewById(R.id.checkButton);
 
-        InfoTask taskInfo = new InfoTask();
+        progressBar = findViewById(R.id.taskProgress);
+
+        progressBar.setVisibility(View.VISIBLE);
+        descriptionTask.setVisibility(View.INVISIBLE);
+        group.setVisibility(View.INVISIBLE);
+        checkButton.setVisibility(View.INVISIBLE);
 
         Map<String, String> args = new HashMap<>();
         args.put("mode", "GET_TASK_INFO");
@@ -66,23 +73,31 @@ public class TaskActivity extends AppCompatActivity {
         args.put("userName", userName);
         args.put("password", password);
 
+        InfoTask taskInfo = new InfoTask(result -> {
+
+            try {
+
+                TaskInfoItem info = JsonParser.parseTaskInfo(result);
+
+                descriptionTask.setText(info.getDescriptionShort());
+                choice1.setText(info.getChoice1());
+                choice2.setText(info.getChoice2());
+                choice3.setText(info.getChoice3());
+
+                progressBar.setVisibility(View.INVISIBLE);
+                descriptionTask.setVisibility(View.VISIBLE);
+                group.setVisibility(View.VISIBLE);
+                checkButton.setVisibility(View.VISIBLE);
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+        });
+
         taskInfo.execute(args);
 
-        try {
-            String res = taskInfo.get();
-            TaskInfoItem info = JsonParser.parseTaskInfo(res);
-
-            descriptionTask.setText(info.getDescriptionShort());
-            choice1.setText(info.getChoice1());
-            choice2.setText(info.getChoice2());
-            choice3.setText(info.getChoice3());
-
-        } catch (ExecutionException | InterruptedException | JSONException e) {
-            e.printStackTrace();
-        }
-
         checkButton.setOnClickListener((View v) -> {
-            InfoTask checkAnswer = new InfoTask();
 
             Map<String, String> params = new HashMap<>();
             params.put("mode", "CHECK_ANSWER");
@@ -90,7 +105,7 @@ public class TaskActivity extends AppCompatActivity {
 
             params.put("answerIndex", String.valueOf(group.indexOfChild(
                     group.findViewById(group.getCheckedRadioButtonId())
-            )+1));
+            ) + 1));
 
             Log.d(TAG, "onCreate: Answer index: " + group.indexOfChild(
                     group.findViewById(group.getCheckedRadioButtonId())
@@ -99,11 +114,9 @@ public class TaskActivity extends AppCompatActivity {
             params.put("userName", userName);
             params.put("password", password);
 
-            checkAnswer.execute(params);
+            InfoTask checkAnswer = new InfoTask(result -> {
 
-            try {
-                String res = checkAnswer.get();
-                if(res.equals("1")) {
+                if (result.equals("1")) {
                     Toast.makeText(TaskActivity.this, "Well done!", Toast.LENGTH_LONG)
                             .show();
 
@@ -114,9 +127,9 @@ public class TaskActivity extends AppCompatActivity {
                     Toast.makeText(TaskActivity.this, "Try again please...", Toast.LENGTH_LONG)
                             .show();
                 }
-            } catch (ExecutionException | InterruptedException e) {
-                e.printStackTrace();
-            }
+            });
+
+            checkAnswer.execute(params);
 
         });
     }

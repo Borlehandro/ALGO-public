@@ -18,6 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 
 import com.alex_borzikov.newhorizonstourism.R;
 import com.alex_borzikov.newhorizonstourism.activities.MainActivity;
@@ -45,6 +46,8 @@ public class RegistrationFragment extends Fragment {
 
     private Button registerButton;
 
+    private ProgressBar progressBar;
+
     private NavController controller;
     private String language;
 
@@ -68,6 +71,10 @@ public class RegistrationFragment extends Fragment {
 
         registerButton = v.findViewById(R.id.register_button);
 
+        progressBar = v.findViewById(R.id.registrationProgress);
+
+        progressBar.setVisibility(View.INVISIBLE);
+
         registerButton.setOnClickListener(view -> {
 
             Log.d(TAG, "Register");
@@ -76,7 +83,6 @@ public class RegistrationFragment extends Fragment {
                     && !registerPassword.getText().toString().equals("")
                     && registerConfirm.getText().toString().equals(registerPassword.getText().toString())) {
 
-                InfoTask task = new InfoTask();
                 Map<String, String> params = new HashMap<>();
 
                 String userName = registerUser.getText().toString();
@@ -90,8 +96,23 @@ public class RegistrationFragment extends Fragment {
 
                 Log.d(TAG, "Language set to :" + language);
 
-                try {
-                    if ((userId = Integer.parseInt(task.execute(params).get())) != -1) {
+                progressBar.setVisibility(View.VISIBLE);
+
+                registerUser.setVisibility(View.INVISIBLE);
+                registerPassword.setVisibility(View.INVISIBLE);
+                registerConfirm.setVisibility(View.INVISIBLE);
+                registerButton.setVisibility(View.INVISIBLE);
+
+                InfoTask task = new InfoTask( result -> {
+
+                    progressBar.setVisibility(View.INVISIBLE);
+
+                    registerUser.setVisibility(View.VISIBLE);
+                    registerPassword.setVisibility(View.VISIBLE);
+                    registerConfirm.setVisibility(View.VISIBLE);
+                    registerButton.setVisibility(View.VISIBLE);
+
+                    if ((userId = Integer.parseInt(result)) != -1) {
                         // Todo refactor. Very bad code!
                         PreLoginActivity.language = language;
                         PreLoginActivity.userId = userId;
@@ -100,9 +121,9 @@ public class RegistrationFragment extends Fragment {
 
                         checkPermissions();
                     }
-                } catch (ExecutionException | InterruptedException e) {
-                    e.printStackTrace();
-                }
+                });
+
+                task.execute(params);
             }
 
         });

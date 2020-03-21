@@ -71,54 +71,53 @@ public class QuestListFragment extends Fragment {
     @Override
     public void onStart() {
 
-        InfoTask getListTask = new InfoTask();
         Map<String, String> questListParams = new HashMap<>();
         questListParams.put("mode", "GET_QUESTS_LIST");
         questListParams.put("language", viewModel.getUserInfo().getValue().getLanguage());
 
+        InfoTask getListTask = new InfoTask(result -> {
+            try {
+
+                Log.d(TAG, "Activity get " + result);
+
+                List<QuestListItem> parsingResult = JsonParser.parseQuestList(result);
+
+                List<String> questsNames = parsingResult.stream().map(QuestListItem::getName)
+                        .collect(Collectors.toList());
+
+                List<String> questsDescriptions = parsingResult.stream()
+                        .map(QuestListItem::getDescriptionShort).collect(Collectors.toList());
+
+                List<Integer> questsId = parsingResult.stream().map(QuestListItem::getId)
+                        .collect(Collectors.toList());
+
+                for (String item : questsNames) {
+                    Log.d(TAG, item);
+                }
+
+                QuestListAdapter adapter = new QuestListAdapter(getActivity(),
+                        R.layout.quest_list_layout, questsNames, questsDescriptions);
+
+                questList.setAdapter(adapter);
+
+                questList.setOnItemClickListener((AdapterView<?> parent, View v,
+                                                  int position, long id) -> {
+
+                    Log.d(TAG, "Click on " + position);
+
+                    viewModel.setQuestId(String.valueOf(questsId.get(position)));
+
+                    controller.navigate(R.id.toDescription);
+
+                });
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        });
+
         getListTask.execute(questListParams);
 
-        try {
-            // TODO: Don't call get() method!
-
-            String result = getListTask.get();
-
-            Log.d(TAG, "Activity get " + result);
-
-            List<QuestListItem> parsingResult = JsonParser.parseQuestList(result);
-
-            List<String> questsNames = parsingResult.stream().map(QuestListItem::getName)
-                    .collect(Collectors.toList());
-
-            List<String> questsDescriptions = parsingResult.stream()
-                    .map(QuestListItem::getDescriptionShort).collect(Collectors.toList());
-
-            List<Integer> questsId = parsingResult.stream().map(QuestListItem::getId)
-                    .collect(Collectors.toList());
-
-            for (String item : questsNames) {
-                Log.d(TAG, item);
-            }
-
-            QuestListAdapter adapter = new QuestListAdapter(getActivity(),
-                    R.layout.quest_list_layout, questsNames, questsDescriptions);
-
-            questList.setAdapter(adapter);
-
-            questList.setOnItemClickListener((AdapterView<?> parent, View v,
-                                              int position, long id) -> {
-
-                Log.d(TAG, "Click on " + position);
-
-                viewModel.setQuestId(String.valueOf(questsId.get(position)));
-
-                controller.navigate(R.id.toDescription);
-
-            });
-
-        } catch (ExecutionException | InterruptedException | JSONException e) {
-            e.printStackTrace();
-        }
         super.onStart();
     }
 }

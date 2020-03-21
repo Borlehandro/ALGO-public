@@ -280,10 +280,6 @@ public class MapFragment extends Fragment implements Session.RouteListener {
                                 RequestPointType.WAYPOINT, null))
                         .collect(Collectors.toList()));
 
-//                points.add(new RequestPoint(new Point(currentPointsQueue.peek().getLocationX(),
-//                        currentPointsQueue.peek().getLocationY()), RequestPointType.WAYPOINT,
-//                        null));
-
                 Log.d(TAG, "onActivityCreated: " + points.toString());
 
                 for (int i=0; i<points.size()-1; ++i) {

@@ -18,6 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 
 import com.alex_borzikov.newhorizonstourism.R;
 import com.alex_borzikov.newhorizonstourism.activities.MainActivity;
@@ -29,7 +30,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
 
 public class LoginFragment extends Fragment {
 
@@ -42,6 +42,8 @@ public class LoginFragment extends Fragment {
     private EditText loginUser, loginPassword;
 
     private Button loginButton;
+
+    private ProgressBar progress;
 
     private NavController controller;
     private String language;
@@ -65,29 +67,32 @@ public class LoginFragment extends Fragment {
 
         loginButton = v.findViewById(R.id.login_button);
 
+        progress = v.findViewById(R.id.loginProgress);
+        progress.setVisibility(View.INVISIBLE);
+
         loginButton.setOnClickListener(view -> {
+
+            progress.setVisibility(View.VISIBLE);
+
+            loginUser.setVisibility(View.INVISIBLE);
+            loginButton.setVisibility(View.INVISIBLE);
+            loginPassword.setVisibility(View.INVISIBLE);
+
             Log.d(TAG, "Login");
             if (!loginUser.getText().toString().equals("")
                     && !loginPassword.getText().toString().equals("")) {
 
-                InfoTask task = new InfoTask();
-                Map<String, String> params = new HashMap<>();
+                InfoTask task = new InfoTask(result -> {
 
-                userName = loginUser.getText().toString();
-                password = loginPassword.getText().toString();
+                    progress.setVisibility(View.INVISIBLE);
 
-                params.put("mode", "LOGIN");
-                params.put("username", userName);
-                params.put("password", password);
+                    loginUser.setVisibility(View.VISIBLE);
+                    loginButton.setVisibility(View.VISIBLE);
+                    loginPassword.setVisibility(View.VISIBLE);
 
-                try {
+                    Log.d(TAG, "!!!" + result);
 
-                    task.execute(params);
-                    String s = task.get();
-
-                    Log.d(TAG, "!!!" + s);
-
-                    if ((userId = Integer.parseInt(s)) != -1) {
+                    if ((userId = Integer.parseInt(result)) != -1) {
 
                         // Todo refactor. Very bad code!
                         PreLoginActivity.language = language;
@@ -97,10 +102,19 @@ public class LoginFragment extends Fragment {
 
                         checkPermissions();
                     }
+                });
 
-                } catch (InterruptedException | ExecutionException e) {
-                    e.printStackTrace();
-                }
+                Map<String, String> params = new HashMap<>();
+
+                userName = loginUser.getText().toString();
+                password = loginPassword.getText().toString();
+
+                params.put("mode", "LOGIN");
+                params.put("username", userName);
+                params.put("password", password);
+
+                task.execute(params);
+
             }
         });
 

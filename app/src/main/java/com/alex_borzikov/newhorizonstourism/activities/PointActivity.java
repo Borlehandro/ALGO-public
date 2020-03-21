@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.alex_borzikov.newhorizonstourism.R;
@@ -36,6 +37,7 @@ public class PointActivity extends AppCompatActivity {
     private TextView descriptionView, nameView;
     private ImageView imageView;
     private Button showTaskButton;
+    private ProgressBar progressBar;
 
     private PointInfoItem info;
 
@@ -50,6 +52,14 @@ public class PointActivity extends AppCompatActivity {
 
         showTaskButton = findViewById(R.id.questPointsShowButton);
 
+        progressBar = findViewById(R.id.pointProgress);
+
+        progressBar.setVisibility(View.VISIBLE);
+        descriptionView.setVisibility(View.INVISIBLE);
+        nameView.setVisibility(View.INVISIBLE);
+        imageView.setVisibility(View.INVISIBLE);
+        showTaskButton.setVisibility(View.INVISIBLE);
+
         pointId = getIntent().getStringExtra("pointId");
         language = getIntent().getStringExtra("language");
         userName = getIntent().getStringExtra("userName");
@@ -60,37 +70,50 @@ public class PointActivity extends AppCompatActivity {
 
         if (!pointId.equals("-1")) {
 
-            InfoTask pointInfoTask = new InfoTask();
-
             Map<String, String> infoParams = new HashMap<>();
             infoParams.put("mode", "GET_POINT_INFO");
             infoParams.put("pointId", pointId);
             infoParams.put("language", language);
 
+            InfoTask pointInfoTask = new InfoTask(result -> {
+
+                try {
+
+                    info = JsonParser.parsePointInfo(result);
+
+                    nameView.setText(info.getName());
+
+                    PictureTask pictureTask = new PictureTask(bitmapResult -> {
+
+                        Log.d(TAG, "onCreate: " + bitmapResult.getHeight());
+
+                        imageView.setImageBitmap(bitmapResult);
+
+                        DescriptionTask task = new DescriptionTask(descriptionResult -> {
+                            String res = descriptionResult.toString();
+                            descriptionView.setText(res);
+
+                            progressBar.setVisibility(View.INVISIBLE);
+                            descriptionView.setVisibility(View.VISIBLE);
+                            nameView.setVisibility(View.VISIBLE);
+                            imageView.setVisibility(View.VISIBLE);
+                            showTaskButton.setVisibility(View.VISIBLE);
+
+                        });
+
+                        task.execute(info.getDescriptionName().replace("\\\\", "\\"));
+
+                    });
+
+                    pictureTask.execute(info.getPictureName().replace("\\\\", "\\"));
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+            });
+
             pointInfoTask.execute(infoParams);
-            try {
-
-                String json = pointInfoTask.get();
-                info = JsonParser.parsePointInfo(json);
-
-                nameView.setText(info.getName());
-
-                PictureTask pictureTask = new PictureTask();
-                pictureTask.execute(info.getPictureName().replace("\\\\", "\\"));
-                Bitmap bm = pictureTask.get();
-
-                Log.d(TAG, "onCreate: " + bm.getHeight());
-
-                imageView.setImageBitmap(bm);
-
-                DescriptionTask task = new DescriptionTask();
-                task.execute(info.getDescriptionName().replace("\\\\", "\\"));
-                String res = task.get().toString();
-                descriptionView.setText(res);
-
-            } catch (ExecutionException | InterruptedException | JSONException e) {
-                e.printStackTrace();
-            }
 
         } else {
             Log.e(TAG, "onCreate: ERROR POINT_ID == -1");

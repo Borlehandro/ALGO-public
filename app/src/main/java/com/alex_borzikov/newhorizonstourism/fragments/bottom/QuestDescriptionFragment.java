@@ -16,6 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.alex_borzikov.newhorizonstourism.MainViewModel;
@@ -42,6 +43,7 @@ public class QuestDescriptionFragment extends Fragment {
     private Button startButton;
     private TextView descriptionView, nameView;
     private ImageView questImage;
+    private ProgressBar progressBar;
 
     private String language, questId;
 
@@ -57,6 +59,14 @@ public class QuestDescriptionFragment extends Fragment {
         questImage = view.findViewById(R.id.questImage);
 
         startButton = view.findViewById(R.id.questPointsShowButton);
+
+        progressBar = view.findViewById(R.id.questProgress);
+
+        progressBar.setVisibility(View.VISIBLE);
+        descriptionView.setVisibility(View.INVISIBLE);
+        nameView.setVisibility(View.INVISIBLE);
+        questImage.setVisibility(View.INVISIBLE);
+        startButton.setVisibility(View.INVISIBLE);
 
         startButton.setOnClickListener((View v) -> {
             controller.navigate(R.id.toPointsQueue);
@@ -88,43 +98,51 @@ public class QuestDescriptionFragment extends Fragment {
     @Override
     public void onStart() {
 
-        QuestInfoItem info;
-
-        InfoTask getQuestInfoTask = new InfoTask();
         Map<String, String> getQuestparams = new HashMap<>();
 
         getQuestparams.put("mode", "GET_QUEST_INFO");
         getQuestparams.put("language", language);
         getQuestparams.put("questId", questId);
 
+        InfoTask getQuestInfoTask = new InfoTask(result -> {
+            try {
+
+                Log.d(TAG, "Quest info : " + result);
+
+                QuestInfoItem info = JsonParser.parseQuestInfo(result);
+
+                nameView.setText(info.getName());
+
+                PictureTask pictureTask = new PictureTask(bitmapResult -> {
+
+                    Log.d(TAG, "onCreate: " + bitmapResult.getHeight());
+
+                    questImage.setImageBitmap(bitmapResult);
+
+                    DescriptionTask task = new DescriptionTask(descriptionResult -> {
+                        String res = descriptionResult.toString();
+                        descriptionView.setText(res);
+
+                        progressBar.setVisibility(View.INVISIBLE);
+                        descriptionView.setVisibility(View.VISIBLE);
+                        nameView.setVisibility(View.VISIBLE);
+                        questImage.setVisibility(View.VISIBLE);
+                        startButton.setVisibility(View.VISIBLE);
+
+                    });
+
+                    task.execute(info.getDescriptionName().replace("\\\\", "\\"));
+
+                });
+
+                pictureTask.execute(info.getPictureName().replace("\\\\", "\\"));
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        });
+
         getQuestInfoTask.execute(getQuestparams);
-
-        try {
-
-            String result = getQuestInfoTask.get();
-
-            Log.d(TAG, "Quest info : " + result);
-
-            info = JsonParser.parseQuestInfo(result);
-
-            nameView.setText(info.getName());
-
-            PictureTask pictureTask = new PictureTask();
-            pictureTask.execute(info.getPictureName().replace("\\\\", "\\"));
-            Bitmap bm = pictureTask.get();
-
-            Log.d(TAG, "onCreate: " + bm.getHeight());
-
-            questImage.setImageBitmap(bm);
-
-            DescriptionTask task = new DescriptionTask();
-            task.execute(info.getDescriptionName().replace("\\\\", "\\"));
-            String res = task.get().toString();
-            descriptionView.setText(res);
-
-        } catch (ExecutionException | InterruptedException | JSONException e) {
-            e.printStackTrace();
-        }
 
         super.onStart();
     }

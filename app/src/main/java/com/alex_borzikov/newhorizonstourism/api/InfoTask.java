@@ -3,7 +3,7 @@ package com.alex_borzikov.newhorizonstourism.api;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import com.google.android.gms.common.api.Api;
+import com.alex_borzikov.newhorizonstourism.ResponsibleTask;
 
 import java.io.IOException;
 import java.util.Map;
@@ -11,7 +11,13 @@ import java.util.Objects;
 
 public class InfoTask extends AsyncTask<Map<String, String>, Void, String> {
 
+    private ResponsibleTask responder;
+
     private static final String TAG = "Borlehandro";
+
+    public InfoTask(ResponsibleTask responder) {
+        this.responder = responder;
+    }
 
     @SafeVarargs
     @Override
@@ -71,5 +77,6 @@ public class InfoTask extends AsyncTask<Map<String, String>, Void, String> {
     @Override
     protected void onPostExecute(String s) {
         super.onPostExecute(s);
+        responder.onTaskResponse(s);
     }
 }

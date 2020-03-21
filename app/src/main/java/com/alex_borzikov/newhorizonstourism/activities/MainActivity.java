@@ -21,6 +21,7 @@ import java.util.concurrent.ExecutionException;
 
 import com.alex_borzikov.newhorizonstourism.MainViewModel;
 import com.alex_borzikov.newhorizonstourism.R;
+import com.alex_borzikov.newhorizonstourism.ResponsibleTask;
 import com.alex_borzikov.newhorizonstourism.api.InfoTask;
 import com.alex_borzikov.newhorizonstourism.data.PointInfoItem;
 import com.alex_borzikov.newhorizonstourism.data.UserInfo;
@@ -92,7 +93,7 @@ public class MainActivity extends AppCompatActivity {
             public void onStateChanged(@NonNull View bottomSheet, int newState) {
                 Log.d(TAG, "onStateChanged: " + newState);
 
-                if(newState==4) {
+                if (newState == 4) {
                     viewModel.setShowOpened(false);
                     sheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
                 }
@@ -117,19 +118,16 @@ public class MainActivity extends AppCompatActivity {
 
             Toast.makeText(getApplicationContext(), "Get code: " + pointCode, Toast.LENGTH_LONG).show();
 
-            InfoTask codeTask = new InfoTask();
-
             Map<String, String> codeParams = new HashMap<>();
             codeParams.put("mode", "CHECK_CODE");
             codeParams.put("code", pointCode);
 
-            codeTask.execute(codeParams);
+            InfoTask codeTask = new InfoTask(result -> {
 
-            try {
-                pointId = codeTask.get();
+                pointId = result;
                 Log.d(TAG, "onRestart: get pointId: " + pointId);
 
-                if (Integer.parseInt(pointId) == viewModel.getPointsQueue().getValue()
+                if (viewModel.getPointsQueue().getValue() != null && Integer.parseInt(pointId) == viewModel.getPointsQueue().getValue()
                         .peek().getId()) {
 
                     Intent toPoint = new Intent(getApplicationContext(), PointActivity.class);
@@ -141,10 +139,10 @@ public class MainActivity extends AppCompatActivity {
                     pointCode = null;
                     startActivityForResult(toPoint, 1);
                 }
+            });
 
-            } catch (ExecutionException | InterruptedException e) {
-                e.printStackTrace();
-            }
+            codeTask.execute(codeParams);
+
         }
     }
 
@@ -152,6 +150,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         Log.d(TAG, "onActivityResult: in main " + requestCode + " res: " + resultCode);
+        viewModel.setNeedPointsQueue(false);
 
         if (requestCode == 1 && resultCode == 1) {
 
