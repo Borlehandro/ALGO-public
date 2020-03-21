@@ -3,9 +3,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".fragments.pre_login.PreLoginFragment">
-
+    android:layout_height="wrap_content"
+    tools:context=".fragments.pre_login.PreLoginFragment"
+    android:layout_marginStart="16dp"
+    android:layout_marginTop="48dp"
+    android:layout_marginEnd="16dp"
+    android:layout_marginBottom="48dp">
 
     <TextView
         android:id="@+id/preLoginText"

@@ -28,9 +28,7 @@
         <activity android:name=".activities.TestActivity" />
         <activity android:name=".activities.TaskActivity" />
         <activity android:name=".activities.PointActivity" />
-        <activity android:name=".activities.LanguageActivity" />
         <activity android:name=".activities.MainActivity" />
-        <activity android:name=".activities.LoginActivity" />
 
     </application>
 
