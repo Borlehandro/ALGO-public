@@ -11,52 +11,61 @@
         android:id="@+id/mapview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:layout_editor_absoluteX="16dp"
-        tools:layout_editor_absoluteY="-128dp">
+        tools:layout_editor_absoluteX="56dp"
+        tools:layout_editor_absoluteY="52dp">
         <!--        app:movable="true">-->
 
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/scanCodeButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentEnd="true"
-            android:layout_marginTop="490dp"
-            android:layout_marginEnd="16dp"
-            android:clickable="true"
-            app:backgroundTint="#FFFFFF"
-            app:rippleColor="#FFFFFF"
-            app:srcCompat="@drawable/qr_code_image" />
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/showButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/scanCodeButton"
-            android:layout_alignParentEnd="true"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="16dp"
-            android:background="#C6434343"
-            android:backgroundTint="#C6434343"
-            android:clickable="true"
-            app:backgroundTint="#C6434343"
-            app:rippleColor="#C6434343"
-            app:elevation="0dp"
-            app:pressedTranslationZ="0dp"
-            app:srcCompat="@drawable/buttom_arrow"/>
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/scanCodeButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentEnd="true"
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="32dp"
+                android:clickable="true"
+                app:backgroundTint="#FFFFFF"
+                app:layout_constraintBottom_toTopOf="@+id/anchorActionButton"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:rippleColor="#FFFFFF"
+                app:srcCompat="@drawable/qr_code_image" />
 
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/anchorActionButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentEnd="true"
-            android:layout_marginTop="412dp"
-            android:layout_marginEnd="16dp"
-            android:clickable="true"
-            app:backgroundTint="#FFFFFF"
-            app:rippleColor="#FFFFFF"
-            app:srcCompat="@android:drawable/ic_menu_mylocation" />
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/showButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                android:layout_marginTop="32dp"
+                android:background="#C6434343"
+                android:backgroundTint="#C6434343"
+                android:clickable="true"
+                app:backgroundTint="#C6434343"
+                app:elevation="0dp"
+                app:pressedTranslationZ="0dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/anchorActionButton"
+                app:rippleColor="#C6434343"
+                app:srcCompat="@drawable/buttom_arrow" />
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/anchorActionButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                android:clickable="true"
+                app:backgroundTint="#FFFFFF"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.6"
+                app:rippleColor="#FFFFFF"
+                app:srcCompat="@android:drawable/ic_menu_mylocation" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
     </com.yandex.mapkit.mapview.MapView>
 

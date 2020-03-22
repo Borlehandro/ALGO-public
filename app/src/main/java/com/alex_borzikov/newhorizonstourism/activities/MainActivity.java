@@ -88,15 +88,16 @@ public class MainActivity extends AppCompatActivity {
 
         Log.d(TAG, "onResumeFragments: ");
 
+        sheetBehavior.setFitToContents(false);
+        sheetBehavior.setHalfExpandedRatio(0.4f);
+
         sheetBehavior.addBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
             @Override
             public void onStateChanged(@NonNull View bottomSheet, int newState) {
                 Log.d(TAG, "onStateChanged: " + newState);
 
-                if (newState == 4) {
+                if (newState == BottomSheetBehavior.STATE_HIDDEN)
                     viewModel.setShowOpened(false);
-                    sheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
-                }
             }
 
             @Override

@@ -2,6 +2,7 @@ package com.alex_borzikov.newhorizonstourism.adapters;
 
 import android.app.Activity;
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,6 +41,8 @@ public class QuestListAdapter extends ArrayAdapter<String> {
 
         TextView nameView = item.findViewById(R.id.quest_name_text);
         TextView descriptionView = item.findViewById(R.id.quest_description_text);
+
+        Log.d("Borlehandro", "onStart DESCRIPTIONS " + position + " : " + descriptions.get(position));
 
         nameView.setText(names.get(position));
         descriptionView.setText(descriptions.get(position));

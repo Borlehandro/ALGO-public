@@ -8,17 +8,18 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ListView;
 
 import com.alex_borzikov.newhorizonstourism.MainViewModel;
 import com.alex_borzikov.newhorizonstourism.R;
-import com.alex_borzikov.newhorizonstourism.adapters.QuestListAdapter;
+import com.alex_borzikov.newhorizonstourism.RecyclerViewClickListener;
+import com.alex_borzikov.newhorizonstourism.adapters.QuestRecycleAdapter;
 import com.alex_borzikov.newhorizonstourism.api.InfoTask;
 import com.alex_borzikov.newhorizonstourism.api.JsonParser;
 import com.alex_borzikov.newhorizonstourism.data.QuestListItem;
@@ -28,16 +29,15 @@ import org.json.JSONException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
-public class QuestListFragment extends Fragment {
+public class QuestListFragment extends Fragment implements RecyclerViewClickListener {
 
     private static final String TAG = "Borlehandro";
 
     private MainViewModel viewModel;
 
-    private ListView questList;
+    private RecyclerView questList;
 
     private NavController controller;
 
@@ -48,6 +48,10 @@ public class QuestListFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_quest_list, container, false);
 
         questList = view.findViewById(R.id.quest_view);
+
+        LinearLayoutManager manager = new LinearLayoutManager(getActivity());
+        questList.setLayoutManager(manager);
+        questList.setHasFixedSize(true);
 
         return view;
     }
@@ -95,13 +99,7 @@ public class QuestListFragment extends Fragment {
                     Log.d(TAG, item);
                 }
 
-                QuestListAdapter adapter = new QuestListAdapter(getActivity(),
-                        R.layout.quest_list_layout, questsNames, questsDescriptions);
-
-                questList.setAdapter(adapter);
-
-                questList.setOnItemClickListener((AdapterView<?> parent, View v,
-                                                  int position, long id) -> {
+                RecyclerViewClickListener listener = (v, position) -> {
 
                     Log.d(TAG, "Click on " + position);
 
@@ -109,7 +107,12 @@ public class QuestListFragment extends Fragment {
 
                     controller.navigate(R.id.toDescription);
 
-                });
+                };
+
+                QuestRecycleAdapter adapter = new QuestRecycleAdapter(questsNames.size(), questsNames,
+                        questsDescriptions, listener);
+
+                questList.setAdapter(adapter);
 
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -119,5 +122,10 @@ public class QuestListFragment extends Fragment {
         getListTask.execute(questListParams);
 
         super.onStart();
+    }
+
+    @Override
+    public void recyclerViewListClicked(View v, int position) {
+
     }
 }

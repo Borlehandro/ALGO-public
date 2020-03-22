@@ -9,6 +9,8 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -20,6 +22,7 @@ import android.widget.ProgressBar;
 
 import com.alex_borzikov.newhorizonstourism.MainViewModel;
 import com.alex_borzikov.newhorizonstourism.R;
+import com.alex_borzikov.newhorizonstourism.adapters.PointRecycleAdapter;
 import com.alex_borzikov.newhorizonstourism.adapters.PointsQueueAdapter;
 import com.alex_borzikov.newhorizonstourism.api.InfoTask;
 import com.alex_borzikov.newhorizonstourism.api.JsonParser;
@@ -45,7 +48,7 @@ public class PointsQueueFragment extends Fragment {
 
     private String questId, language;
 
-    private ListView pointsQueueView;
+    private RecyclerView pointsQueueView;
     private Button questGoButton;
 
     private ProgressBar progressBar;
@@ -57,6 +60,9 @@ public class PointsQueueFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_points_queue, container, false);
 
         pointsQueueView = v.findViewById(R.id.pointsQueueView);
+        pointsQueueView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        pointsQueueView.setHasFixedSize(true);
+
         questGoButton = v.findViewById(R.id.questGoButton);
 
         progressBar = v.findViewById(R.id.pointQueueProgress);
@@ -130,8 +136,8 @@ public class PointsQueueFragment extends Fragment {
                         pictures.add(bitmapResult);
                         if (pictures.size() == pointsNames.size()) {
 
-                            PointsQueueAdapter adapter = new PointsQueueAdapter(getActivity(),
-                                    R.layout.points_queue_item, pointsNames, pictures);
+                            PointRecycleAdapter adapter = new PointRecycleAdapter(pointsNames.size(),
+                                    pointsNames, pictures);
 
                             pointsQueueView.setAdapter(adapter);
 

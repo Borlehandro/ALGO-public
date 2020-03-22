@@ -11,19 +11,18 @@
         android:id="@+id/mapNavFragment"
         android:name="androidx.navigation.fragment.NavHostFragment"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         app:defaultNavHost="true"
-        app:navGraph="@navigation/map_navigation" />
-
+        app:navGraph="@navigation/map_navigation"
+        android:layout_gravity="bottom"/>
 
     <fragment
         android:id="@+id/bottomSheetNavFragment"
         android:name="androidx.navigation.fragment.NavHostFragment"
         android:layout_width="match_parent"
-        android:layout_height="300dp"
+        android:layout_height="match_parent"
         android:visibility="invisible"
         app:behavior_hideable="true"
-        app:behavior_peekHeight="30dp"
         app:defaultNavHost="false"
         app:elevation="4dp"
         app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"

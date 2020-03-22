@@ -1,6 +1,5 @@
 package com.alex_borzikov.newhorizonstourism.fragments.bottom;
 
-import android.graphics.Bitmap;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -31,7 +30,6 @@ import org.json.JSONException;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
 
 public class QuestDescriptionFragment extends Fragment {
 
@@ -54,9 +52,9 @@ public class QuestDescriptionFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_quest_description, container, false);
 
         descriptionView = view.findViewById(R.id.questDescription);
-        nameView = view.findViewById(R.id.questName);
+        nameView = view.findViewById(R.id.pointName);
 
-        questImage = view.findViewById(R.id.questImage);
+        questImage = view.findViewById(R.id.pointImage);
 
         startButton = view.findViewById(R.id.questPointsShowButton);
 

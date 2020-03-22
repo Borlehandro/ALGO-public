@@ -4,7 +4,6 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -24,7 +23,6 @@ import org.json.JSONException;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
 
 public class PointActivity extends AppCompatActivity {
 
@@ -46,9 +44,9 @@ public class PointActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_point);
 
-        nameView = findViewById(R.id.questName);
+        nameView = findViewById(R.id.pointName);
         descriptionView = findViewById(R.id.questDescription);
-        imageView = findViewById(R.id.questImage);
+        imageView = findViewById(R.id.pointImage);
 
         showTaskButton = findViewById(R.id.questPointsShowButton);
 
