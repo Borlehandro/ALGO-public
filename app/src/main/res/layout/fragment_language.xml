@@ -3,88 +3,89 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     tools:context=".fragments.bottom.QuestListFragment">
 
     <androidx.cardview.widget.CardView
-        android:layout_width="fill_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
-        android:layout_marginBottom="16dp"
         app:cardCornerRadius="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.8">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="wrap_content"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:layout_gravity="center">
 
-        <RadioGroup
-            android:gravity="center"
-            android:id="@+id/languageGroup"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            android:layout_marginStart="64dp"
-            android:layout_marginEnd="64dp">
-
-            <RadioButton
-                android:id="@+id/englishButton"
-                android:gravity="center"
-                android:layout_width="wrap_content"
+            <RadioGroup
+                android:id="@+id/languageGroup"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:drawableEnd="@drawable/british"
-                android:layoutDirection="rtl"
-                android:text="English"
-                android:textAlignment="center"
-                android:textSize="18sp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <RadioButton
-                android:id="@+id/russianButton"
+                android:layout_marginTop="8dp"
+                android:layout_marginStart="64dp"
+                android:layout_marginEnd="64dp"
                 android:gravity="center"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:drawableEnd="@drawable/russian"
-                android:layoutDirection="rtl"
-                android:text="Русский"
-                android:textAlignment="center"
-                android:textSize="18sp"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent">
 
-            <RadioButton
-                android:id="@+id/chineseButton"
-                android:gravity="center"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:drawableEnd="@drawable/chinese"
-                android:layoutDirection="rtl"
-                android:text="..............."
-                android:textAlignment="center"
-                android:textSize="18sp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                <RadioButton
+                    android:id="@+id/englishButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:drawableEnd="@drawable/british"
+                    android:gravity="center"
+                    android:layoutDirection="rtl"
+                    android:text="English"
+                    android:textAlignment="center"
+                    android:textSize="18sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
-        </RadioGroup>
+                <RadioButton
+                    android:id="@+id/russianButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:drawableEnd="@drawable/russian"
+                    android:gravity="center"
+                    android:layoutDirection="rtl"
+                    android:text="Русский"
+                    android:textAlignment="center"
+                    android:textSize="18sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <RadioButton
+                    android:id="@+id/chineseButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:drawableEnd="@drawable/chinese"
+                    android:gravity="center"
+                    android:layoutDirection="rtl"
+                    android:text="..............."
+                    android:textAlignment="center"
+                    android:textSize="18sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+            </RadioGroup>
 
             <Button
                 android:id="@+id/commitLanguageButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/languageGroup"
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="8dp"
-                android:text="SELECT"/>
+                android:text="SELECT"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/languageGroup" />
             <!-- Todo Make text dynamic -->
 
         </androidx.constraintlayout.widget.ConstraintLayout>
