@@ -89,6 +89,7 @@ public class PointsQueueFragment extends Fragment {
 
         questId = viewModel.getQuestId().getValue();
         language = viewModel.getUserInfo().getValue().getLanguage();
+        viewModel.setQueueOpened(true);
 
         Log.d(TAG, "onActivityCreated: queue get lang: " + language + " questId: " + questId);
 

@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.content.Intent;
@@ -19,6 +20,7 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
+import com.alex_borzikov.newhorizonstourism.LockableBottomSheetBehavior;
 import com.alex_borzikov.newhorizonstourism.MainViewModel;
 import com.alex_borzikov.newhorizonstourism.R;
 import com.alex_borzikov.newhorizonstourism.ResponsibleTask;
@@ -81,6 +83,14 @@ public class MainActivity extends AppCompatActivity {
                 sheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
             }
         });
+
+        viewModel.getQueueOpened().observe(this, opened -> {
+            if(opened) {
+
+                sheetBehavior.setState(BottomSheetBehavior.STATE_HALF_EXPANDED);
+
+            }
+        });
     }
 
     @Override
@@ -98,10 +108,12 @@ public class MainActivity extends AppCompatActivity {
 
                 if (newState == BottomSheetBehavior.STATE_HIDDEN)
                     viewModel.setShowOpened(false);
+
             }
 
             @Override
             public void onSlide(@NonNull View bottomSheet, float slideOffset) {
+                Log.d(TAG, "onSlide: ");
 
             }
         });
