@@ -28,7 +28,7 @@ public class TaskActivity extends AppCompatActivity {
 
     private static final String TAG = "Borlehandro";
     private String language;
-    private String taskId, userName, password;
+    private String taskId, userTicket;
 
     private TextView descriptionTask;
     private RadioGroup group;
@@ -45,9 +45,8 @@ public class TaskActivity extends AppCompatActivity {
 
         Log.d(TAG, "onCreate: Task: " + taskId);
 
-        language = getIntent().getStringExtra("language");
-        userName = getIntent().getStringExtra("userName");
-        password = getIntent().getStringExtra("password");
+        language = getResources().getConfiguration().getLocales().get(0).getLanguage();
+        userTicket = getIntent().getStringExtra("userTicket");
 
         descriptionTask = findViewById(R.id.taskDescription);
 
@@ -70,8 +69,7 @@ public class TaskActivity extends AppCompatActivity {
         args.put("mode", "GET_TASK_INFO");
         args.put("taskId", taskId);
         args.put("language", language);
-        args.put("userName", userName);
-        args.put("password", password);
+        args.put("userTicket", userTicket);
 
         InfoTask taskInfo = new InfoTask(result -> {
 
@@ -111,20 +109,19 @@ public class TaskActivity extends AppCompatActivity {
                     group.findViewById(group.getCheckedRadioButtonId())
             ));
 
-            params.put("userName", userName);
-            params.put("password", password);
+            params.put("userTicket", userTicket);
 
             InfoTask checkAnswer = new InfoTask(result -> {
 
                 if (result.equals("1")) {
-                    Toast.makeText(TaskActivity.this, "Well done!", Toast.LENGTH_LONG)
+                    Toast.makeText(TaskActivity.this, getString(R.string.taskSuccess), Toast.LENGTH_LONG)
                             .show();
 
                     setResult(1);
                     finish();
 
                 } else {
-                    Toast.makeText(TaskActivity.this, "Try again please...", Toast.LENGTH_LONG)
+                    Toast.makeText(TaskActivity.this, getString(R.string.taskFail), Toast.LENGTH_LONG)
                             .show();
                 }
             });

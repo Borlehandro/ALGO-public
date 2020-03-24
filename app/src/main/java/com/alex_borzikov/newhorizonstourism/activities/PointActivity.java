@@ -30,7 +30,7 @@ public class PointActivity extends AppCompatActivity {
 
     private static final String TAG = "Borlehandro";
     private String language;
-    private String pointId, userName, password;
+    private String pointId, userTicket;
 
     private TextView descriptionView, nameView;
     private ImageView imageView;
@@ -59,9 +59,8 @@ public class PointActivity extends AppCompatActivity {
         showTaskButton.setVisibility(View.INVISIBLE);
 
         pointId = getIntent().getStringExtra("pointId");
-        language = getIntent().getStringExtra("language");
-        userName = getIntent().getStringExtra("userName");
-        password = getIntent().getStringExtra("password");
+        language = getResources().getConfiguration().getLocales().get(0).getLanguage();
+        userTicket = getIntent().getStringExtra("userTicket");
 
         Log.d(TAG, "onCreate: id in Point " + pointId);
         Log.d(TAG, "onCreate: lang in Point " + language);
@@ -124,10 +123,8 @@ public class PointActivity extends AppCompatActivity {
 
             Log.d(TAG, "onCreate: Point: " + info.getTaskId());
 
-            toTask.putExtra("language", language);
             toTask.putExtra("taskId", String.valueOf(info.getTaskId()));
-            toTask.putExtra("userName", userName);
-            toTask.putExtra("password", password);
+            toTask.putExtra("userTicket", userTicket);
 
             startActivityForResult(toTask, 1);
         });

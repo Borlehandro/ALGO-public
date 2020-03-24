@@ -1,5 +1,6 @@
 package com.alex_borzikov.newhorizonstourism.fragments.bottom;
 
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 
@@ -35,6 +36,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
@@ -88,7 +90,10 @@ public class PointsQueueFragment extends Fragment {
         viewModel = new ViewModelProvider(getActivity()).get(MainViewModel.class);
 
         questId = viewModel.getQuestId().getValue();
-        language = viewModel.getUserInfo().getValue().getLanguage();
+
+        language = getResources().getConfiguration().getLocales().get(0).getLanguage();
+        Log.w(TAG, "onActivityCreated: " + language);
+
         viewModel.setQueueOpened(true);
 
         Log.d(TAG, "onActivityCreated: queue get lang: " + language + " questId: " + questId);

@@ -35,7 +35,6 @@ public class LoginFragment extends Fragment {
 
     private static final String TAG = "Borlehandro";
 
-    private static int userId;
     private static String userName;
     private static String password;
 
@@ -46,7 +45,7 @@ public class LoginFragment extends Fragment {
     private ProgressBar progress;
 
     private NavController controller;
-    private String language;
+    private String language, userTicket;
 
     static final int REQUEST_ALL_RESULT = 1;
 
@@ -92,13 +91,12 @@ public class LoginFragment extends Fragment {
 
                     Log.d(TAG, "!!!" + result);
 
-                    if ((userId = Integer.parseInt(result)) != -1) {
+                    if (!result.equals("-1")) {
+                        userTicket = result;
 
                         // Todo refactor. Very bad code!
                         PreLoginActivity.language = language;
-                        PreLoginActivity.userId = userId;
-                        PreLoginActivity.userName = userName;
-                        PreLoginActivity.password = password;
+                        PreLoginActivity.userTicket = result;
 
                         checkPermissions();
                     }
@@ -166,9 +164,7 @@ public class LoginFragment extends Fragment {
 
         // TODO Send password safety
         intent.putExtra("language", language);
-        intent.putExtra("userId", userId);
-        intent.putExtra("userName", userName);
-        intent.putExtra("password", password);
+        intent.putExtra("userTicket", userTicket);
 
         startActivity(intent);
     }

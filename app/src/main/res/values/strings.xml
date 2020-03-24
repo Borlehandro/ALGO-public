@@ -1,15 +1,31 @@
 <resources>
-    <string name="app_name">AlGo</string>
-    <string name="title_activity_test_login">Sign in</string>
-    <string name="prompt_email">Email</string>
-    <string name="prompt_password">Password</string>
-    <string name="action_sign_in">Sign in or register</string>
-    <string name="action_sign_in_short">Sign in</string>
-    <string name="welcome">"Welcome !"</string>
-    <string name="invalid_username">Not a valid username</string>
-    <string name="invalid_password">Password must be >5 characters</string>
-    <string name="login_failed">"Login failed"</string>
+    <string name="app_name" translatable="false">AlGo</string>
+    <string name="sumbit_lang">Next</string>
+    <string name="login">Login</string>
+    <string name="register">Register</string>
+    <string name="task">Get a task</string>
+    <string name="taskButton">Send</string>
+    <string name="passwordHint">Password</string>
+    <string name="usernameHint">Username</string>
+    <string name="loginButton">Log in</string>
+    <string name="pointQueueButton">START</string>
+    <string name="questHeader">Quest</string>
+    <string name="showQuestButton">Show points</string>
+    <string name="questListHeader">QUESTS LIST</string>
+    <string name="conformPasswordHint">Conform password</string>
+    <string name="preLoginDescription">You can log in or create new account</string>
+    <string name="registerButton">Register</string>
+    <string name="taskSuccess">Well done!</string>
+    <string name="taskFail">Please try again...</string>
+    <string name="permissionMessage">ALGO asks a permission to your camera and location.</string>
+    <string name="permissionAllow">OK</string>
+    <string name="permissionDeny">Cancel</string>
+    <string name="pointsListHeader">Quest points list</string>
+    <string name="taskTitle">Choose the right variant</string>
+    <string name="profileExitButton">Exit</string>
+    <string name="questsCompletedTitle">Quests completed:</string>
+    <string name="pointsCompletedTitle">Points Completed</string>
+    <string name="kilometersCompletedTitle">Kilometers completed</string>
+    <string name="bonusesCollectedTitle">Bonuses collected</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

@@ -49,7 +49,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/anchorActionButton"
                 app:rippleColor="#C6434343"
-                app:srcCompat="@drawable/buttom_arrow" />
+                app:srcCompat="@drawable/buttom_arrow"/>
 
             <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/anchorActionButton"

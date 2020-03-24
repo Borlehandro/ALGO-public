@@ -1,6 +1,7 @@
 package com.alex_borzikov.newhorizonstourism.fragments;
 
 import android.content.Intent;
+import android.content.res.Resources;
 import android.graphics.PointF;
 import android.os.Bundle;
 
@@ -66,6 +67,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
 
 import static com.yandex.runtime.Runtime.getApplicationContext;
@@ -253,7 +255,10 @@ public class MapFragment extends Fragment implements Session.RouteListener {
 
         viewModel = new ViewModelProvider(getActivity()).get(MainViewModel.class);
 
-        Log.d(TAG, "onActivityCreated: " + viewModel.getUserInfo().getValue().getLanguage());
+        Resources res = getResources();
+
+        String language = res.getConfiguration().getLocales().get(0).getLanguage();
+        Log.w(TAG, "onActivityCreated: " + language);
 
         viewModel.getShowOpened().observe(getViewLifecycleOwner(), (opened) -> {
             if (opened)

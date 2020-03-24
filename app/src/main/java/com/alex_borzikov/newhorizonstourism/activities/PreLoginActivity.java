@@ -10,13 +10,10 @@ import android.util.Log;
 import android.widget.TextView;
 
 import com.alex_borzikov.newhorizonstourism.R;
-import com.alex_borzikov.newhorizonstourism.fragments.pre_login.LanguageFragment;
 
 public class PreLoginActivity extends AppCompatActivity {
 
-    public static int userId;
-    public static String userName;
-    public static String password;
+    public static String userTicket;
     public static String language;
 
     static final int REQUEST_ALL_RESULT = 1;
@@ -58,11 +55,7 @@ public class PreLoginActivity extends AppCompatActivity {
 
         intent.putExtra("uid", "login");
 
-        // TODO Send password safety
-        intent.putExtra("language", language);
-        intent.putExtra("userId", userId);
-        intent.putExtra("userName", userName);
-        intent.putExtra("password", password);
+        intent.putExtra("userTicket", userTicket);
 
         startActivity(intent);
     }

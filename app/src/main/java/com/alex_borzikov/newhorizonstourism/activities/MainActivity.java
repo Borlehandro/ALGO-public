@@ -1,46 +1,38 @@
 package com.alex_borzikov.newhorizonstourism.activities;
 
+import android.content.Intent;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
-import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
-import android.view.animation.TranslateAnimation;
-import android.widget.Toast;
+import com.alex_borzikov.newhorizonstourism.MainViewModel;
+import com.alex_borzikov.newhorizonstourism.R;
+import com.alex_borzikov.newhorizonstourism.api.InfoTask;
+import com.alex_borzikov.newhorizonstourism.data.PointInfoItem;
+import com.alex_borzikov.newhorizonstourism.dialogs.FinishDialog;
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
 
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
 
-import com.alex_borzikov.newhorizonstourism.LockableBottomSheetBehavior;
-import com.alex_borzikov.newhorizonstourism.MainViewModel;
-import com.alex_borzikov.newhorizonstourism.R;
-import com.alex_borzikov.newhorizonstourism.ResponsibleTask;
-import com.alex_borzikov.newhorizonstourism.api.InfoTask;
-import com.alex_borzikov.newhorizonstourism.data.PointInfoItem;
-import com.alex_borzikov.newhorizonstourism.data.UserInfo;
-import com.alex_borzikov.newhorizonstourism.dialogs.FinishDialog;
-import com.google.android.material.bottomsheet.BottomSheetBehavior;
-
-import static com.yandex.runtime.Runtime.getApplicationContext;
 
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "Borlehandro";
 
-    private UserInfo userInfo;
-
     private String pointId;
 
     public static String pointCode;
+
+    private String userTicket;
 
     private Fragment bottomFragment;
     private BottomSheetBehavior sheetBehavior;
@@ -58,20 +50,13 @@ public class MainActivity extends AppCompatActivity {
         Log.d(TAG, "onCreate: ");
 
         // TODO Send password safety
-        userInfo = new UserInfo(
-                getIntent().getIntExtra("userId", 0),
-                getIntent().getStringExtra("userName"),
-                getIntent().getStringExtra("password"),
-                getIntent().getStringExtra("language")
-        );
+        userTicket = getIntent().getStringExtra("userTicket");
 
-        Log.d(TAG, "user " + userInfo.getName());
-        Log.d(TAG, "id " + userInfo.getId());
-        Log.d(TAG, "password " + userInfo.getPassword());
-        Log.d(TAG, "lang " + userInfo.getLanguage());
+        Log.d(TAG, "userTicket " + userTicket);
 
         viewModel = new ViewModelProvider(this).get(MainViewModel.class);
-        viewModel.setUserInfo(userInfo);
+        // Are you need it?
+        viewModel.setUserTicket(userTicket);
         viewModel.setShowOpened(false);
         sheetBehavior = BottomSheetBehavior.from(bottomFragment.getView());
 
@@ -145,9 +130,8 @@ public class MainActivity extends AppCompatActivity {
 
                     Intent toPoint = new Intent(getApplicationContext(), PointActivity.class);
                     toPoint.putExtra("pointId", pointId);
-                    toPoint.putExtra("language", userInfo.getLanguage());
-                    toPoint.putExtra("userName", userInfo.getName());
-                    toPoint.putExtra("password", userInfo.getPassword());
+                    toPoint.putExtra("userTicket", userTicket);
+
                     // It can not repeat!
                     pointCode = null;
                     startActivityForResult(toPoint, 1);

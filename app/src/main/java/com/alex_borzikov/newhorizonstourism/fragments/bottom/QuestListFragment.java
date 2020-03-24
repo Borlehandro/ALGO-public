@@ -29,6 +29,7 @@ import org.json.JSONException;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -78,7 +79,9 @@ public class QuestListFragment extends Fragment implements RecyclerViewClickList
 
         Map<String, String> questListParams = new HashMap<>();
         questListParams.put("mode", "GET_QUESTS_LIST");
-        questListParams.put("language", viewModel.getUserInfo().getValue().getLanguage());
+        String language = getResources().getConfiguration().getLocales().get(0).getLanguage();
+        Log.w(TAG, "onStart: " + language);
+        questListParams.put("language", language);
 
         InfoTask getListTask = new InfoTask(result -> {
             try {
@@ -129,4 +132,7 @@ public class QuestListFragment extends Fragment implements RecyclerViewClickList
     public void recyclerViewListClicked(View v, int position) {
 
     }
+
+
+
 }

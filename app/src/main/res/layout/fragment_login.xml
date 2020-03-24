@@ -30,7 +30,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:ems="10"
-                android:hint="Password"
+                android:hint="@string/passwordHint"
                 android:inputType="textPassword"
                 android:text="Hello"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -38,30 +38,21 @@
                 app:layout_constraintTop_toBottomOf="@+id/login_user" />
 
             <!--Todo Make this text multilingual-->
-            <TextView
-                android:id="@+id/textView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:text="LOGIN"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
 
             <EditText
                 android:id="@+id/login_user"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="32dp"
-                android:layout_marginTop="16dp"
                 android:layout_marginEnd="32dp"
+                android:layout_marginTop="16dp"
                 android:ems="10"
-                android:hint="Username"
+                android:hint="@string/usernameHint"
                 android:inputType="textPersonName"
                 android:text="languageTester"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textView" />
+                app:layout_constraintTop_toTopOf="parent" />
 
             <Button
                 android:id="@+id/login_button"
@@ -69,7 +60,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:layout_marginBottom="16dp"
-                android:text="Login"
+                android:text="@string/loginButton"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"

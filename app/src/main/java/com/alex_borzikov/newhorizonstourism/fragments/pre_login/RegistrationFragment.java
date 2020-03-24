@@ -30,17 +30,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 public class RegistrationFragment extends Fragment {
 
     private static final String TAG = "Borlehandro";
-
-    private static int userId;
-    private static String userName;
-    private static String password;
 
     private EditText registerUser, registerPassword, registerConfirm;
 
@@ -49,7 +42,7 @@ public class RegistrationFragment extends Fragment {
     private ProgressBar progressBar;
 
     private NavController controller;
-    private String language;
+    private String language, userTicket;
 
     static final int REQUEST_ALL_RESULT = 1;
 
@@ -112,12 +105,11 @@ public class RegistrationFragment extends Fragment {
                     registerConfirm.setVisibility(View.VISIBLE);
                     registerButton.setVisibility(View.VISIBLE);
 
-                    if ((userId = Integer.parseInt(result)) != -1) {
+                    if (!result.equals("-1")) {
+                        userTicket = result;
                         // Todo refactor. Very bad code!
                         PreLoginActivity.language = language;
-                        PreLoginActivity.userId = userId;
-                        PreLoginActivity.userName = userName;
-                        PreLoginActivity.password = password;
+                        PreLoginActivity.userTicket = userTicket;
 
                         checkPermissions();
                     }
@@ -176,9 +168,7 @@ public class RegistrationFragment extends Fragment {
 
         // TODO Send password safety
         intent.putExtra("language", language);
-        intent.putExtra("userId", userId);
-        intent.putExtra("userName", userName);
-        intent.putExtra("password", password);
+        intent.putExtra("userTicket", userTicket);
 
         startActivity(intent);
     }

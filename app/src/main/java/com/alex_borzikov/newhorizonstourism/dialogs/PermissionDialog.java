@@ -10,6 +10,8 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.DialogFragment;
 
+import com.alex_borzikov.newhorizonstourism.R;
+
 import java.util.List;
 
 public class PermissionDialog extends DialogFragment {
@@ -30,17 +32,16 @@ public class PermissionDialog extends DialogFragment {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
-        builder.setMessage("Чтобы приложение ALGO работало правильно, необходимо " +
-                "разрешить ему использовать камеру и иметь дотуп к вашему местоположению.")
+        builder.setMessage(getString(R.string.permissionMessage))
 
-                .setPositiveButton("Хорошо", (dialog, id) -> {
+                .setPositiveButton(getString(R.string.permissionAllow), (dialog, id) -> {
 
                     ActivityCompat.requestPermissions(getActivity(),
                             permissions,
                             PERMISSION_NUMBER);
                 })
 
-                .setNegativeButton("Отменить", (dialog, id) -> {
+                .setNegativeButton(getString(R.string.permissionDeny), (dialog, id) -> {
                     getActivity().finish();
                 });
 

@@ -254,8 +254,7 @@ public class ApiClient {
 
     }
 
-    public static String getTaskInfo(String taskId, String language,
-                                     String username, String password) throws IOException {
+    public static String getTaskInfo(String taskId, String language, String userTicket) throws IOException {
 
         HttpURLConnection connection = connectPost();
         connection.setDoOutput(true);
@@ -268,11 +267,10 @@ public class ApiClient {
         writer.write("mode=" + MODES.get("GET_TASKS_INFO"));
         writer.write("&language=" + language);
         writer.write("&task=" + taskId);
-        writer.write("&username=" + username);
-        writer.write("&password=" + password);
+        writer.write("&userTicket=" + userTicket);
 
         Log.d(TAG, (MODES.get("GET_TASKS_INFO") + " " + language + " " + taskId
-                + " " + username + " " + password ));
+                + " " + userTicket ));
 
         writer.flush();
         writer.close();
@@ -327,14 +325,14 @@ public class ApiClient {
         return outputStringBuilder.toString();
     }
 
-    public static String checkTaskAnswer(String answerIndex, String taskId, String username, String password) throws IOException {
+    public static String checkTaskAnswer(String answerIndex, String taskId, String userTicket) throws IOException {
         HttpURLConnection connection = connectPost();
         connection.setDoOutput(true);
         connection.setDoInput(true);
         OutputStream data = connection.getOutputStream();
 
         Log.d(TAG, "checkTaskAnswer: " + MODES.get("CHECK_ANSWER")  + " " +answerIndex + " "
-                + taskId + " " + username + " " + password);
+                + taskId + " " + userTicket);
 
         BufferedWriter writer = new BufferedWriter(
                 new OutputStreamWriter(data, StandardCharsets.UTF_8));
@@ -342,8 +340,7 @@ public class ApiClient {
         writer.write("mode=" + MODES.get("CHECK_ANSWER"));
         writer.write("&answer=" + answerIndex);
         writer.write("&task=" + taskId);
-        writer.write("&username=" + username);
-        writer.write("&password=" + password);
+        writer.write("&userTicket=" + userTicket);
 
         writer.flush();
         writer.close();

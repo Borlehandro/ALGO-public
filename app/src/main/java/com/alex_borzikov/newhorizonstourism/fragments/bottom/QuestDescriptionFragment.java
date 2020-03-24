@@ -29,6 +29,7 @@ import com.alex_borzikov.newhorizonstourism.data.QuestInfoItem;
 import org.json.JSONException;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 public class QuestDescriptionFragment extends Fragment {
@@ -87,7 +88,8 @@ public class QuestDescriptionFragment extends Fragment {
         viewModel = new ViewModelProvider(getActivity()).get(MainViewModel.class);
 
         questId = viewModel.getQuestId().getValue();
-        language = viewModel.getUserInfo().getValue().getLanguage();
+        language = getResources().getConfiguration().getLocales().get(0).getLanguage();
+        Log.w(TAG, "onActivityCreated: " + language);
 
         Log.d(TAG, "onActivityCreated: desc get lang: " + language + " questId: " + questId);
 
