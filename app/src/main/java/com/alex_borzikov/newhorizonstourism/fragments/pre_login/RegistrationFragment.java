@@ -2,6 +2,7 @@ package com.alex_borzikov.newhorizonstourism.fragments.pre_login;
 
 import android.Manifest;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 
@@ -31,6 +32,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static android.content.Context.MODE_PRIVATE;
+
 public class RegistrationFragment extends Fragment {
 
     private static final String TAG = "Borlehandro";
@@ -44,12 +47,14 @@ public class RegistrationFragment extends Fragment {
     private NavController controller;
     private String language, userTicket;
 
+    private SharedPreferences preferences;
+
     static final int REQUEST_ALL_RESULT = 1;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        language = getArguments().getString("language");
+        preferences = getActivity().getSharedPreferences("User", MODE_PRIVATE);
     }
 
     @Override
@@ -107,10 +112,9 @@ public class RegistrationFragment extends Fragment {
 
                     if (!result.equals("-1")) {
                         userTicket = result;
-                        // Todo refactor. Very bad code!
-                        PreLoginActivity.language = language;
-                        PreLoginActivity.userTicket = userTicket;
-
+                        SharedPreferences.Editor editor = preferences.edit();
+                        editor.putString("ticket", userTicket);
+                        editor.apply();
                         checkPermissions();
                     }
                 });
@@ -165,10 +169,6 @@ public class RegistrationFragment extends Fragment {
         Intent intent = new Intent(getActivity(), MainActivity.class);
 
         intent.putExtra("uid", "login");
-
-        // TODO Send password safety
-        intent.putExtra("language", language);
-        intent.putExtra("userTicket", userTicket);
 
         startActivity(intent);
     }

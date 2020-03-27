@@ -10,7 +10,6 @@ import java.util.List;
 
 public class MainViewModel extends ViewModel {
 
-    private final MutableLiveData<String> userTicket = new MutableLiveData<>();
     private final MutableLiveData<Boolean> showOpened = new MutableLiveData<>();
     private final MutableLiveData<Boolean> needPointsQueue = new MutableLiveData<>();
     private final MutableLiveData<Boolean> questStarted = new MutableLiveData<>();
@@ -18,14 +17,6 @@ public class MainViewModel extends ViewModel {
     private final MutableLiveData<Boolean> queueOpened = new MutableLiveData<>();
     private final MutableLiveData<String> questId = new MutableLiveData<>();
     private final MutableLiveData<LinkedList<PointInfoItem>> pointsQueue = new MutableLiveData<>();
-
-    public void setUserTicket(String item) {
-        userTicket.setValue(item);
-    }
-
-    public LiveData<String> getUserTicket() {
-        return userTicket;
-    }
 
     public MutableLiveData<Boolean> getShowOpened() {
         return showOpened;

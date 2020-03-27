@@ -1,6 +1,7 @@
 package com.alex_borzikov.newhorizonstourism.fragments.pre_login;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.os.Bundle;
@@ -25,6 +26,8 @@ import com.alex_borzikov.newhorizonstourism.activities.MainActivity;
 
 import java.util.Locale;
 
+import static android.content.Context.MODE_PRIVATE;
+
 public class LanguageFragment extends Fragment {
 
     private static final String TAG = "Borlehandro";
@@ -38,6 +41,14 @@ public class LanguageFragment extends Fragment {
     private Button commitLangButton;
 
     private Locale myLocale;
+
+    private SharedPreferences preferences;
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        preferences = getActivity().getSharedPreferences("User", MODE_PRIVATE);
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -55,23 +66,19 @@ public class LanguageFragment extends Fragment {
 
             switch (i) {
                 case R.id.englishButton :
-                    language = "english";
                     setLocale("en");
                     break;
 
                 case R.id.russianButton :
-                    language = "russian";
                     setLocale("ru");
                     break;
 
                 case R.id.chineseButton :
-                    language = "chinese";
                     setLocale("ch");
                     break;
             }
 
             commitLangButton.setVisibility(View.VISIBLE);
-            Log.d(TAG, "onCheckedChanged: " + language);
             // Todo here will be multilingual "Select" text
             // commitLangButton.setText(language);
         });
@@ -81,10 +88,8 @@ public class LanguageFragment extends Fragment {
             Log.d(TAG, "onCreateView: " + languageGroup.indexOfChild(
                     languageGroup.findViewById(languageGroup.getCheckedRadioButtonId())));
 
-            if(language!=null) {
-                Bundle bundle = new Bundle();
-                bundle.putString("language", language);
-                controller.navigate(R.id.toPreLogin, bundle);
+            if(preferences.contains("language")) {
+                controller.navigate(R.id.toPreLogin);
             }
         });
 
@@ -98,6 +103,10 @@ public class LanguageFragment extends Fragment {
     }
 
     public void setLocale(String localeName) {
+
+            SharedPreferences.Editor editor = preferences.edit();
+            editor.putString("language", localeName);
+            editor.apply();
 
             myLocale = new Locale(localeName);
             Resources res = getResources();

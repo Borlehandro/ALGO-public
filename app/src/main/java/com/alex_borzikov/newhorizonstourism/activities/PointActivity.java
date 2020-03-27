@@ -60,7 +60,7 @@ public class PointActivity extends AppCompatActivity {
 
         pointId = getIntent().getStringExtra("pointId");
         language = getResources().getConfiguration().getLocales().get(0).getLanguage();
-        userTicket = getIntent().getStringExtra("userTicket");
+        userTicket = getSharedPreferences("User", MODE_PRIVATE).getString("user", "0");
 
         Log.d(TAG, "onCreate: id in Point " + pointId);
         Log.d(TAG, "onCreate: lang in Point " + language);
@@ -124,7 +124,6 @@ public class PointActivity extends AppCompatActivity {
             Log.d(TAG, "onCreate: Point: " + info.getTaskId());
 
             toTask.putExtra("taskId", String.valueOf(info.getTaskId()));
-            toTask.putExtra("userTicket", userTicket);
 
             startActivityForResult(toTask, 1);
         });

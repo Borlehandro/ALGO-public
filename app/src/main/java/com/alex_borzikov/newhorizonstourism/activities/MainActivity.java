@@ -32,8 +32,6 @@ public class MainActivity extends AppCompatActivity {
 
     public static String pointCode;
 
-    private String userTicket;
-
     private Fragment bottomFragment;
     private BottomSheetBehavior sheetBehavior;
 
@@ -45,18 +43,13 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+
         bottomFragment = getSupportFragmentManager().findFragmentById(R.id.bottomSheetNavFragment);
 
         Log.d(TAG, "onCreate: ");
 
-        // TODO Send password safety
-        userTicket = getIntent().getStringExtra("userTicket");
-
-        Log.d(TAG, "userTicket " + userTicket);
-
         viewModel = new ViewModelProvider(this).get(MainViewModel.class);
         // Are you need it?
-        viewModel.setUserTicket(userTicket);
         viewModel.setShowOpened(false);
         sheetBehavior = BottomSheetBehavior.from(bottomFragment.getView());
 
@@ -130,7 +123,6 @@ public class MainActivity extends AppCompatActivity {
 
                     Intent toPoint = new Intent(getApplicationContext(), PointActivity.class);
                     toPoint.putExtra("pointId", pointId);
-                    toPoint.putExtra("userTicket", userTicket);
 
                     // It can not repeat!
                     pointCode = null;

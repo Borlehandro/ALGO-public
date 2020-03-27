@@ -2,6 +2,7 @@ package com.alex_borzikov.newhorizonstourism.fragments.pre_login;
 
 import android.Manifest;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 
@@ -31,6 +32,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static android.content.Context.MODE_PRIVATE;
+
 public class LoginFragment extends Fragment {
 
     private static final String TAG = "Borlehandro";
@@ -43,6 +46,7 @@ public class LoginFragment extends Fragment {
     private Button loginButton;
 
     private ProgressBar progress;
+    private  SharedPreferences preferences;
 
     private NavController controller;
     private String language, userTicket;
@@ -52,7 +56,7 @@ public class LoginFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        language = getArguments().getString("language");
+        preferences = getActivity().getSharedPreferences("User", MODE_PRIVATE);
     }
 
     @Override
@@ -94,9 +98,9 @@ public class LoginFragment extends Fragment {
                     if (!result.equals("-1")) {
                         userTicket = result;
 
-                        // Todo refactor. Very bad code!
-                        PreLoginActivity.language = language;
-                        PreLoginActivity.userTicket = result;
+                        SharedPreferences.Editor editor = preferences.edit();
+                        editor.putString("ticket", userTicket);
+                        editor.apply();
 
                         checkPermissions();
                     }
@@ -161,10 +165,6 @@ public class LoginFragment extends Fragment {
         Intent intent = new Intent(getActivity(), MainActivity.class);
 
         intent.putExtra("uid", "login");
-
-        // TODO Send password safety
-        intent.putExtra("language", language);
-        intent.putExtra("userTicket", userTicket);
 
         startActivity(intent);
     }

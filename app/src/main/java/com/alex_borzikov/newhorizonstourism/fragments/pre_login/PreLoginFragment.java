@@ -1,5 +1,6 @@
 package com.alex_borzikov.newhorizonstourism.fragments.pre_login;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -14,17 +15,27 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 import com.alex_borzikov.newhorizonstourism.R;
+import com.alex_borzikov.newhorizonstourism.activities.PreLoginActivity;
+
+import static android.content.Context.MODE_PRIVATE;
 
 public class PreLoginFragment extends Fragment implements View.OnClickListener {
 
     private NavController controller;
+    private SharedPreferences preferences;
+
     private Button registerButton, loginButton;
-    private String language;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        language = getArguments().getString("language");
+
+        preferences = getActivity().getSharedPreferences("User", MODE_PRIVATE);
+
+        if(preferences.contains("ticket")) {
+            // Ok
+            ((PreLoginActivity)(getActivity())).checkPermissions();
+        }
     }
 
     @Override
@@ -51,17 +62,14 @@ public class PreLoginFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onClick(View view) {
 
-        Bundle bundle = new Bundle();
-        bundle.putString("language", language);
-
         switch (view.getId()) {
 
             case R.id.loginChoice :
-                controller.navigate(R.id.toLogin, bundle);
+                controller.navigate(R.id.toLogin);
                 break;
 
             case R.id.registerChoice:
-                controller.navigate(R.id.toRegistration, bundle);
+                controller.navigate(R.id.toRegistration);
                 break;
         }
     }

@@ -1,6 +1,7 @@
 package com.alex_borzikov.newhorizonstourism.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.util.LogWriter;
 
 import android.icu.text.IDNA;
 import android.os.Bundle;
@@ -46,7 +47,7 @@ public class TaskActivity extends AppCompatActivity {
         Log.d(TAG, "onCreate: Task: " + taskId);
 
         language = getResources().getConfiguration().getLocales().get(0).getLanguage();
-        userTicket = getIntent().getStringExtra("userTicket");
+        userTicket = getSharedPreferences("User", MODE_PRIVATE).getString("ticket", null);
 
         descriptionTask = findViewById(R.id.taskDescription);
 
@@ -71,9 +72,13 @@ public class TaskActivity extends AppCompatActivity {
         args.put("language", language);
         args.put("userTicket", userTicket);
 
+        Log.w(TAG, "onCreate: task " + userTicket);
+
         InfoTask taskInfo = new InfoTask(result -> {
 
             try {
+
+                Log.w(TAG, "Result: " + result);
 
                 TaskInfoItem info = JsonParser.parseTaskInfo(result);
 
