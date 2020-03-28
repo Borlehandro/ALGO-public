@@ -167,9 +167,9 @@ public class RegistrationFragment extends Fragment {
     private void startMain() {
 
         Intent intent = new Intent(getActivity(), MainActivity.class);
-
         intent.putExtra("uid", "login");
-
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        getActivity().finish();
         startActivity(intent);
     }
 

@@ -24,7 +24,7 @@
             android:layout_gravity="center">
 
             <RadioGroup
-                android:id="@+id/languageGroup"
+                android:id="@+id/changeLanguageGroup"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
@@ -36,7 +36,7 @@
                 app:layout_constraintTop_toTopOf="parent">
 
                 <RadioButton
-                    android:id="@+id/englishButton"
+                    android:id="@+id/changeEnglishButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:drawableEnd="@drawable/british"
@@ -49,7 +49,7 @@
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <RadioButton
-                    android:id="@+id/russianButton"
+                    android:id="@+id/changeRussianButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:drawableEnd="@drawable/russian"
@@ -62,7 +62,7 @@
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <RadioButton
-                    android:id="@+id/chineseButton"
+                    android:id="@+id/changeChineseButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:drawableEnd="@drawable/chinese"
@@ -76,17 +76,16 @@
 
             </RadioGroup>
 
-            <Button
+            <ImageButton
                 android:id="@+id/commitLanguageButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="8dp"
-                android:text="@string/sumbit_lang"
+                android:background="@drawable/right_arrow"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/languageGroup" />
-            <!-- Todo Make text dynamic -->
+                app:layout_constraintTop_toBottomOf="@+id/changeLanguageGroup" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

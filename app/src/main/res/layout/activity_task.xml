@@ -25,18 +25,23 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:text="Большое описание, подстраивающееся под экран...... Большое описание, подстраивающееся под экран. Большое описание, подстраивающееся под экран. Большое описание, подстраивающееся под экран. Большое описание, подстраивающееся под экран. Большое описание, подстраивающееся под экран. Большое описание, подстраивающееся под экран. Большое описание, подстраивающееся под экран..."
+        android:textAlignment="center"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toTopOf="@+id/radioGroup"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/taskTitle" />
 
 
     <RadioGroup
         android:id="@+id/radioGroup"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
+        app:layout_constraintBottom_toTopOf="@+id/checkButton"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/taskDescription">
 
@@ -44,28 +49,51 @@
             android:id="@+id/radio1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="1" />
+            android:layout_gravity="center"
+            android:background="@drawable/radio_background"
+            android:gravity="center"
+            android:padding="4dp"
+            android:layout_marginTop="4dp"
+            android:text="1"
+            android:textAlignment="center"
+            android:textSize="16sp" />
 
         <RadioButton
             android:id="@+id/radio2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="2" />
+            android:layout_marginTop="4dp"
+            android:layout_gravity="center"
+            android:background="@drawable/radio_background"
+            android:gravity="center"
+            android:padding="4dp"
+            android:text="2"
+            android:textAlignment="center"
+            android:textSize="16sp" />
 
         <RadioButton
             android:id="@+id/radio3"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="3" />
+            android:layout_gravity="center"
+            android:layout_marginTop="4dp"
+            android:background="@drawable/radio_background"
+            android:gravity="center"
+            android:padding="4dp"
+            android:text="3"
+            android:textAlignment="center"
+            android:textSize="16sp" />
     </RadioGroup>
 
-    <Button
+    <ImageButton
         android:id="@+id/checkButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        android:text="@string/taskButton"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/right_arrow"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/radioGroup" />
 
@@ -73,12 +101,15 @@
         android:id="@+id/taskTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="@color/colorLink"
-        android:textSize="24sp"
         android:layout_marginTop="8dp"
         android:text="@string/taskTitle"
+        android:textColor="@color/colorLink"
+        android:textSize="24sp"
+        app:layout_constraintBottom_toTopOf="@+id/taskDescription"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_chainStyle="packed" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

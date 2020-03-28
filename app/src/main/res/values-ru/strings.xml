@@ -4,7 +4,7 @@
     <string name="login">Войти</string>
     <string name="register">Зарегистрироваться</string>
     <string name="preLoginDescription">Зарегистрируйте новый аккаунт или войдите в уже существующий</string>
-    <string name="task">Получить задание</string>
+    <string name="getPointTask">Получить задание</string>
     <string name="taskButton">Отправить</string>
     <string name="passwordHint">Пароль</string>
     <string name="usernameHint">Имя пользователя</string>
@@ -22,4 +22,5 @@
     <string name="permissionDeny">Отмена</string>
     <string name="pointsListHeader">Список точек квеста</string>
     <string name="taskTitle">Выберете правильный ответ</string>
+    <string name="profileExitButton">Выйти</string>
 </resources>

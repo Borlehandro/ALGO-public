@@ -7,7 +7,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
 
-public class FinishDialog extends DialogFragment {
+public class AboutDialog extends DialogFragment {
 
     @NonNull
     @Override
@@ -16,13 +16,12 @@ public class FinishDialog extends DialogFragment {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
         // Todo Fix text
-        builder.setMessage("Спасибо за то, что вы прошли квест! В настоящий момент приложение " +
-                "находится в режиме тестирования, поэтому мы будем благодарны за вашу оценку " +
-                "и отзыв на Google Play!")
+        builder.setMessage("О приложении...")
                 .setNeutralButton("Хорошо", (dialog, id) -> {
                     dismiss();
                 });
 
         return builder.create();
     }
+
 }

@@ -6,6 +6,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -18,6 +20,7 @@ import com.alex_borzikov.newhorizonstourism.api.InfoTask;
 import com.alex_borzikov.newhorizonstourism.api.JsonParser;
 import com.alex_borzikov.newhorizonstourism.api.PictureTask;
 import com.alex_borzikov.newhorizonstourism.data.PointInfoItem;
+import com.alex_borzikov.newhorizonstourism.dialogs.AboutDialog;
 
 import org.json.JSONException;
 
@@ -52,18 +55,36 @@ public class PointActivity extends AppCompatActivity {
 
         progressBar = findViewById(R.id.pointProgress);
 
+        pointId = getIntent().getStringExtra("pointId");
+        userTicket = getSharedPreferences("User", MODE_PRIVATE).getString("user", "0");
+
+        Log.d(TAG, "onCreate: id in Point " + pointId);
+        Log.d(TAG, "onCreate: lang in Point " + language);
+
+        showTaskButton.setOnClickListener((View v) -> {
+
+            Intent toTask = new Intent(this, TaskActivity.class);
+
+            Log.d(TAG, "onCreate: Point: " + info.getTaskId());
+
+            toTask.putExtra("taskId", String.valueOf(info.getTaskId()));
+
+            startActivityForResult(toTask, 1);
+        });
+
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        language = getResources().getConfiguration().getLocales().get(0).getLanguage();
+        showTaskButton.setText(getResources().getString(R.string.getPointTask));
+
         progressBar.setVisibility(View.VISIBLE);
         descriptionView.setVisibility(View.INVISIBLE);
         nameView.setVisibility(View.INVISIBLE);
         imageView.setVisibility(View.INVISIBLE);
         showTaskButton.setVisibility(View.INVISIBLE);
-
-        pointId = getIntent().getStringExtra("pointId");
-        language = getResources().getConfiguration().getLocales().get(0).getLanguage();
-        userTicket = getSharedPreferences("User", MODE_PRIVATE).getString("user", "0");
-
-        Log.d(TAG, "onCreate: id in Point " + pointId);
-        Log.d(TAG, "onCreate: lang in Point " + language);
 
         if (!pointId.equals("-1")) {
 
@@ -116,18 +137,6 @@ public class PointActivity extends AppCompatActivity {
             Log.e(TAG, "onCreate: ERROR POINT_ID == -1");
             finish();
         }
-
-        showTaskButton.setOnClickListener((View v) -> {
-
-            Intent toTask = new Intent(this, TaskActivity.class);
-
-            Log.d(TAG, "onCreate: Point: " + info.getTaskId());
-
-            toTask.putExtra("taskId", String.valueOf(info.getTaskId()));
-
-            startActivityForResult(toTask, 1);
-        });
-
     }
 
     @Override
@@ -145,4 +154,28 @@ public class PointActivity extends AppCompatActivity {
         finish();
         super.onBackPressed();
     }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+
+        getMenuInflater().inflate(R.menu.main_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        switch (item.getItemId()) {
+            case R.id.accountItem:
+                startActivity(new Intent(this, UserProfileActivity.class));
+                return true;
+            case R.id.itemAbout:
+                AboutDialog dialog = new AboutDialog();
+                dialog.show(getSupportFragmentManager(), "about");
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
 }

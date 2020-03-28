@@ -3,7 +3,7 @@
     <string name="sumbit_lang">Next</string>
     <string name="login">Login</string>
     <string name="register">Register</string>
-    <string name="task">Get a task</string>
+    <string name="getPointTask">Get a task</string>
     <string name="taskButton">Send</string>
     <string name="passwordHint">Password</string>
     <string name="usernameHint">Username</string>
@@ -27,5 +27,8 @@
     <string name="pointsCompletedTitle">Points Completed</string>
     <string name="kilometersCompletedTitle">Kilometers completed</string>
     <string name="bonusesCollectedTitle">Bonuses collected</string>
+    <string name="languageItem">Language</string>
+    <string name="aboutItem">About</string>
+    <string name="accountItem">UserAccount</string>
 
 </resources>

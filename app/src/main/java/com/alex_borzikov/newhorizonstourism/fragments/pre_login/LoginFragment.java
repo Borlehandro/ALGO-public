@@ -163,9 +163,9 @@ public class LoginFragment extends Fragment {
     private void startMain() {
 
         Intent intent = new Intent(getActivity(), MainActivity.class);
-
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.putExtra("uid", "login");
-
+        getActivity().finish();
         startActivity(intent);
     }
 

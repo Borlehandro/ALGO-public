@@ -61,12 +61,6 @@ public class QuestDescriptionFragment extends Fragment {
 
         progressBar = view.findViewById(R.id.questProgress);
 
-        progressBar.setVisibility(View.VISIBLE);
-        descriptionView.setVisibility(View.INVISIBLE);
-        nameView.setVisibility(View.INVISIBLE);
-        questImage.setVisibility(View.INVISIBLE);
-        startButton.setVisibility(View.INVISIBLE);
-
         startButton.setOnClickListener((View v) -> {
             controller.navigate(R.id.toPointsQueue);
         });
@@ -88,7 +82,6 @@ public class QuestDescriptionFragment extends Fragment {
         viewModel = new ViewModelProvider(getActivity()).get(MainViewModel.class);
 
         questId = viewModel.getQuestId().getValue();
-        language = getResources().getConfiguration().getLocales().get(0).getLanguage();
         Log.w(TAG, "onActivityCreated: " + language);
 
         Log.d(TAG, "onActivityCreated: desc get lang: " + language + " questId: " + questId);
@@ -97,6 +90,15 @@ public class QuestDescriptionFragment extends Fragment {
 
     @Override
     public void onStart() {
+
+        progressBar.setVisibility(View.VISIBLE);
+        descriptionView.setVisibility(View.INVISIBLE);
+        nameView.setVisibility(View.INVISIBLE);
+        questImage.setVisibility(View.INVISIBLE);
+        startButton.setVisibility(View.INVISIBLE);
+
+        language = getResources().getConfiguration().getLocales().get(0).getLanguage();
+        startButton.setText(getResources().getString(R.string.showQuestButton));
 
         Map<String, String> getQuestparams = new HashMap<>();
 

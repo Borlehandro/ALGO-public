@@ -1,6 +1,5 @@
 package com.alex_borzikov.newhorizonstourism.fragments.pre_login;
 
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.content.res.Resources;
@@ -17,12 +16,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.RadioGroup;
-import android.widget.Toast;
 
 import com.alex_borzikov.newhorizonstourism.R;
-import com.alex_borzikov.newhorizonstourism.activities.MainActivity;
 
 import java.util.Locale;
 
@@ -32,13 +29,11 @@ public class LanguageFragment extends Fragment {
 
     private static final String TAG = "Borlehandro";
 
-    private String language;
-
     private NavController controller;
 
     private RadioGroup languageGroup;
 
-    private Button commitLangButton;
+    private ImageButton commitLangButton;
 
     private Locale myLocale;
 
@@ -56,7 +51,7 @@ public class LanguageFragment extends Fragment {
 
         View v = inflater.inflate(R.layout.fragment_language, container, false);
 
-        languageGroup = v.findViewById(R.id.languageGroup);
+        languageGroup = v.findViewById(R.id.changeLanguageGroup);
         commitLangButton = v.findViewById(R.id.commitLanguageButton);
         commitLangButton.setVisibility(View.INVISIBLE);
 
@@ -65,22 +60,21 @@ public class LanguageFragment extends Fragment {
             Log.d(TAG, "onCheckedChanged: " + i );
 
             switch (i) {
-                case R.id.englishButton :
+                case R.id.changeEnglishButton:
                     setLocale("en");
                     break;
 
-                case R.id.russianButton :
+                case R.id.changeRussianButton:
                     setLocale("ru");
                     break;
 
-                case R.id.chineseButton :
-                    setLocale("ch");
+                case R.id.changeChineseButton:
+                    setLocale("zh");
                     break;
             }
 
             commitLangButton.setVisibility(View.VISIBLE);
-            // Todo here will be multilingual "Select" text
-            // commitLangButton.setText(language);
+
         });
 
         commitLangButton.setOnClickListener((View view) -> {
@@ -115,19 +109,6 @@ public class LanguageFragment extends Fragment {
             conf.locale = myLocale;
             res.updateConfiguration(conf, dm);
 //            Intent refresh = new Intent(getContext(), getActivity().getClass());
-//            refresh.putExtra("lang", localeName);
 //            startActivity(refresh);
-    }
-
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        // refresh your views here
-        commitLangButton.setText(R.string.sumbit_lang);
-        super.onConfigurationChanged(newConfig);
-        // Checks the active language
-
-        if (newConfig.locale == Locale.ENGLISH) {
-            Toast.makeText(getActivity(), "English", Toast.LENGTH_SHORT).show();
-        }
     }
 }

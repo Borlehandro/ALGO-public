@@ -16,6 +16,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.alex_borzikov.newhorizonstourism.MainViewModel;
 import com.alex_borzikov.newhorizonstourism.R;
@@ -40,6 +42,8 @@ public class QuestListFragment extends Fragment implements RecyclerViewClickList
     private MainViewModel viewModel;
 
     private RecyclerView questList;
+    private TextView title;
+    private ProgressBar progress;
 
     private NavController controller;
 
@@ -47,9 +51,13 @@ public class QuestListFragment extends Fragment implements RecyclerViewClickList
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
+        Log.d(TAG, "Quest List onCreateView");
+
         View view = inflater.inflate(R.layout.fragment_quest_list, container, false);
 
         questList = view.findViewById(R.id.quest_view);
+        title = view.findViewById(R.id.questText);
+        progress = view.findViewById(R.id.progressBar);
 
         LinearLayoutManager manager = new LinearLayoutManager(getActivity());
         questList.setLayoutManager(manager);
@@ -77,10 +85,17 @@ public class QuestListFragment extends Fragment implements RecyclerViewClickList
     @Override
     public void onStart() {
 
+        progress.setVisibility(View.VISIBLE);
+        title.setVisibility(View.INVISIBLE);
+        questList.setVisibility(View.INVISIBLE);
+
+        Log.d(TAG, "Quest List onStart");
+        String language = getResources().getConfiguration().getLocales().get(0).getLanguage();
+
+        title.setText(getResources().getString(R.string.questListHeader));
+
         Map<String, String> questListParams = new HashMap<>();
         questListParams.put("mode", "GET_QUESTS_LIST");
-        String language = getResources().getConfiguration().getLocales().get(0).getLanguage();
-        Log.w(TAG, "onStart: " + language);
         questListParams.put("language", language);
 
         InfoTask getListTask = new InfoTask(result -> {
@@ -118,6 +133,10 @@ public class QuestListFragment extends Fragment implements RecyclerViewClickList
 
                 questList.setAdapter(adapter);
 
+                progress.setVisibility(View.INVISIBLE);
+                title.setVisibility(View.VISIBLE);
+                questList.setVisibility(View.VISIBLE);
+
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -132,7 +151,5 @@ public class QuestListFragment extends Fragment implements RecyclerViewClickList
     public void recyclerViewListClicked(View v, int position) {
 
     }
-
-
 
 }

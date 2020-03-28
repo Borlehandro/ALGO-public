@@ -3,12 +3,15 @@ package com.alex_borzikov.newhorizonstourism.activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -16,6 +19,7 @@ import com.alex_borzikov.newhorizonstourism.MainViewModel;
 import com.alex_borzikov.newhorizonstourism.R;
 import com.alex_borzikov.newhorizonstourism.api.InfoTask;
 import com.alex_borzikov.newhorizonstourism.data.PointInfoItem;
+import com.alex_borzikov.newhorizonstourism.dialogs.AboutDialog;
 import com.alex_borzikov.newhorizonstourism.dialogs.FinishDialog;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 
@@ -43,7 +47,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
         bottomFragment = getSupportFragmentManager().findFragmentById(R.id.bottomSheetNavFragment);
 
         Log.d(TAG, "onCreate: ");
@@ -63,12 +66,32 @@ public class MainActivity extends AppCompatActivity {
         });
 
         viewModel.getQueueOpened().observe(this, opened -> {
-            if(opened) {
-
+            if(opened)
                 sheetBehavior.setState(BottomSheetBehavior.STATE_HALF_EXPANDED);
-
-            }
         });
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+
+        getMenuInflater().inflate(R.menu.main_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        switch (item.getItemId()) {
+            case R.id.accountItem:
+                startActivity(new Intent(this, UserProfileActivity.class));
+                return true;
+            case R.id.itemAbout:
+                AboutDialog dialog = new AboutDialog();
+                dialog.show(getSupportFragmentManager(), "about");
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     @Override

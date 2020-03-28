@@ -20,6 +20,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.alex_borzikov.newhorizonstourism.MainViewModel;
 import com.alex_borzikov.newhorizonstourism.R;
@@ -52,6 +53,7 @@ public class PointsQueueFragment extends Fragment {
 
     private RecyclerView pointsQueueView;
     private Button questGoButton;
+    private TextView title;
 
     private ProgressBar progressBar;
 
@@ -69,9 +71,7 @@ public class PointsQueueFragment extends Fragment {
 
         progressBar = v.findViewById(R.id.pointQueueProgress);
 
-        progressBar.setVisibility(View.VISIBLE);
-        pointsQueueView.setVisibility(View.INVISIBLE);
-        questGoButton.setVisibility(View.INVISIBLE);
+        title = v.findViewById(R.id.pointsQueueText);
 
         return v;
     }
@@ -103,12 +103,19 @@ public class PointsQueueFragment extends Fragment {
     @Override
     public void onStart() {
 
+        progressBar.setVisibility(View.VISIBLE);
+        pointsQueueView.setVisibility(View.INVISIBLE);
+        questGoButton.setVisibility(View.INVISIBLE);
+
+        language = getResources().getConfiguration().getLocales().get(0).getLanguage();
+
+        title.setText(getResources().getString(R.string.pointsListHeader));
+        questGoButton.setText(getResources().getString(R.string.pointQueueButton));
+
         Map<String, String> codeParams = new HashMap<>();
         codeParams.put("mode", "GET_POINTS_QUEUE");
         codeParams.put("questId", questId);
         codeParams.put("language", language);
-
-
 
         InfoTask queueTask = new InfoTask(result -> {
             try {
