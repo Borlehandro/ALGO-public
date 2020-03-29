@@ -215,6 +215,7 @@ public class MapFragment extends Fragment implements Session.RouteListener {
         showButton = fragment.findViewById(R.id.showButton);
         codeScanButton = fragment.findViewById(R.id.scanCodeButton);
         anchorButton = fragment.findViewById(R.id.anchorActionButton);
+        codeScanButton.setVisibility(View.INVISIBLE);
 
 
         if (!focused)
@@ -303,6 +304,8 @@ public class MapFragment extends Fragment implements Session.RouteListener {
             viewModel.setShowOpened(false);
             viewModel.setNeedPointsQueue(false);
             viewModel.setQuestFinished(false);
+
+            codeScanButton.setVisibility(View.VISIBLE);
 
             mapObjects.clear();
 

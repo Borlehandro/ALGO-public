@@ -171,12 +171,30 @@ public class MainActivity extends AppCompatActivity {
             if (points != null && points.size() != 1) {
                 points.pop();
             } else {
+                // Send update to server
+
+                Map<String, String> codeParams = new HashMap<>();
+                codeParams.put("mode", "SET_COMPLETED");
+                codeParams.put("userTicket",
+                        getSharedPreferences("User", MODE_PRIVATE).getString("ticket", "0"));
+                codeParams.put("questId", viewModel.getQuestId().getValue());
+
+                InfoTask completedTask = new InfoTask(result -> {
+
+                    if(!result.equals("-1")) {
+
+                        FinishDialog finish = new FinishDialog(result);
+                        finish.show(getSupportFragmentManager(), "finish");
+
+                    } else Log.e(TAG, "onActivityResult: WRONG UPDATE RESULT");
+
+                });
+
+                completedTask.execute(codeParams);
+
                 Toast.makeText(MainActivity.this, "That's all!",
                         Toast.LENGTH_LONG).show();
                 viewModel.setQuestFinished(true);
-
-                FinishDialog finish = new FinishDialog();
-                finish.show(getSupportFragmentManager(), "finish");
 
             }
 

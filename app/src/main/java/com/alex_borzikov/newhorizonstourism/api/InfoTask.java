@@ -4,6 +4,7 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 import com.alex_borzikov.newhorizonstourism.ResponsibleTask;
+import com.google.android.gms.common.api.Api;
 
 import java.io.IOException;
 import java.util.Map;
@@ -28,7 +29,7 @@ public class InfoTask extends AsyncTask<Map<String, String>, Void, String> {
                 case "GET_QUESTS_LIST":
                     System.out.println("It's quest list with lang " + params[0].get("language"));
                     Log.d(TAG, "It's quest list with lang " + params[0].get("language"));
-                    return ApiClient.getGuestList(params[0].get("language"));
+                    return ApiClient.getGuestList(params[0].get("language"), params[0].get("userTicket"));
 
                 case "GET_QUEST_INFO":
                     Log.d(TAG, "It's quest info");
@@ -65,6 +66,18 @@ public class InfoTask extends AsyncTask<Map<String, String>, Void, String> {
                     return ApiClient.checkTaskAnswer(params[0].get("answerIndex"),
                             params[0].get("taskId"),
                             params[0].get("userTicket"));
+
+                case "GET_USER_INFO":
+                    Log.d(TAG, "It's get user info");
+                    return ApiClient.getUserInfo(params[0].get("userTicket"));
+
+                case "SET_COMPLETED":
+                    Log.d(TAG, "It's set completed");
+                    return ApiClient.setCompleted(params[0].get("userTicket"), params[0].get("questId"));
+
+                case "CHECK_NOT_COMPLETED":
+                    Log.d(TAG, "It's check not completed");
+                    return ApiClient.checkNotCompleted(params[0].get("userTicket"), params[0].get("questId"));
             }
         } catch (IOException | NullPointerException e) {
             Log.e(TAG, "doInBackground: " + e.getMessage());

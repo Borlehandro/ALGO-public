@@ -16,7 +16,7 @@
     <string name="preLoginDescription">You can log in or create new account</string>
     <string name="registerButton">Register</string>
     <string name="taskSuccess">Well done!</string>
-    <string name="taskFail">Please try again...</string>
+    <string name="taskFail">Please try again…</string>
     <string name="permissionMessage">ALGO asks a permission to your camera and location.</string>
     <string name="permissionAllow">OK</string>
     <string name="permissionDeny">Cancel</string>
@@ -30,5 +30,7 @@
     <string name="languageItem">Language</string>
     <string name="aboutItem">About</string>
     <string name="accountItem">UserAccount</string>
+    <string name="helloText">Hello, %1$s!</string>
+    <string name="routeNotFoundText">ALGO не может построить пешеходный маршрут. Возможно, это связано с тем, что вы находитесь в другом городе.</string>
 
 </resources>

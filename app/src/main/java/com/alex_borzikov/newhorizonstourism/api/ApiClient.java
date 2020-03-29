@@ -35,13 +35,16 @@ public class ApiClient {
         proxyMap.put("GET_TASKS_INFO", 7);
         proxyMap.put("CHECK_ANSWER", 8);
         proxyMap.put("GET_POINTS_QUEUE", 9);
+        proxyMap.put("SET_COMPLETED", 10);
+        proxyMap.put("CHECK_NOT_COMPLETED", 11);
+        proxyMap.put("GET_USER_INFO", 12);
 
         MODES = Collections.unmodifiableMap(proxyMap);
     }
 
     private static final String SERVER_URL = "https://algo-project.herokuapp.com/";
 
-    public static String getGuestList(String language) throws IOException {
+    public static String getGuestList(String language, String userTicket) throws IOException {
 
         HttpURLConnection connection = connectPost();
 
@@ -54,10 +57,9 @@ public class ApiClient {
 
         writer.write("mode=" + MODES.get("GET_QUESTS_LIST"));
         writer.write("&language=" + language);
+        writer.write("&userTicket=" + userTicket);
 
         Log.d(TAG, "Send lang " + language);
-        System.out.println( "Send lang " + language);
-        System.out.println("Send mode " + MODES.get("GET_QUESTS_LIST"));
         Log.d(TAG, "Send mode " + MODES.get("GET_QUESTS_LIST"));
 
         writer.flush();
@@ -76,7 +78,6 @@ public class ApiClient {
         }
 
         Log.d(TAG, "Login Client must return: " + outputStringBuilder.toString());
-        System.out.println("Login Client must return: " + outputStringBuilder.toString());
         return outputStringBuilder.toString();
     }
 
@@ -397,6 +398,108 @@ public class ApiClient {
         Log.d(TAG, "Login Client must return: " + sb.toString());
 
         return sb;
+    }
+
+    public static String getUserInfo(String userTicket) throws IOException {
+
+        HttpURLConnection connection = connectPost();
+        connection.setDoOutput(true);
+
+        OutputStream data = connection.getOutputStream();
+
+        BufferedWriter writer = new BufferedWriter(
+                new OutputStreamWriter(data, StandardCharsets.UTF_8));
+
+        writer.write("mode=" + MODES.get("GET_USER_INFO"));
+        writer.write("&userTicket=" + userTicket);
+
+        writer.flush();
+        writer.close();
+
+        InputStream content = connection.getInputStream();
+
+        // Todo REFACTOR! IT'S COPY-PASTE CODE!
+        String line;
+        //connection.
+        BufferedReader in = new BufferedReader(new InputStreamReader(content));
+        StringBuilder outputStringBuilder = new StringBuilder();
+
+        while ((line = in.readLine()) != null) {
+            outputStringBuilder.append(line);
+        }
+
+        Log.d(TAG, "Login Client must return: " + outputStringBuilder.toString());
+
+        return outputStringBuilder.toString();
+    }
+
+    public static String checkNotCompleted(String userTicket, String questId) throws IOException {
+
+        HttpURLConnection connection = connectPost();
+        connection.setDoOutput(true);
+
+        OutputStream data = connection.getOutputStream();
+
+        BufferedWriter writer = new BufferedWriter(
+                new OutputStreamWriter(data, StandardCharsets.UTF_8));
+
+        writer.write("mode=" + MODES.get("CHECK_NOT_COMPLETED"));
+        writer.write("&userTicket=" + userTicket);
+        writer.write("&quest_id=" + questId);
+
+        writer.flush();
+        writer.close();
+
+        InputStream content = connection.getInputStream();
+
+        // Todo REFACTOR! IT'S COPY-PASTE CODE!
+        String line;
+        //connection.
+        BufferedReader in = new BufferedReader(new InputStreamReader(content));
+        StringBuilder outputStringBuilder = new StringBuilder();
+
+        while ((line = in.readLine()) != null) {
+            outputStringBuilder.append(line);
+        }
+
+        Log.d(TAG, "Login Client must return: " + outputStringBuilder.toString());
+
+        return outputStringBuilder.toString();
+
+    }
+
+    public static String setCompleted(String userTicket, String questId) throws IOException {
+
+        HttpURLConnection connection = connectPost();
+        connection.setDoOutput(true);
+
+        OutputStream data = connection.getOutputStream();
+
+        BufferedWriter writer = new BufferedWriter(
+                new OutputStreamWriter(data, StandardCharsets.UTF_8));
+
+        writer.write("mode=" + MODES.get("SET_COMPLETED"));
+        writer.write("&userTicket=" + userTicket);
+        writer.write("&quest_id=" + questId);
+
+        writer.flush();
+        writer.close();
+
+        InputStream content = connection.getInputStream();
+
+        // Todo REFACTOR! IT'S COPY-PASTE CODE!
+        String line;
+        //connection.
+        BufferedReader in = new BufferedReader(new InputStreamReader(content));
+        StringBuilder outputStringBuilder = new StringBuilder();
+
+        while ((line = in.readLine()) != null) {
+            outputStringBuilder.append(line);
+        }
+
+        Log.d(TAG, "Login Client must return: " + outputStringBuilder.toString());
+
+        return outputStringBuilder.toString();
     }
 
     private static HttpURLConnection connectPost() throws IOException {

@@ -9,6 +9,12 @@ import androidx.fragment.app.DialogFragment;
 
 public class FinishDialog extends DialogFragment {
 
+    private String bonuses;
+
+    public FinishDialog(String bonuses) {
+        this.bonuses = bonuses;
+    }
+
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -18,7 +24,7 @@ public class FinishDialog extends DialogFragment {
         // Todo Fix text
         builder.setMessage("Спасибо за то, что вы прошли квест! В настоящий момент приложение " +
                 "находится в режиме тестирования, поэтому мы будем благодарны за вашу оценку " +
-                "и отзыв на Google Play!")
+                "и отзыв на Google Play!" + " Вам начислено " + bonuses + " бонусов!")
                 .setNeutralButton("Хорошо", (dialog, id) -> {
                     dismiss();
                 });

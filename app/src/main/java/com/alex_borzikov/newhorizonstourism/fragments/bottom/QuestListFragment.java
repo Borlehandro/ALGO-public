@@ -1,5 +1,6 @@
 package com.alex_borzikov.newhorizonstourism.fragments.bottom;
 
+import android.content.Context;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -97,6 +98,8 @@ public class QuestListFragment extends Fragment implements RecyclerViewClickList
         Map<String, String> questListParams = new HashMap<>();
         questListParams.put("mode", "GET_QUESTS_LIST");
         questListParams.put("language", language);
+        questListParams.put("userTicket", getActivity().getSharedPreferences("User", Context.MODE_PRIVATE)
+                .getString("ticket", "0"));
 
         InfoTask getListTask = new InfoTask(result -> {
             try {
@@ -114,6 +117,9 @@ public class QuestListFragment extends Fragment implements RecyclerViewClickList
                 List<Integer> questsId = parsingResult.stream().map(QuestListItem::getId)
                         .collect(Collectors.toList());
 
+                List<Boolean> completed = parsingResult.stream().map(QuestListItem::isCompleted)
+                        .collect(Collectors.toList());
+
                 for (String item : questsNames) {
                     Log.d(TAG, item);
                 }
@@ -129,7 +135,7 @@ public class QuestListFragment extends Fragment implements RecyclerViewClickList
                 };
 
                 QuestRecycleAdapter adapter = new QuestRecycleAdapter(questsNames.size(), questsNames,
-                        questsDescriptions, listener);
+                        questsDescriptions, completed, listener);
 
                 questList.setAdapter(adapter);
 

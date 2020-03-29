@@ -4,6 +4,7 @@ import com.alex_borzikov.newhorizonstourism.data.PointInfoItem;
 import com.alex_borzikov.newhorizonstourism.data.QuestInfoItem;
 import com.alex_borzikov.newhorizonstourism.data.QuestListItem;
 import com.alex_borzikov.newhorizonstourism.data.TaskInfoItem;
+import com.alex_borzikov.newhorizonstourism.data.UserInfo;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -24,7 +25,8 @@ public class JsonParser {
         for (int i = 0; i < array.length(); ++i) {
             JSONObject object = array.getJSONObject(i);
             res.add(new QuestListItem(object.getString("id"), object.getString("name"),
-                    object.getString("short_description"), object.getString("points_count")));
+                    object.getString("short_description"), object.getString("points_count"),
+                    object.getBoolean("completed")));
         }
 
         return res;
@@ -77,4 +79,17 @@ public class JsonParser {
 
         return res;
     }
+
+    public static UserInfo parseUserInfo(String json) throws JSONException {
+
+        JSONObject info = new JSONObject(json);
+
+        return new UserInfo(info.getString("user_name"),
+                Integer.parseInt(info.getString("quests_completed")),
+                Integer.parseInt(info.getString("bonuses")),
+                Integer.parseInt(info.getString("points_completed")),
+                Float.parseFloat(info.getString("kilometers_completed")));
+
+    }
+
 }

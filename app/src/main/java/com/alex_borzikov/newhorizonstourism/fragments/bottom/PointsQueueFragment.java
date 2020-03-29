@@ -1,12 +1,12 @@
 package com.alex_borzikov.newhorizonstourism.fragments.bottom;
 
-import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -18,14 +18,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.alex_borzikov.newhorizonstourism.MainViewModel;
 import com.alex_borzikov.newhorizonstourism.R;
 import com.alex_borzikov.newhorizonstourism.adapters.PointRecycleAdapter;
-import com.alex_borzikov.newhorizonstourism.adapters.PointsQueueAdapter;
 import com.alex_borzikov.newhorizonstourism.api.InfoTask;
 import com.alex_borzikov.newhorizonstourism.api.JsonParser;
 import com.alex_borzikov.newhorizonstourism.api.PictureTask;
@@ -37,9 +35,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 public class PointsQueueFragment extends Fragment {
@@ -95,6 +91,14 @@ public class PointsQueueFragment extends Fragment {
         Log.w(TAG, "onActivityCreated: " + language);
 
         viewModel.setQueueOpened(true);
+
+        viewModel.getQuestFinished().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
+            @Override
+            public void onChanged(Boolean aBoolean) {
+                if(aBoolean)
+                    controller.navigate(R.id.toBegin);
+            }
+        });
 
         Log.d(TAG, "onActivityCreated: queue get lang: " + language + " questId: " + questId);
 

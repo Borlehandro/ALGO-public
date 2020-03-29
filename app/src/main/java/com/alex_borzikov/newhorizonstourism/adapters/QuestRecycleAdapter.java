@@ -5,6 +5,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -21,12 +22,16 @@ public class QuestRecycleAdapter extends RecyclerView.Adapter<QuestRecycleAdapte
 
     private int itemsNumber;
     private List<String> name, description;
+    private final List<Boolean> completed;
     private static RecyclerViewClickListener listener;
     private static int holdersCount;
 
-    public QuestRecycleAdapter(int number, List<String> name, List<String> description, RecyclerViewClickListener recyclerViewClickListener) {
+    public QuestRecycleAdapter(int number, List<String> name, List<String> description,
+                               List<Boolean> completed,
+                               RecyclerViewClickListener recyclerViewClickListener) {
         this.name = name;
         this.description = description;
+        this.completed = completed;
         itemsNumber = number;
         holdersCount = 0;
         listener = recyclerViewClickListener;
@@ -40,7 +45,7 @@ public class QuestRecycleAdapter extends RecyclerView.Adapter<QuestRecycleAdapte
         LayoutInflater inflater = LayoutInflater.from(context);
         View v = inflater.inflate(R.layout.quest_list_layout, parent, false);
         Log.d(TAG, "onCreateViewHolder: ");
-        Holder holder = new Holder(v);
+        Holder holder = new Holder(v, context);
 
         holdersCount++;
         return holder;
@@ -51,6 +56,12 @@ public class QuestRecycleAdapter extends RecyclerView.Adapter<QuestRecycleAdapte
 
         holder.nameView.setText(name.get(position));
         holder.descriptionView.setText(description.get(position));
+        if (completed.get(position)) {
+            holder.questButton.setBackground(holder.context.getDrawable(R.drawable.icon));
+            holder.questButton.setClickable(false);
+            holder.holderView.setClickable(false);
+        }
+
         Log.d(TAG, "onBindViewHolder Description set: " + holder.descriptionView.getText());
 
     }
@@ -63,13 +74,24 @@ public class QuestRecycleAdapter extends RecyclerView.Adapter<QuestRecycleAdapte
     class Holder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         TextView nameView, descriptionView;
+        ImageView questButton;
+        View holderView;
 
-        public Holder(@NonNull View itemView) {
+        // Test it
+        Context context;
+
+        public Holder(@NonNull View itemView, Context context) {
             super(itemView);
 
             nameView = itemView.findViewById(R.id.quest_name_text);
             descriptionView = itemView.findViewById(R.id.quest_description_text);
+            questButton = itemView.findViewById(R.id.lookQuestButton);
+
+            this.context = context;
+
             itemView.setOnClickListener(this);
+
+            holderView = itemView;
 
         }
 

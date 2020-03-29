@@ -6,13 +6,15 @@ public class QuestListItem {
     private String name;
     private String descriptionShort;
     private int pointsNumber;
+    private boolean completed;
 
-    public QuestListItem(String id, String name, String descriptionShort, String pointsNumber) {
+    public QuestListItem(String id, String name, String descriptionShort, String pointsNumber, boolean completed) {
 
-        this.id = Integer.valueOf(id);
+        this.id = Integer.parseInt(id);
         this.name = name;
         this.descriptionShort = descriptionShort;
-        this.pointsNumber = Integer.valueOf(pointsNumber);
+        this.pointsNumber = Integer.parseInt(pointsNumber);
+        this.completed = completed;
     }
 
     public int getId() {
@@ -31,4 +33,11 @@ public class QuestListItem {
         return pointsNumber;
     }
 
+    public boolean isCompleted() {
+        return completed;
+    }
+
+    public void setCompleted(boolean completed) {
+        this.completed = completed;
+    }
 }
