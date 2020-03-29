@@ -41,6 +41,16 @@
                 android:background="@drawable/right_arrow"
                 android:layout_gravity="center"/>
 
+            <TextView
+                android:id="@+id/completedText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingTop="4dp"
+                android:paddingBottom="4dp"
+                android:layout_gravity="center"
+                android:text="" />
+
+
         </LinearLayout>
 
     </androidx.cardview.widget.CardView>

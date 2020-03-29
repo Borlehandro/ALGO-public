@@ -57,9 +57,10 @@ public class QuestRecycleAdapter extends RecyclerView.Adapter<QuestRecycleAdapte
         holder.nameView.setText(name.get(position));
         holder.descriptionView.setText(description.get(position));
         if (completed.get(position)) {
-            holder.questButton.setBackground(holder.context.getDrawable(R.drawable.icon));
+            holder.questButton.setBackground(holder.context.getDrawable(R.drawable.right_arrow_grey));
             holder.questButton.setClickable(false);
             holder.holderView.setClickable(false);
+            holder.completedText.setText(holder.context.getString(R.string.questUnawalibleText));
         }
 
         Log.d(TAG, "onBindViewHolder Description set: " + holder.descriptionView.getText());
@@ -73,7 +74,7 @@ public class QuestRecycleAdapter extends RecyclerView.Adapter<QuestRecycleAdapte
 
     class Holder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-        TextView nameView, descriptionView;
+        TextView nameView, descriptionView, completedText;
         ImageView questButton;
         View holderView;
 
@@ -86,6 +87,7 @@ public class QuestRecycleAdapter extends RecyclerView.Adapter<QuestRecycleAdapte
             nameView = itemView.findViewById(R.id.quest_name_text);
             descriptionView = itemView.findViewById(R.id.quest_description_text);
             questButton = itemView.findViewById(R.id.lookQuestButton);
+            completedText = itemView.findViewById(R.id.completedText);
 
             this.context = context;
 

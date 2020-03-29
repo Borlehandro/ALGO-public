@@ -86,14 +86,14 @@ public class TaskActivity extends AppCompatActivity {
             InfoTask checkAnswer = new InfoTask(result -> {
 
                 if (result.equals("1")) {
-                    Toast.makeText(TaskActivity.this, getString(R.string.taskSuccess), Toast.LENGTH_LONG)
+                    Toast.makeText(TaskActivity.this, getString(R.string.taskSuccess), Toast.LENGTH_SHORT)
                             .show();
 
                     setResult(1);
                     finish();
 
                 } else {
-                    Toast.makeText(TaskActivity.this, getString(R.string.taskFail), Toast.LENGTH_LONG)
+                    Toast.makeText(TaskActivity.this, getString(R.string.taskFail), Toast.LENGTH_SHORT)
                             .show();
                 }
             });

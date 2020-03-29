@@ -30,4 +30,5 @@
     <string name="taskSuccess">对！</string>
     <string name="aboutItem">关于此应用</string>
     <string name="completedMessage">祝贺您！探索活动结束了 ！这个应用正在测试阶段 中，所以您可以评分或撰 写评价。</string>
+    <string name="questUnawalibleText">您已经完成了这个探索活  动</string>
 </resources>

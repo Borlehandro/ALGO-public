@@ -30,4 +30,5 @@
     <string name="routeNotFoundText">ALGO не может построить пешеходный маршрут. Возможно, это связано с тем, что вы находитесь в другом городе.</string>
     <string name="aboutItem">О программе</string>
     <string name="completedMessage">Поздравляем, вы прошли квест! Сейчас это приложение ещё находится на стадии бетта-тестирования, поэтому мы будем очень рады, если вы поставите ему оценку и оставите отзыв.</string>
+    <string name="questUnawalibleText">Вы уже прошли этот квест</string>
 </resources>

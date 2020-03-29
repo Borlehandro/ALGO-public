@@ -129,7 +129,7 @@ public class MainActivity extends AppCompatActivity {
         // Todo Make code using better
         if (pointCode != null) {
 
-            Toast.makeText(getApplicationContext(), "Get code: " + pointCode, Toast.LENGTH_LONG).show();
+            // Toast.makeText(getApplicationContext(), "Get code: " + pointCode, Toast.LENGTH_LONG).show();
 
             Map<String, String> codeParams = new HashMap<>();
             codeParams.put("mode", "CHECK_CODE");

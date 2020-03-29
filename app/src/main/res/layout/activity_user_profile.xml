@@ -29,15 +29,14 @@
         android:id="@+id/exitButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:backgroundTint="#FFFF"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="4dp"
         android:background="@drawable/button_background"
-        android:textColor="@color/colorAccent"
+        android:backgroundTint="#FFFF"
         android:text="@string/profileExitButton"
+        android:textColor="@color/colorAccent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/cardView" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/questsCompletedTitle"
@@ -167,7 +166,7 @@
                     android:drawableEnd="@drawable/chinese"
                     android:gravity="center"
                     android:layoutDirection="rtl"
-                    android:text="..............."
+                    android:text="简体中文"
                     android:textAlignment="center"
                     android:textSize="18sp"
                     app:layout_constraintStart_toStartOf="parent"
