@@ -45,7 +45,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:text="@string/questHeader"
+                android:text="Quest"
                 android:textAlignment="center"
                 android:textColor="#1772AF"
                 android:textSize="36sp"
@@ -58,10 +58,15 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
+                android:padding="8dp"
+                android:paddingBottom="8dp"
+                android:layout_margin="8dp"
+                android:background="@drawable/tets_button"
+                android:textColor="@color/colorAccent"
                 android:text="@string/showQuestButton"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/questDescription" />
+                app:layout_constraintTop_toBottomOf="@+id/questDescription"/>
 
             <ImageView
                 android:id="@+id/pointImage"

@@ -1,2 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <string name="login">帐号登录</string>
+    <string name="register">注册</string>
+    <string name="permissionMessage">ALGO要获取您设备的摄像头 和位置信息</string>
+    <string name="permissionAllow">确定</string>
+    <string name="permissionDeny">取消</string>
+    <string name="pointsListHeader">探索活动点名单</string>
+    <string name="taskTitle">选择正确的答案</string>
+    <string name="usernameHint">用户名</string>
+    <string name="passwordHint">密码</string>
+    <string name="conformPasswordHint">确认密码</string>
+    <string name="preLoginDescription">注册或登录</string>
+    <string name="questListHeader">探索活动名单</string>
+    <string name="loginButton">帐号登录</string>
+    <string name="registerButton">注册</string>
+    <string name="profileExitButton">退出</string>
+    <string name="questsCompletedTitle">完成的探索活动的数量：</string>
+    <string name="pointsCompletedTitle">完成的探索活动点的数量：</string>
+    <string name="kilometersCompletedTitle">走过公里的数量：</string>
+    <string name="bonusesCollectedTitle">获得奖金的数量：</string>
+    <string name="pointQueueButton">开始探索活动</string>
+    <string name="getPointTask">收到任务</string>
+    <string name="taskButton">发送</string>
+    <string name="showQuestButton">探索活动点</string>
+    <string name="languageItem">更改预设语言</string>
+    <string name="helloText">%1$s, 您好！</string>
+    <string name="routeNotFoundText">ALGO不能开辟步行路线 。您可能在别的城市里。</string>
+    <string name="taskFail">不对。请再试试吧！</string>
+    <string name="taskSuccess">对！</string>
+    <string name="aboutItem">关于此应用</string>
+    <string name="completedMessage">祝贺您！探索活动结束了 ！这个应用正在测试阶段 中，所以您可以评分或撰 写评价。</string>
+</resources>

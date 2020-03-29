@@ -9,13 +9,7 @@ import androidx.fragment.app.DialogFragment;
 
 import com.alex_borzikov.newhorizonstourism.R;
 
-public class FinishDialog extends DialogFragment {
-
-    private String bonuses;
-
-    public FinishDialog(String bonuses) {
-        this.bonuses = bonuses;
-    }
+public class WithoutRouteDialog extends DialogFragment {
 
     @NonNull
     @Override
@@ -24,8 +18,8 @@ public class FinishDialog extends DialogFragment {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
         // Todo Fix text
-        builder.setMessage(getString(R.string.completedMessage) + getString(R.string.bonusesCollectedTitle) + " " + bonuses)
-                .setNeutralButton(getString(R.string.permissionAllow), (dialog, id) -> {
+        builder.setMessage(getString(R.string.routeNotFoundText))
+                .setPositiveButton(getString(R.string.permissionAllow), (dialog, id) -> {
                     dismiss();
                 });
 

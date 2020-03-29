@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="sumbit_lang">Далее</string>
     <string name="login">Войти</string>
     <string name="register">Зарегистрироваться</string>
     <string name="preLoginDescription">Зарегистрируйте новый аккаунт или войдите в уже существующий</string>
@@ -9,23 +8,26 @@
     <string name="passwordHint">Пароль</string>
     <string name="usernameHint">Имя пользователя</string>
     <string name="loginButton">Войти</string>
-    <string name="pointQueueButton">НАЧАТЬ</string>
-    <string name="questHeader">Квест</string>
+    <string name="pointQueueButton">Начать квест</string>
     <string name="showQuestButton">Показать точки</string>
-    <string name="questListHeader">СПИСОК КВЕСТОВ</string>
+    <string name="questListHeader">Список квестов</string>
     <string name="conformPasswordHint">Пароль ещё раз</string>
     <string name="registerButton">Зарегистрироваться</string>
-    <string name="taskSuccess">Отлично!</string>
-    <string name="taskFail">Попробуйте ещё раз…</string>
+    <string name="taskSuccess">Отлично, ответ верен!</string>
+    <string name="taskFail">Упс, кажется ответ неверный! Попробуйте ещё раз!</string>
     <string name="permissionMessage">Чтобы приложение ALGO работало правильно, необходимо разрешить ему использовать камеру и иметь дотуп к вашему местоположению.</string>
-    <string name="permissionAllow">Разрешить</string>
+    <string name="permissionAllow">Хорошо</string>
     <string name="permissionDeny">Отмена</string>
     <string name="pointsListHeader">Список точек квеста</string>
     <string name="taskTitle">Выберете правильный ответ</string>
     <string name="profileExitButton">Выйти</string>
     <string name="helloText">Привет, %1$s!</string>
-    <string name="questsCompletedTitle">Квестов пройдено</string>
+    <string name="questsCompletedTitle">Квестов пройдено:</string>
     <string name="pointsCompletedTitle">Пройдено точек</string>
     <string name="kilometersCompletedTitle">Пройдено километров</string>
     <string name="bonusesCollectedTitle">Бонусов получено</string>
+    <string name="languageItem">Изменить язык</string>
+    <string name="routeNotFoundText">ALGO не может построить пешеходный маршрут. Возможно, это связано с тем, что вы находитесь в другом городе.</string>
+    <string name="aboutItem">О программе</string>
+    <string name="completedMessage">Поздравляем, вы прошли квест! Сейчас это приложение ещё находится на стадии бетта-тестирования, поэтому мы будем очень рады, если вы поставите ему оценку и оставите отзыв.</string>
 </resources>

@@ -52,7 +52,6 @@ public class MainActivity extends AppCompatActivity {
         Log.d(TAG, "onCreate: ");
 
         viewModel = new ViewModelProvider(this).get(MainViewModel.class);
-        // Are you need it?
         viewModel.setShowOpened(false);
         sheetBehavior = BottomSheetBehavior.from(bottomFragment.getView());
 

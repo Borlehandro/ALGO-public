@@ -68,7 +68,7 @@
                     android:drawableEnd="@drawable/chinese"
                     android:gravity="center"
                     android:layoutDirection="rtl"
-                    android:text="..............."
+                    android:text="简体中文"
                     android:textAlignment="center"
                     android:textSize="18sp"
                     app:layout_constraintStart_toStartOf="parent"

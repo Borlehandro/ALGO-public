@@ -22,6 +22,7 @@ import com.alex_borzikov.newhorizonstourism.MainViewModel;
 import com.alex_borzikov.newhorizonstourism.R;
 import com.alex_borzikov.newhorizonstourism.activities.CodeScanActivity;
 import com.alex_borzikov.newhorizonstourism.data.PointInfoItem;
+import com.alex_borzikov.newhorizonstourism.dialogs.WithoutRouteDialog;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.yandex.mapkit.Animation;
 import com.yandex.mapkit.MapKit;
@@ -93,7 +94,7 @@ public class MapFragment extends Fragment implements Session.RouteListener {
 
     private MainViewModel viewModel;
 
-    private boolean focused;
+    private boolean focused, withoutRouters;
 
     // Todo Stop after quest finish
     private final LocationListener locationListener = new LocationListener() {
@@ -128,16 +129,26 @@ public class MapFragment extends Fragment implements Session.RouteListener {
                 points.add(new RequestPoint(new Point(currentPointsQueue.peek().getLocationX(),
                         currentPointsQueue.peek().getLocationY()), RequestPointType.WAYPOINT, null));
 
-                if(mark!=null)
+                if (mark != null)
                     mapObjects.remove(mark);
 
                 mark = mapObjects.addPlacemark(
                         new Point(currentPointsQueue.peek().getLocationX(),
-                        currentPointsQueue.peek().getLocationY()));
+                                currentPointsQueue.peek().getLocationY()));
 
                 mark.setOpacity(0.9f);
                 mark.setIcon(ImageProvider.fromResource(getActivity(), R.drawable.placemark_mini));
                 mark.setDraggable(true);
+
+                if (withoutRouters) {
+                    mapView.getMap().move(
+                            new CameraPosition(
+                                    new Point(currentPointsQueue.peek().getLocationX(),
+                                            currentPointsQueue.peek().getLocationY()),
+                                    18.0f, 0.0f, 0.0f),
+                            new Animation(Animation.Type.SMOOTH, 5),
+                            null);
+                }
 
                 router.requestRoutes(points, new TimeOptions(), MapFragment.this);
 
@@ -158,21 +169,22 @@ public class MapFragment extends Fragment implements Session.RouteListener {
         public void onObjectAdded(@NonNull UserLocationView userLocationView) {
 
             userLocationView.getArrow().setIcon(ImageProvider.fromResource(
-                    getApplicationContext(), R.drawable.user_arrow),
+                    getApplicationContext(), R.drawable.search_layer_pin_dust_default),
                     new IconStyle().setAnchor(new PointF(0.5f, 0.5f))
                             .setRotationType(RotationType.ROTATE)
                             .setZIndex(1f)
-                            .setScale(0.5f));
+                            .setScale(1f));
 
             CompositeIcon pinIcon = userLocationView.getPin().useCompositeIcon();
 
             pinIcon.setIcon(
                     "pin",
-                    ImageProvider.fromResource(getApplicationContext(), R.drawable.user_arrow),
+                    ImageProvider.fromResource(getApplicationContext(),
+                            R.drawable.search_layer_pin_dust_default),
                     new IconStyle().setAnchor(new PointF(0.5f, 0.5f))
                             .setRotationType(RotationType.ROTATE)
                             .setZIndex(1f)
-                            .setScale(0.5f)
+                            .setScale(1f)
             );
 
             userLocationView.getAccuracyCircle().setFillColor(ContextCompat.getColor(getActivity(),
@@ -280,7 +292,7 @@ public class MapFragment extends Fragment implements Session.RouteListener {
         });
 
         viewModel.getNeedPointsQueue().observe(getViewLifecycleOwner(), need -> {
-            if(need) {
+            if (need) {
 
                 LinkedList<PointInfoItem> currentPointsQueue = viewModel.getPointsQueue().getValue();
 
@@ -297,18 +309,20 @@ public class MapFragment extends Fragment implements Session.RouteListener {
 
                 Log.d(TAG, "onActivityCreated: " + points.toString());
 
-                for (int i=0; i<points.size()-1; ++i) {
+                withoutRouters = false;
 
-                    PlacemarkMapObject mark = mapObjects.addPlacemark(points.get(i+1).getPoint());
+                for (int i = 0; i < points.size() - 1; ++i) {
+
+                    PlacemarkMapObject mark = mapObjects.addPlacemark(points.get(i + 1).getPoint());
                     mark.setOpacity(0.9f);
                     mark.setIcon(ImageProvider.fromResource(getActivity(), R.drawable.placemark_mini));
                     mark.setDraggable(true);
 
                     Log.d(TAG, "onActivityCreated: way " +
                             points.get(i).getPoint().getLatitude() + ";" + points.get(i).getPoint().getLongitude()
-                            + " to " + points.get(i+1).getPoint().getLatitude() + ";" + points.get(i+1).getPoint().getLongitude());
+                            + " to " + points.get(i + 1).getPoint().getLatitude() + ";" + points.get(i + 1).getPoint().getLongitude());
 
-                    router.requestRoutes(Arrays.asList(points.get(i), points.get(i+1)),
+                    router.requestRoutes(Arrays.asList(points.get(i), points.get(i + 1)),
                             new TimeOptions(), MapFragment.this);
                 }
             }
@@ -353,22 +367,45 @@ public class MapFragment extends Fragment implements Session.RouteListener {
     public void onMasstransitRoutes(List<Route> routes) {
 
         if (routes.size() > 0) {
+            Log.w(TAG, "onMasstransitRoutes: SIZE IS > 0 ");
             for (Section section : routes.get(0).getSections()) {
 
-                PolylineMapObject polylineMapObject = mapObjects.addPolyline(SubpolylineHelper.subpolyline(
-                                routes.get(0).getGeometry(), section.getGeometry()));
+                Log.w(TAG, "onMasstransitRoutes: TRY DRAW IT");
 
-                polylineMapObject.setStrokeColor(ContextCompat.getColor(getActivity(),
-                        R.color.colorWay));
+                Log.w(TAG, "onMasstransitRoutes: SECTION " + section.getGeometry().toString());
+
+                PolylineMapObject polylineMapObject = mapObjects.addPolyline(SubpolylineHelper.subpolyline(
+                        routes.get(0).getGeometry(), section.getGeometry()));
+
+                Log.w(TAG, "onMasstransitRoutes: POLYLINE " + polylineMapObject);
+
+                polylineMapObject.setStrokeColor(ContextCompat.getColor(getActivity(), R.color.colorWay));
 
                 // Todo MAKE IT BETTER!
-                if(!viewModel.getNeedPointsQueue().getValue()) {
+                if (!viewModel.getNeedPointsQueue().getValue()) {
                     if (lastLine != null)
                         mapObjects.remove(lastLine);
 
                     lastLine = polylineMapObject;
                 }
             }
+        } else if (!withoutRouters) {
+            withoutRouters = true;
+            Log.w(TAG, "onMasstransitRoutes: SIZE IS 0");
+
+            Log.w(TAG, "onActivityCreated: WITHOUT ROUTERS ");
+
+            mapView.getMap().move(
+                    new CameraPosition(new Point(
+                            viewModel.getPointsQueue().getValue().peek().getLocationX(),
+                            viewModel.getPointsQueue().getValue().peek().getLocationY()),
+                            20.0f, 0.0f, 0.0f),
+                    new Animation(Animation.Type.LINEAR, 0),
+                    null);
+
+            WithoutRouteDialog dialog = new WithoutRouteDialog();
+            dialog.show(getActivity().getSupportFragmentManager(), "withoutRoute");
+
         }
     }
 
@@ -381,7 +418,7 @@ public class MapFragment extends Fragment implements Session.RouteListener {
             errorMessage = "network_error_message";
         }
 
-        Toast.makeText(getApplicationContext(), errorMessage, Toast.LENGTH_SHORT).show();
+        Log.e(TAG, errorMessage);
     }
 
     @Override

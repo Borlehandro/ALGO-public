@@ -136,6 +136,7 @@ public class UserProfileActivity extends AppCompatActivity {
         conf.locale = myLocale;
         res.updateConfiguration(conf, dm);
 
+
         // this.recreate();
         restartApp();
     }

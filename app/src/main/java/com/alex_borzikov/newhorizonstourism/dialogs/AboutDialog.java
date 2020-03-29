@@ -7,6 +7,8 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
 
+import com.alex_borzikov.newhorizonstourism.R;
+
 public class AboutDialog extends DialogFragment {
 
     @NonNull
@@ -16,8 +18,8 @@ public class AboutDialog extends DialogFragment {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
         // Todo Fix text
-        builder.setMessage("О приложении...")
-                .setNeutralButton("Хорошо", (dialog, id) -> {
+        builder.setMessage(getString(R.string.aboutText))
+                .setNeutralButton(getString(R.string.permissionAllow), (dialog, id) -> {
                     dismiss();
                 });
 
