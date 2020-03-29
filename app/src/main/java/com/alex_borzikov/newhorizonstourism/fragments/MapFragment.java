@@ -42,6 +42,7 @@ import com.yandex.mapkit.map.CameraPosition;
 import com.yandex.mapkit.map.CompositeIcon;
 import com.yandex.mapkit.map.IconStyle;
 import com.yandex.mapkit.map.MapObjectCollection;
+import com.yandex.mapkit.map.PlacemarkMapObject;
 import com.yandex.mapkit.map.PolylineMapObject;
 import com.yandex.mapkit.map.RotationType;
 import com.yandex.mapkit.mapview.MapView;
@@ -82,6 +83,7 @@ public class MapFragment extends Fragment implements Session.RouteListener {
     private FloatingActionButton anchorButton, showButton, codeScanButton;
 
     private UserLocationLayer userLocationLayer;
+    private PlacemarkMapObject mark;
 
     private LocationManager locationManager;
     private MapObjectCollection mapObjects;
@@ -118,13 +120,24 @@ public class MapFragment extends Fragment implements Session.RouteListener {
 
             if (currentPointsQueue != null && currentPointsQueue.size() > 0) {
 
-                Log.d(TAG, "onLocationUpdated: Try to build drivingRouter with it `|` ");
+                Log.d(TAG, "onLocationUpdated: Try to build router with it `|` ");
 
                 List<RequestPoint> points = new ArrayList<>();
                 points.add(new RequestPoint(location.getPosition(), RequestPointType.WAYPOINT, null));
 
                 points.add(new RequestPoint(new Point(currentPointsQueue.peek().getLocationX(),
                         currentPointsQueue.peek().getLocationY()), RequestPointType.WAYPOINT, null));
+
+                if(mark!=null)
+                    mapObjects.remove(mark);
+
+                mark = mapObjects.addPlacemark(
+                        new Point(currentPointsQueue.peek().getLocationX(),
+                        currentPointsQueue.peek().getLocationY()));
+
+                mark.setOpacity(0.9f);
+                mark.setIcon(ImageProvider.fromResource(getActivity(), R.drawable.placemark_mini));
+                mark.setDraggable(true);
 
                 router.requestRoutes(points, new TimeOptions(), MapFragment.this);
 
@@ -195,10 +208,6 @@ public class MapFragment extends Fragment implements Session.RouteListener {
         MapKit mapKit = MapKitFactory.getInstance();
 
         mapView = fragment.findViewById(R.id.mapview);
-
-        mapView.getMap().setRotateGesturesEnabled(false);
-
-        mapView.setNoninteractive(false);
 
         locationManager = mapKit.createLocationManager();
 
@@ -289,6 +298,11 @@ public class MapFragment extends Fragment implements Session.RouteListener {
                 Log.d(TAG, "onActivityCreated: " + points.toString());
 
                 for (int i=0; i<points.size()-1; ++i) {
+
+                    PlacemarkMapObject mark = mapObjects.addPlacemark(points.get(i+1).getPoint());
+                    mark.setOpacity(0.9f);
+                    mark.setIcon(ImageProvider.fromResource(getActivity(), R.drawable.placemark_mini));
+                    mark.setDraggable(true);
 
                     Log.d(TAG, "onActivityCreated: way " +
                             points.get(i).getPoint().getLatitude() + ";" + points.get(i).getPoint().getLongitude()
