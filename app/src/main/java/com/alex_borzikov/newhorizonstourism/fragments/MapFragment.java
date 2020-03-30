@@ -1,5 +1,6 @@
 package com.alex_borzikov.newhorizonstourism.fragments;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.PointF;
@@ -72,6 +73,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
 
+import static android.content.Context.LOCATION_SERVICE;
 import static com.yandex.runtime.Runtime.getApplicationContext;
 
 public class MapFragment extends Fragment implements Session.RouteListener {
@@ -237,7 +239,6 @@ public class MapFragment extends Fragment implements Session.RouteListener {
         codeScanButton = fragment.findViewById(R.id.scanCodeButton);
         anchorButton = fragment.findViewById(R.id.anchorActionButton);
         codeScanButton.setVisibility(View.INVISIBLE);
-
 
         if (!focused)
             locationManager.requestSingleUpdate(locationListener);

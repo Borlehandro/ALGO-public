@@ -1,6 +1,7 @@
 package com.alex_borzikov.newhorizonstourism.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -12,6 +13,7 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
@@ -36,14 +38,19 @@ public class UserProfileActivity extends AppCompatActivity {
 
     private String userTicket;
 
-    TextView profileTitle, questsCollectedText, bonusesCollectedText,
-            pointCollectedText, kilometersCompletedText;
+    TextView profileTitle, questsCollectedText, questsCollectedTitle, bonusesCollectedTitle,
+            bonusesCollectedText, pointCollectedText, pointCollectedTitle, kilometersCompletedText,
+            kilometersCompletedTitle;
+
+    ProgressBar progressBar;
 
     Button exitButton;
 
     RadioGroup languageGroup;
 
     RadioButton englishButton, russianButton, chineseButton;
+
+    CardView cardView;
 
     private Locale myLocale;
 
@@ -62,18 +69,46 @@ public class UserProfileActivity extends AppCompatActivity {
 
         Log.w(TAG, "onCreate userProfile " + preferences.getString("language", null));
 
+
+        progressBar = findViewById(R.id.progressBar2);
+
+
         profileTitle = findViewById(R.id.userProfileTitle);
+
         questsCollectedText = findViewById(R.id.questCompletedText);
+        questsCollectedTitle = findViewById(R.id.questsCompletedTitle);
+
         pointCollectedText = findViewById(R.id.pointsCompletedText);
+        pointCollectedTitle = findViewById(R.id.pointsCompletedTitle);
+
         kilometersCompletedText = findViewById(R.id.kilometersCompletedText);
+        kilometersCompletedTitle = findViewById(R.id.kilometresCompletedTitle);
+
         bonusesCollectedText = findViewById(R.id.bonusesCollectedText);
+        bonusesCollectedTitle = findViewById(R.id.bonusesTitle);
+
         exitButton = findViewById(R.id.exitButton);
+
+        cardView = findViewById(R.id.cardView);
 
         languageGroup = findViewById(R.id.changeLanguageGroup);
 
         englishButton = findViewById(R.id.changeEnglishButton);
         russianButton = findViewById(R.id.changeRussianButton);
         chineseButton = findViewById(R.id.changeChineseButton);
+
+        progressBar.setVisibility(View.VISIBLE);
+        profileTitle.setVisibility(View.INVISIBLE);
+        questsCollectedText.setVisibility(View.INVISIBLE);
+        questsCollectedTitle.setVisibility(View.INVISIBLE);
+        pointCollectedText.setVisibility(View.INVISIBLE);
+        pointCollectedTitle.setVisibility(View.INVISIBLE);
+        kilometersCompletedText.setVisibility(View.INVISIBLE);
+        kilometersCompletedTitle.setVisibility(View.INVISIBLE);
+        bonusesCollectedText.setVisibility(View.INVISIBLE);
+        bonusesCollectedTitle.setVisibility(View.INVISIBLE);
+        exitButton.setVisibility(View.INVISIBLE);
+        cardView.setVisibility(View.INVISIBLE);
 
         String language = preferences.getString("language", "en");
 
@@ -164,6 +199,19 @@ public class UserProfileActivity extends AppCompatActivity {
                 pointCollectedText.setText(String.valueOf(info.getPointsCompleted()));
                 kilometersCompletedText.setText(String.valueOf(info.getKilometersCompleted()));
 
+                progressBar.setVisibility(View.INVISIBLE);
+                profileTitle.setVisibility(View.VISIBLE);
+                questsCollectedText.setVisibility(View.VISIBLE);
+                questsCollectedTitle.setVisibility(View.VISIBLE);
+                pointCollectedText.setVisibility(View.VISIBLE);
+                pointCollectedTitle.setVisibility(View.VISIBLE);
+                kilometersCompletedText.setVisibility(View.VISIBLE);
+                kilometersCompletedTitle.setVisibility(View.VISIBLE);
+                bonusesCollectedText.setVisibility(View.VISIBLE);
+                bonusesCollectedTitle.setVisibility(View.VISIBLE);
+                exitButton.setVisibility(View.VISIBLE);
+                languageGroup.setVisibility(View.VISIBLE);
+                cardView.setVisibility(View.VISIBLE);
 
             } catch (JSONException e) {
                 e.printStackTrace();
