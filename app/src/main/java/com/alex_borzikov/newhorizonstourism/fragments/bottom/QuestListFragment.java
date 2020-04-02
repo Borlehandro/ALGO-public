@@ -130,6 +130,8 @@ public class QuestListFragment extends Fragment implements RecyclerViewClickList
 
                     viewModel.setQuestId(String.valueOf(questsId.get(position)));
 
+                    viewModel.setDescriptionShown(true);
+
                     controller.navigate(R.id.toDescription);
 
                 };

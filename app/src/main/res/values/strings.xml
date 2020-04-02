@@ -147,5 +147,6 @@ Previous version of the document: https://yandex.com/legal/maps_termsofuse/20140
 
     </string>
     <string name="questUnawalibleText">You have passed this quest</string>
+    <string name="descriptionText">Description</string>
 
 </resources>

@@ -62,6 +62,7 @@ public class QuestDescriptionFragment extends Fragment {
         progressBar = view.findViewById(R.id.questProgress);
 
         startButton.setOnClickListener((View v) -> {
+            viewModel.setDescriptionShown(false);
             controller.navigate(R.id.toPointsQueue);
         });
 

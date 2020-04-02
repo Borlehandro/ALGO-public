@@ -31,4 +31,5 @@
     <string name="aboutItem">О программе</string>
     <string name="completedMessage">Поздравляем, вы прошли квест! Сейчас это приложение ещё находится на стадии бетта-тестирования, поэтому мы будем очень рады, если вы поставите ему оценку и оставите отзыв.</string>
     <string name="questUnawalibleText">Вы уже прошли этот квест</string>
+    <string name="descriptionText">Описание</string>
 </resources>

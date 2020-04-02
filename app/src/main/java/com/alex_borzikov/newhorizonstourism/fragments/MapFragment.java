@@ -24,6 +24,7 @@ import com.alex_borzikov.newhorizonstourism.R;
 import com.alex_borzikov.newhorizonstourism.activities.CodeScanActivity;
 import com.alex_borzikov.newhorizonstourism.data.PointInfoItem;
 import com.alex_borzikov.newhorizonstourism.dialogs.WithoutRouteDialog;
+import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.yandex.mapkit.Animation;
 import com.yandex.mapkit.MapKit;
@@ -83,7 +84,8 @@ public class MapFragment extends Fragment implements Session.RouteListener {
     private MapView mapView;
 
     // Todo you need more action buttons
-    private FloatingActionButton anchorButton, showButton, codeScanButton;
+    private FloatingActionButton anchorButton, codeScanButton;
+    private ExtendedFloatingActionButton showButton;
 
     private UserLocationLayer userLocationLayer;
     private PlacemarkMapObject mark;
@@ -295,6 +297,8 @@ public class MapFragment extends Fragment implements Session.RouteListener {
         viewModel.getNeedPointsQueue().observe(getViewLifecycleOwner(), need -> {
             if (need) {
 
+                showButton.setText(getActivity().getString(R.string.pointsListHeader));
+
                 LinkedList<PointInfoItem> currentPointsQueue = viewModel.getPointsQueue().getValue();
 
                 List<RequestPoint> points = new ArrayList<>();
@@ -356,6 +360,11 @@ public class MapFragment extends Fragment implements Session.RouteListener {
                 locationManager.unsubscribe(locationListener);
                 mapObjects.clear();
             }
+        });
+
+        viewModel.getDescriptionShown().observe(getViewLifecycleOwner(), (shown) -> {
+            if(shown)
+                showButton.setText(R.string.descriptionText);
         });
     }
 
@@ -432,6 +441,19 @@ public class MapFragment extends Fragment implements Session.RouteListener {
     @Override
     public void onStart() {
         Log.d(TAG, "onStart");
+        if(viewModel.getNeedPointsQueue().getValue()!=null
+                && viewModel.getNeedPointsQueue().getValue())
+
+            showButton.setText(getActivity().getString(R.string.pointsListHeader));
+
+        else if(viewModel.getDescriptionShown().getValue()!=null
+                && viewModel.getDescriptionShown().getValue()!=null)
+
+            showButton.setText(getActivity().getString(R.string.descriptionText));
+
+        else
+            showButton.setText(R.string.questListHeader);
+
         super.onStart();
         mapView.onStart();
         MapKitFactory.getInstance().onStart();
