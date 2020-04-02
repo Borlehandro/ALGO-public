@@ -161,7 +161,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         Log.d(TAG, "onActivityResult: in main " + requestCode + " res: " + resultCode);
-        viewModel.setNeedPointsQueue(false);
+        // viewModel.setNeedPointsQueue(false);
 
         if (requestCode == 1 && resultCode == 1) {
 
@@ -191,8 +191,6 @@ public class MainActivity extends AppCompatActivity {
 
                 completedTask.execute(codeParams);
 
-                Toast.makeText(MainActivity.this, "That's all!",
-                        Toast.LENGTH_LONG).show();
                 viewModel.setQuestFinished(true);
 
             }

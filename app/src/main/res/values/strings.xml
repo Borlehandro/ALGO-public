@@ -26,7 +26,7 @@
     <string name="bonusesCollectedTitle">Bonus got:</string>
     <string name="languageItem">Change the language</string>
     <string name="aboutItem">About the programm</string>
-    <string name="accountItem">UserAccount</string>
+    <string name="accountItem" translatable="false">UserAccount</string>
     <string name="helloText">Hello, %1$s!</string>
     <string name="routeNotFoundText">ALGO cannot make a walking route. Probably you are in another city</string>
     <string name="taskFail">Oops, your answer is wrong. Try again!</string>

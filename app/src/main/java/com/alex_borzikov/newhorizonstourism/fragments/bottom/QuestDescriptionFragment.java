@@ -29,7 +29,6 @@ import com.alex_borzikov.newhorizonstourism.data.QuestInfoItem;
 import org.json.JSONException;
 
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
 
 public class QuestDescriptionFragment extends Fragment {
@@ -62,7 +61,8 @@ public class QuestDescriptionFragment extends Fragment {
         progressBar = view.findViewById(R.id.questProgress);
 
         startButton.setOnClickListener((View v) -> {
-            viewModel.setDescriptionShown(false);
+            // viewModel.setDescriptionShown(false);
+            viewModel.setBottomSheetState(MainViewModel.BottomStates.POINTS_QUEUE_START);
             controller.navigate(R.id.toPointsQueue);
         });
 

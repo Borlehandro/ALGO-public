@@ -90,6 +90,8 @@ public class QuestListFragment extends Fragment implements RecyclerViewClickList
         title.setVisibility(View.INVISIBLE);
         questList.setVisibility(View.INVISIBLE);
 
+        viewModel.setBottomSheetState(MainViewModel.BottomStates.QUEST_LIST_STATE);
+
         Log.d(TAG, "Quest List onStart");
         String language = getResources().getConfiguration().getLocales().get(0).getLanguage();
 
@@ -130,7 +132,7 @@ public class QuestListFragment extends Fragment implements RecyclerViewClickList
 
                     viewModel.setQuestId(String.valueOf(questsId.get(position)));
 
-                    viewModel.setDescriptionShown(true);
+                    viewModel.setBottomSheetState(MainViewModel.BottomStates.QUEST_DESCRIPTION_STATE);
 
                     controller.navigate(R.id.toDescription);
 

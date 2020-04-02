@@ -130,7 +130,7 @@ public class PointsQueueFragment extends Fragment {
 
                 if(viewModel.getQuestStarted().getValue()==null || !viewModel.getQuestStarted().getValue()) {
                     viewModel.setPointsQueue(queue);
-                    viewModel.setNeedPointsQueue(true);
+                    viewModel.setBottomSheetState(MainViewModel.BottomStates.POINTS_QUEUE_IN_PROCESS);
                 }
 
                 List<String> pointsNames = queue.stream().map(PointInfoItem::getName)
