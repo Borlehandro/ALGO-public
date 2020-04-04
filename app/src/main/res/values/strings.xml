@@ -148,5 +148,7 @@ Previous version of the document: https://yandex.com/legal/maps_termsofuse/20140
     </string>
     <string name="questUnawalibleText">You have passed this quest</string>
     <string name="descriptionText">Description</string>
+    <string name="locationTurningOnText" translatable="false">ALGO need turned on GPS for correct work, please turn it on</string>
+    <string name="settingsText" translatable="false">Settings</string>
 
 </resources>

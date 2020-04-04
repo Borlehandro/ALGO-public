@@ -10,13 +10,12 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.alex_borzikov.newhorizonstourism.MainViewModel;
@@ -25,13 +24,13 @@ import com.alex_borzikov.newhorizonstourism.api.InfoTask;
 import com.alex_borzikov.newhorizonstourism.data.PointInfoItem;
 import com.alex_borzikov.newhorizonstourism.dialogs.AboutDialog;
 import com.alex_borzikov.newhorizonstourism.dialogs.FinishDialog;
+import com.alex_borzikov.newhorizonstourism.dialogs.LocationDialog;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Locale;
 import java.util.Map;
-import java.util.prefs.Preferences;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -57,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
 
         preferences = getSharedPreferences("User", MODE_PRIVATE);
 
-        if(!(preferences.contains("ticket")
+        if (!(preferences.contains("ticket")
                 && preferences.contains("language"))) {
 
             Intent toLogin = new Intent(this, PreLoginActivity.class);
@@ -66,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
             startActivity(toLogin);
 
         } else if (!getResources().getConfiguration().getLocales().get(0).getLanguage()
-                        .equals(preferences.getString("language", null))) {
+                .equals(preferences.getString("language", null))) {
 
             setLocale(preferences.getString("language", null));
 
@@ -90,7 +89,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         viewModel.getQueueOpened().observe(this, opened -> {
-            if(opened)
+            if (opened)
                 sheetBehavior.setState(BottomSheetBehavior.STATE_HALF_EXPANDED);
         });
     }
@@ -205,7 +204,7 @@ public class MainActivity extends AppCompatActivity {
 
                 InfoTask completedTask = new InfoTask(result -> {
 
-                    if(!result.equals("-1")) {
+                    if (!result.equals("-1")) {
 
                         FinishDialog finish = new FinishDialog(result);
                         finish.show(getSupportFragmentManager(), "finish");
@@ -224,6 +223,12 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    protected void onResume() {
+        checkLocationEnabled();
+        super.onResume();
+    }
+
     public void setLocale(String localeName) {
 
         Locale myLocale = new Locale(localeName);
@@ -236,6 +241,16 @@ public class MainActivity extends AppCompatActivity {
         Intent restart = new Intent(getApplicationContext(), MainActivity.class);
         startActivity(restart);
         finish();
+    }
+
+    private void checkLocationEnabled(){
+        if (!((android.location.LocationManager) getSystemService(LOCATION_SERVICE))
+                .isProviderEnabled(android.location.LocationManager.GPS_PROVIDER)) {
+            LocationDialog dialog = new LocationDialog();
+            FragmentManager manager = getSupportFragmentManager();
+            Log.w(TAG, "checkLocationEnabled: " + manager.toString());
+            dialog.show(manager, "location");
+        }
     }
 
 }

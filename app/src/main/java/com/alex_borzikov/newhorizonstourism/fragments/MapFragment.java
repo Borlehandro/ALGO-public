@@ -21,6 +21,7 @@ import com.alex_borzikov.newhorizonstourism.MainViewModel;
 import com.alex_borzikov.newhorizonstourism.R;
 import com.alex_borzikov.newhorizonstourism.activities.CodeScanActivity;
 import com.alex_borzikov.newhorizonstourism.data.PointInfoItem;
+import com.alex_borzikov.newhorizonstourism.dialogs.LocationDialog;
 import com.alex_borzikov.newhorizonstourism.dialogs.WithoutRouteDialog;
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -66,6 +67,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static android.content.Context.LOCATION_SERVICE;
 import static com.yandex.runtime.Runtime.getApplicationContext;
 
 public class MapFragment extends Fragment implements Session.RouteListener {
@@ -265,7 +267,6 @@ public class MapFragment extends Fragment implements Session.RouteListener {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
 
         super.onActivityCreated(savedInstanceState);
-
 
         viewModel = new ViewModelProvider(getActivity()).get(MainViewModel.class);
 
