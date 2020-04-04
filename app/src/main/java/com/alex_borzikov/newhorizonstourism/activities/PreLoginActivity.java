@@ -102,9 +102,7 @@ public class PreLoginActivity extends AppCompatActivity {
     }
 
     private void startMain() {
-
         Intent intent = new Intent(PreLoginActivity.this, MainActivity.class);
-        intent.putExtra("uid", "login");
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
         finish();
         startActivity(intent);

@@ -15,18 +15,20 @@
         android:roundIcon="@mipmap/algo"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".activities.UserProfileActivity"/>
-        <activity android:name=".activities.PreLoginActivity">
+
+        <activity android:name=".activities.MainActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".activities.UserProfileActivity"/>
+        <activity android:name=".activities.PreLoginActivity"/>
         <activity android:name=".activities.CodeScanActivity" />
         <activity android:name=".activities.TaskActivity" />
         <activity android:name=".activities.PointActivity" />
-        <activity android:name=".activities.MainActivity" />
+
     </application>
 
 </manifest>

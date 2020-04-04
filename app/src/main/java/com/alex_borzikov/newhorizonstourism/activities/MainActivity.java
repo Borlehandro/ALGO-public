@@ -1,7 +1,11 @@
 package com.alex_borzikov.newhorizonstourism.activities;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -25,7 +29,9 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior;
 
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Locale;
 import java.util.Map;
+import java.util.prefs.Preferences;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -41,11 +47,30 @@ public class MainActivity extends AppCompatActivity {
 
     private MainViewModel viewModel;
 
+    private SharedPreferences preferences;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        preferences = getSharedPreferences("User", MODE_PRIVATE);
+
+        if(!(preferences.contains("ticket")
+                && preferences.contains("language"))) {
+
+            Intent toLogin = new Intent(this, PreLoginActivity.class);
+            toLogin.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+            finish();
+            startActivity(toLogin);
+
+        } else if (!getResources().getConfiguration().getLocales().get(0).getLanguage()
+                        .equals(preferences.getString("language", null))) {
+
+            setLocale(preferences.getString("language", null));
+
+        }
 
         bottomFragment = getSupportFragmentManager().findFragmentById(R.id.bottomSheetNavFragment);
 
@@ -175,7 +200,7 @@ public class MainActivity extends AppCompatActivity {
                 Map<String, String> codeParams = new HashMap<>();
                 codeParams.put("mode", "SET_COMPLETED");
                 codeParams.put("userTicket",
-                        getSharedPreferences("User", MODE_PRIVATE).getString("ticket", "0"));
+                        preferences.getString("ticket", "0"));
                 codeParams.put("questId", viewModel.getQuestId().getValue());
 
                 InfoTask completedTask = new InfoTask(result -> {
@@ -198,4 +223,19 @@ public class MainActivity extends AppCompatActivity {
             viewModel.setPointsQueue(points);
         }
     }
+
+    public void setLocale(String localeName) {
+
+        Locale myLocale = new Locale(localeName);
+        Resources res = getResources();
+        DisplayMetrics dm = res.getDisplayMetrics();
+        Configuration conf = res.getConfiguration();
+        conf.locale = myLocale;
+        res.updateConfiguration(conf, dm);
+        // this.recreate();
+        Intent restart = new Intent(getApplicationContext(), MainActivity.class);
+        startActivity(restart);
+        finish();
+    }
+
 }

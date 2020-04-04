@@ -1,11 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:background="#FFFF"
     tools:context=".fragments.bottom.QuestDescriptionFragment">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/insideConstraint"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
     <ProgressBar
         android:id="@+id/questProgress"
@@ -18,66 +28,79 @@
         app:layout_constraintTop_toTopOf="parent"
         android:layout_marginTop="32dp"/>
 
-    <androidx.core.widget.NestedScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <androidx.core.widget.NestedScrollView
+            android:id="@+id/nestedScrollView2"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="match_parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
 
-            <TextView
-                android:id="@+id/questDescription"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="16dp"
-                android:layout_marginEnd="8dp"
-                android:textAlignment="center"
-                android:textColor="@color/common_google_signin_btn_text_dark_focused"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/pointImage"
-                tools:text="Просто текст для демлонстрациии. На самом деле, очень важно, чтобы в зависимоти от экрана устройства он вёл себя особенным образом. Просто текст для демлонстрациии. На самом деле, очень важно, чтобы в зависимоти от экрана устройства он вёл себя особенным образом. Просто текст для демлонстрациии. На самом деле, очень важно, чтобы в зависимоти от экрана устройства он вёл себя особенным образом. Просто текст для демлонстрациии. На самом деле, очень важно, чтобы в зависимоти от экрана устройства он вёл себя особенным образом. Просто текст для демлонстрациии. На самом деле, очень важно, чтобы в зависимоти от экрана устройства он вёл себя особенным образом. Просто текст для демлонстрациии. На самом деле, очень важно, чтобы в зависимоти от экрана устройства он вёл себя особенным образом. Просто текст для демлонстрациии. На самом деле, очень важно, чтобы в зависимоти от экрана устройства он вёл себя особенным образом. Просто текст для демлонстрациии." />
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
-            <TextView
-                android:id="@+id/pointName"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="Quest"
-                android:textAlignment="center"
-                android:textColor="#1772AF"
-                android:textSize="36sp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                <TextView
+                    android:id="@+id/questDescription"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginEnd="8dp"
+                    android:textAlignment="center"
+                    android:textColor="@color/common_google_signin_btn_text_dark_focused"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/pointImage"
+                    tools:text="Просто текст для демлонстрациии. На самом деле, очень важно, чтобы в зависимоти от экрана устройства он вёл себя особенным образом. Просто текст для демлонстрациии. На самом деле, очень важно, чтобы в зависимоти от экрана устройства он вёл себя особенным образом. Просто текст для демлонстрациии. На самом деле, очень важно, чтобы в зависимоти от экрана устройства он вёл себя особенным образом. Просто текст для демлонстрациии. На самом деле, очень важно, чтобы в зависимоти от экрана устройства он вёл себя особенным образом. Просто текст для демлонстрациии. На самом деле, очень важно, чтобы в зависимоти от экрана устройства он вёл себя особенным образом. Просто текст для демлонстрациии. На самом деле, очень важно, чтобы в зависимоти от экрана устройства он вёл себя особенным образом. Просто текст для демлонстрациии. На самом деле, очень важно, чтобы в зависимоти от экрана устройства он вёл себя особенным образом. Просто текст для демлонстрациии." />
 
-            <Button
-                android:id="@+id/questPointsShowButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:padding="8dp"
-                android:paddingBottom="8dp"
-                android:layout_margin="8dp"
-                android:background="@drawable/tets_button"
-                android:textColor="@color/colorAccent"
-                android:text="@string/showQuestButton"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/questDescription"/>
+                <TextView
+                    android:id="@+id/pointName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="Quest"
+                    android:textAlignment="center"
+                    android:textColor="#1772AF"
+                    android:textSize="36sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
-            <ImageView
-                android:id="@+id/pointImage"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:src="@mipmap/algo"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/pointName" />
-        </androidx.constraintlayout.widget.ConstraintLayout>
-    </androidx.core.widget.NestedScrollView>
+                <Button
+                    android:id="@+id/questPointsShowButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="8dp"
+                    android:layout_marginTop="8dp"
+                    android:background="@drawable/tets_button"
+                    android:padding="8dp"
+                    android:text="@string/showQuestButton"
+                    android:textColor="@color/colorAccent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/questDescription" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+                <ImageView
+                    android:id="@+id/pointImage"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:src="@mipmap/algo"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/pointName" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </androidx.core.widget.NestedScrollView>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <View
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    </LinearLayout>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="login">帐号登录</string>
+    <string name="login">登录帐号</string>
     <string name="register">注册</string>
     <string name="permissionMessage">ALGO要获取您设备的摄像头 和位置信息</string>
     <string name="permissionAllow">确定</string>

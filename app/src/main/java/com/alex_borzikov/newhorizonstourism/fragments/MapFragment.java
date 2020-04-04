@@ -3,6 +3,7 @@ package com.alex_borzikov.newhorizonstourism.fragments;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.PointF;
+import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -89,7 +90,6 @@ public class MapFragment extends Fragment implements Session.RouteListener {
 
     private boolean focused, withoutRouters;
 
-    // Todo Stop after quest finish
     private final LocationListener locationListener = new LocationListener() {
 
         @Override
@@ -166,7 +166,7 @@ public class MapFragment extends Fragment implements Session.RouteListener {
                     new IconStyle().setAnchor(new PointF(0.5f, 0.5f))
                             .setRotationType(RotationType.ROTATE)
                             .setZIndex(1f)
-                            .setScale(0.3f));
+                            .setScale(0.2f));
 
             CompositeIcon pinIcon = userLocationView.getPin().useCompositeIcon();
 
@@ -177,7 +177,7 @@ public class MapFragment extends Fragment implements Session.RouteListener {
                     new IconStyle().setAnchor(new PointF(0.5f, 0.5f))
                             .setRotationType(RotationType.ROTATE)
                             .setZIndex(1f)
-                            .setScale(0.3f)
+                            .setScale(0.2f)
             );
 
             userLocationView.getAccuracyCircle().setFillColor(ContextCompat.getColor(getActivity(),
