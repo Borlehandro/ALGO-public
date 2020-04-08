@@ -54,16 +54,12 @@ public class UserProfileActivity extends AppCompatActivity {
 
     private Locale myLocale;
 
-    Intent starterIntent;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_profile);
 
         preferences = getSharedPreferences("User", MODE_PRIVATE);
-
-        starterIntent = getIntent();
 
         // Not password but ticket
 
@@ -171,8 +167,6 @@ public class UserProfileActivity extends AppCompatActivity {
         conf.locale = myLocale;
         res.updateConfiguration(conf, dm);
 
-
-        // this.recreate();
         restartApp();
     }
 
@@ -235,7 +229,7 @@ public class UserProfileActivity extends AppCompatActivity {
 
     public void restartApp() {
         finish();
-        startActivity(starterIntent);
+        startActivity(new Intent(this, UserProfileActivity.class));
     }
 
 }

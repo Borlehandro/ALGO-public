@@ -1,18 +1,21 @@
 package com.alex_borzikov.newhorizonstourism.activities;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.alex_borzikov.newhorizonstourism.MainViewModel;
@@ -21,10 +24,12 @@ import com.alex_borzikov.newhorizonstourism.api.InfoTask;
 import com.alex_borzikov.newhorizonstourism.data.PointInfoItem;
 import com.alex_borzikov.newhorizonstourism.dialogs.AboutDialog;
 import com.alex_borzikov.newhorizonstourism.dialogs.FinishDialog;
+import com.alex_borzikov.newhorizonstourism.dialogs.LocationDialog;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Locale;
 import java.util.Map;
 
 
@@ -41,11 +46,30 @@ public class MainActivity extends AppCompatActivity {
 
     private MainViewModel viewModel;
 
+    private SharedPreferences preferences;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        preferences = getSharedPreferences("User", MODE_PRIVATE);
+
+        if (!(preferences.contains("ticket")
+                && preferences.contains("language"))) {
+
+            Intent toLogin = new Intent(this, PreLoginActivity.class);
+            toLogin.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+            finish();
+            startActivity(toLogin);
+
+        } else if (!getResources().getConfiguration().getLocales().get(0).getLanguage()
+                .equals(preferences.getString("language", null))) {
+
+            setLocale(preferences.getString("language", null));
+
+        }
 
         bottomFragment = getSupportFragmentManager().findFragmentById(R.id.bottomSheetNavFragment);
 
@@ -65,7 +89,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         viewModel.getQueueOpened().observe(this, opened -> {
-            if(opened)
+            if (opened)
                 sheetBehavior.setState(BottomSheetBehavior.STATE_HALF_EXPANDED);
         });
     }
@@ -161,7 +185,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         Log.d(TAG, "onActivityResult: in main " + requestCode + " res: " + resultCode);
-        viewModel.setNeedPointsQueue(false);
+        // viewModel.setNeedPointsQueue(false);
 
         if (requestCode == 1 && resultCode == 1) {
 
@@ -175,12 +199,12 @@ public class MainActivity extends AppCompatActivity {
                 Map<String, String> codeParams = new HashMap<>();
                 codeParams.put("mode", "SET_COMPLETED");
                 codeParams.put("userTicket",
-                        getSharedPreferences("User", MODE_PRIVATE).getString("ticket", "0"));
+                        preferences.getString("ticket", "0"));
                 codeParams.put("questId", viewModel.getQuestId().getValue());
 
                 InfoTask completedTask = new InfoTask(result -> {
 
-                    if(!result.equals("-1")) {
+                    if (!result.equals("-1")) {
 
                         FinishDialog finish = new FinishDialog(result);
                         finish.show(getSupportFragmentManager(), "finish");
@@ -191,8 +215,6 @@ public class MainActivity extends AppCompatActivity {
 
                 completedTask.execute(codeParams);
 
-                Toast.makeText(MainActivity.this, "That's all!",
-                        Toast.LENGTH_LONG).show();
                 viewModel.setQuestFinished(true);
 
             }
@@ -200,4 +222,35 @@ public class MainActivity extends AppCompatActivity {
             viewModel.setPointsQueue(points);
         }
     }
+
+    @Override
+    protected void onResume() {
+        checkLocationEnabled();
+        super.onResume();
+    }
+
+    public void setLocale(String localeName) {
+
+        Locale myLocale = new Locale(localeName);
+        Resources res = getResources();
+        DisplayMetrics dm = res.getDisplayMetrics();
+        Configuration conf = res.getConfiguration();
+        conf.locale = myLocale;
+        res.updateConfiguration(conf, dm);
+        // this.recreate();
+        Intent restart = new Intent(getApplicationContext(), MainActivity.class);
+        startActivity(restart);
+        finish();
+    }
+
+    private void checkLocationEnabled(){
+        if (!((android.location.LocationManager) getSystemService(LOCATION_SERVICE))
+                .isProviderEnabled(android.location.LocationManager.GPS_PROVIDER)) {
+            LocationDialog dialog = new LocationDialog();
+            FragmentManager manager = getSupportFragmentManager();
+            Log.w(TAG, "checkLocationEnabled: " + manager.toString());
+            dialog.show(manager, "location");
+        }
+    }
+
 }

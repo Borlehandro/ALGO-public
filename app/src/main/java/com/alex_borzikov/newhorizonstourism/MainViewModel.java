@@ -10,12 +10,28 @@ import java.util.List;
 
 public class MainViewModel extends ViewModel {
 
+    public MutableLiveData<BottomStates> getBottomSheetState() {
+        return bottomSheetState;
+    }
+
+    public void setBottomSheetState(BottomStates state) {
+        bottomSheetState.setValue(state);
+    }
+
+    public enum BottomStates {
+        QUEST_LIST_STATE,
+        QUEST_DESCRIPTION_STATE,
+        POINTS_QUEUE_START,
+        POINTS_QUEUE_IN_PROCESS,
+        POINTS_QUEUE_COMPLETED
+    }
+
+    private final MutableLiveData<BottomStates> bottomSheetState = new MutableLiveData<>();
+
     private final MutableLiveData<Boolean> showOpened = new MutableLiveData<>();
-    private final MutableLiveData<Boolean> needPointsQueue = new MutableLiveData<>();
     private final MutableLiveData<Boolean> questStarted = new MutableLiveData<>();
     private final MutableLiveData<Boolean> questFinished = new MutableLiveData<>();
     private final MutableLiveData<Boolean> queueOpened = new MutableLiveData<>();
-    private final MutableLiveData<Boolean> descriptionShown = new MutableLiveData<>();
     private final MutableLiveData<String> questId = new MutableLiveData<>();
     private final MutableLiveData<LinkedList<PointInfoItem>> pointsQueue = new MutableLiveData<>();
 
@@ -59,12 +75,6 @@ public class MainViewModel extends ViewModel {
         questFinished.setValue(item);
     }
 
-    public MutableLiveData<Boolean> getNeedPointsQueue() {
-        return needPointsQueue;
-    }
-
-    public void setNeedPointsQueue(boolean item){needPointsQueue.setValue(item);}
-
     public MutableLiveData<Boolean> getQueueOpened() {
         return queueOpened;
     }
@@ -73,11 +83,4 @@ public class MainViewModel extends ViewModel {
         queueOpened.setValue(item);
     }
 
-    public MutableLiveData<Boolean> getDescriptionShown() {
-        return descriptionShown;
-    }
-
-    public void setDescriptionShown(boolean shown) {
-        descriptionShown.setValue(shown);
-    }
 }

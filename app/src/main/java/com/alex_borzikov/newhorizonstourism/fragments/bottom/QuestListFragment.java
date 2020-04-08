@@ -2,23 +2,21 @@ package com.alex_borzikov.newhorizonstourism.fragments.bottom;
 
 import android.content.Context;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModel;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.alex_borzikov.newhorizonstourism.MainViewModel;
 import com.alex_borzikov.newhorizonstourism.R;
@@ -32,7 +30,6 @@ import org.json.JSONException;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -90,6 +87,8 @@ public class QuestListFragment extends Fragment implements RecyclerViewClickList
         title.setVisibility(View.INVISIBLE);
         questList.setVisibility(View.INVISIBLE);
 
+        viewModel.setBottomSheetState(MainViewModel.BottomStates.QUEST_LIST_STATE);
+
         Log.d(TAG, "Quest List onStart");
         String language = getResources().getConfiguration().getLocales().get(0).getLanguage();
 
@@ -130,7 +129,7 @@ public class QuestListFragment extends Fragment implements RecyclerViewClickList
 
                     viewModel.setQuestId(String.valueOf(questsId.get(position)));
 
-                    viewModel.setDescriptionShown(true);
+                    viewModel.setBottomSheetState(MainViewModel.BottomStates.QUEST_DESCRIPTION_STATE);
 
                     controller.navigate(R.id.toDescription);
 

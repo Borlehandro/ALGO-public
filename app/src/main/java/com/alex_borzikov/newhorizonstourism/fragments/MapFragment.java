@@ -1,28 +1,27 @@
 package com.alex_borzikov.newhorizonstourism.fragments;
 
-import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.PointF;
+import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.alex_borzikov.newhorizonstourism.MainViewModel;
 import com.alex_borzikov.newhorizonstourism.R;
 import com.alex_borzikov.newhorizonstourism.activities.CodeScanActivity;
 import com.alex_borzikov.newhorizonstourism.data.PointInfoItem;
+import com.alex_borzikov.newhorizonstourism.dialogs.LocationDialog;
 import com.alex_borzikov.newhorizonstourism.dialogs.WithoutRouteDialog;
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -32,7 +31,6 @@ import com.yandex.mapkit.MapKitFactory;
 import com.yandex.mapkit.RequestPoint;
 import com.yandex.mapkit.RequestPointType;
 import com.yandex.mapkit.geometry.Point;
-import com.yandex.mapkit.geometry.Polyline;
 import com.yandex.mapkit.geometry.SubpolylineHelper;
 import com.yandex.mapkit.layers.ObjectEvent;
 import com.yandex.mapkit.location.FilteringMode;
@@ -50,14 +48,11 @@ import com.yandex.mapkit.map.PolylineMapObject;
 import com.yandex.mapkit.map.RotationType;
 import com.yandex.mapkit.mapview.MapView;
 import com.yandex.mapkit.transport.TransportFactory;
-import com.yandex.mapkit.transport.masstransit.MasstransitOptions;
 import com.yandex.mapkit.transport.masstransit.PedestrianRouter;
 import com.yandex.mapkit.transport.masstransit.Route;
 import com.yandex.mapkit.transport.masstransit.Section;
-import com.yandex.mapkit.transport.masstransit.SectionMetadata;
 import com.yandex.mapkit.transport.masstransit.Session;
 import com.yandex.mapkit.transport.masstransit.TimeOptions;
-import com.yandex.mapkit.transport.masstransit.Transport;
 import com.yandex.mapkit.user_location.UserLocationLayer;
 import com.yandex.mapkit.user_location.UserLocationObjectListener;
 import com.yandex.mapkit.user_location.UserLocationView;
@@ -66,12 +61,14 @@ import com.yandex.runtime.image.ImageProvider;
 import com.yandex.runtime.network.NetworkError;
 import com.yandex.runtime.network.RemoteError;
 
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Locale;
+import java.util.Properties;
 import java.util.stream.Collectors;
 
 import static android.content.Context.LOCATION_SERVICE;
@@ -83,7 +80,6 @@ public class MapFragment extends Fragment implements Session.RouteListener {
 
     private MapView mapView;
 
-    // Todo you need more action buttons
     private FloatingActionButton anchorButton, codeScanButton;
     private ExtendedFloatingActionButton showButton;
 
@@ -100,7 +96,6 @@ public class MapFragment extends Fragment implements Session.RouteListener {
 
     private boolean focused, withoutRouters;
 
-    // Todo Stop after quest finish
     private final LocationListener locationListener = new LocationListener() {
 
         @Override
@@ -173,22 +168,22 @@ public class MapFragment extends Fragment implements Session.RouteListener {
         public void onObjectAdded(@NonNull UserLocationView userLocationView) {
 
             userLocationView.getArrow().setIcon(ImageProvider.fromResource(
-                    getApplicationContext(), R.drawable.search_layer_pin_dust_default),
+                    getApplicationContext(), R.drawable.location_mark),
                     new IconStyle().setAnchor(new PointF(0.5f, 0.5f))
                             .setRotationType(RotationType.ROTATE)
                             .setZIndex(1f)
-                            .setScale(1f));
+                            .setScale(0.2f));
 
             CompositeIcon pinIcon = userLocationView.getPin().useCompositeIcon();
 
             pinIcon.setIcon(
                     "pin",
                     ImageProvider.fromResource(getApplicationContext(),
-                            R.drawable.search_layer_pin_dust_default),
+                            R.drawable.location_mark),
                     new IconStyle().setAnchor(new PointF(0.5f, 0.5f))
                             .setRotationType(RotationType.ROTATE)
                             .setZIndex(1f)
-                            .setScale(1f)
+                            .setScale(0.2f)
             );
 
             userLocationView.getAccuracyCircle().setFillColor(ContextCompat.getColor(getActivity(),
@@ -211,7 +206,22 @@ public class MapFragment extends Fragment implements Session.RouteListener {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        MapKitFactory.setApiKey("445832db-f7b3-4d5b-ba6a-f8a60f790ba0");
+        // Todo encrypt config.properties
+
+        try(InputStream input = getContext().getAssets().open("config.properties")) {
+
+            Properties property = new Properties();
+            property.load(input);
+
+            String key = property.getProperty("api_key");
+
+            Log.e(TAG, "Get key: " + key);
+            MapKitFactory.setApiKey(key);
+
+        } catch (IOException e) {
+            Log.e(TAG, e.getMessage());
+            getActivity().finish();
+        }
 
         MapKitFactory.initialize(getActivity());
 
@@ -277,7 +287,6 @@ public class MapFragment extends Fragment implements Session.RouteListener {
 
         super.onActivityCreated(savedInstanceState);
 
-
         viewModel = new ViewModelProvider(getActivity()).get(MainViewModel.class);
 
         Resources res = getResources();
@@ -294,8 +303,8 @@ public class MapFragment extends Fragment implements Session.RouteListener {
             }
         });
 
-        viewModel.getNeedPointsQueue().observe(getViewLifecycleOwner(), need -> {
-            if (need) {
+        viewModel.getBottomSheetState().observe(getViewLifecycleOwner(), state -> {
+            if (state == MainViewModel.BottomStates.POINTS_QUEUE_IN_PROCESS) {
 
                 showButton.setText(getActivity().getString(R.string.pointsListHeader));
 
@@ -335,7 +344,7 @@ public class MapFragment extends Fragment implements Session.RouteListener {
 
         viewModel.getQuestStarted().observe(getViewLifecycleOwner(), (started) -> {
             viewModel.setShowOpened(false);
-            viewModel.setNeedPointsQueue(false);
+            viewModel.setBottomSheetState(MainViewModel.BottomStates.POINTS_QUEUE_COMPLETED);
             viewModel.setQuestFinished(false);
 
             codeScanButton.setVisibility(View.VISIBLE);
@@ -362,8 +371,8 @@ public class MapFragment extends Fragment implements Session.RouteListener {
             }
         });
 
-        viewModel.getDescriptionShown().observe(getViewLifecycleOwner(), (shown) -> {
-            if(shown)
+        viewModel.getBottomSheetState().observe(getViewLifecycleOwner(), (state) -> {
+            if (state == MainViewModel.BottomStates.QUEST_DESCRIPTION_STATE)
                 showButton.setText(R.string.descriptionText);
         });
     }
@@ -392,7 +401,7 @@ public class MapFragment extends Fragment implements Session.RouteListener {
                 polylineMapObject.setStrokeColor(ContextCompat.getColor(getActivity(), R.color.colorWay));
 
                 // Todo MAKE IT BETTER!
-                if (!viewModel.getNeedPointsQueue().getValue()) {
+                if (!(viewModel.getBottomSheetState().getValue() == MainViewModel.BottomStates.POINTS_QUEUE_IN_PROCESS)) {
                     if (lastLine != null)
                         mapObjects.remove(lastLine);
 
@@ -441,13 +450,14 @@ public class MapFragment extends Fragment implements Session.RouteListener {
     @Override
     public void onStart() {
         Log.d(TAG, "onStart");
-        if(viewModel.getNeedPointsQueue().getValue()!=null
-                && viewModel.getNeedPointsQueue().getValue())
+
+        if (viewModel.getBottomSheetState().getValue() == MainViewModel.BottomStates.POINTS_QUEUE_START
+                || viewModel.getBottomSheetState().getValue() == MainViewModel.BottomStates.POINTS_QUEUE_IN_PROCESS
+                || viewModel.getBottomSheetState().getValue() == MainViewModel.BottomStates.POINTS_QUEUE_COMPLETED)
 
             showButton.setText(getActivity().getString(R.string.pointsListHeader));
 
-        else if(viewModel.getDescriptionShown().getValue()!=null
-                && viewModel.getDescriptionShown().getValue()!=null)
+        else if (viewModel.getBottomSheetState().getValue() == MainViewModel.BottomStates.QUEST_DESCRIPTION_STATE)
 
             showButton.setText(getActivity().getString(R.string.descriptionText));
 
