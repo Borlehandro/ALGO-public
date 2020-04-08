@@ -61,10 +61,14 @@ import com.yandex.runtime.image.ImageProvider;
 import com.yandex.runtime.network.NetworkError;
 import com.yandex.runtime.network.RemoteError;
 
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Properties;
 import java.util.stream.Collectors;
 
 import static android.content.Context.LOCATION_SERVICE;
@@ -202,7 +206,22 @@ public class MapFragment extends Fragment implements Session.RouteListener {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        MapKitFactory.setApiKey("445832db-f7b3-4d5b-ba6a-f8a60f790ba0");
+        // Todo encrypt config.properties
+
+        try(InputStream input = getContext().getAssets().open("config.properties")) {
+
+            Properties property = new Properties();
+            property.load(input);
+
+            String key = property.getProperty("api_key");
+
+            Log.e(TAG, "Get key: " + key);
+            MapKitFactory.setApiKey(key);
+
+        } catch (IOException e) {
+            Log.e(TAG, e.getMessage());
+            getActivity().finish();
+        }
 
         MapKitFactory.initialize(getActivity());
 
