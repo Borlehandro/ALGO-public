@@ -1,6 +1,8 @@
 package com.alex_borzikov.newhorizonstourism.activities;
 
 import android.os.Bundle;
+import android.util.Log;
+
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -8,6 +10,8 @@ import com.google.zxing.Result;
 import me.dm7.barcodescanner.zxing.ZXingScannerView;
 
 public class CodeScanActivity extends AppCompatActivity implements ZXingScannerView.ResultHandler {
+
+    private static final String TAG = "Borlehandro";
 
     ZXingScannerView scannerView;
 
@@ -23,7 +27,8 @@ public class CodeScanActivity extends AppCompatActivity implements ZXingScannerV
 
     @Override
     public void handleResult(Result result) {
-        MainActivity.pointCode = result.getText();
+        MainActivity.pointCode = result.getText().substring(result.getText().indexOf("=")+1);
+        Log.d(TAG, "handleResult: " + MainActivity.pointCode);
         onBackPressed();
     }
 

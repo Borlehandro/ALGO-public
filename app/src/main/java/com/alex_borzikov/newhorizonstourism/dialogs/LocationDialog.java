@@ -20,7 +20,6 @@ public class LocationDialog extends DialogFragment {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
-        // Todo Fix text
         builder.setMessage(getString(R.string.locationTurningOnText));
         builder.setNegativeButton(getString(R.string.permissionDeny), (dialog, id) -> getActivity().finish());
         builder.setPositiveButton(getString(R.string.settingsText), (dialog, id)

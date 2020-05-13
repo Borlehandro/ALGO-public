@@ -23,7 +23,6 @@ public class FinishDialog extends DialogFragment {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
-        // Todo Fix text
         builder.setMessage(getString(R.string.completedMessage) + "\n" + getString(R.string.bonusesCollectedTitle) + " " + bonuses)
                 .setNeutralButton(getString(R.string.permissionAllow), (dialog, id) -> dismiss());
 
