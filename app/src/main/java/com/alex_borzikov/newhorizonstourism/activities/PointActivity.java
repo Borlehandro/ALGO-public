@@ -29,8 +29,6 @@ import java.util.Map;
 
 public class PointActivity extends AppCompatActivity {
 
-    // Todo go to main when press back
-
     private static final String TAG = "Borlehandro";
     private String language;
     private String pointId, userTicket;

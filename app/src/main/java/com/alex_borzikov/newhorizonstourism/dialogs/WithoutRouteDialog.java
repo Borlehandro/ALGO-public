@@ -17,7 +17,6 @@ public class WithoutRouteDialog extends DialogFragment {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
-        // Todo Fix text
         builder.setMessage(getString(R.string.routeNotFoundText))
                 .setPositiveButton(getString(R.string.permissionAllow), (dialog, id) -> {
                     dismiss();

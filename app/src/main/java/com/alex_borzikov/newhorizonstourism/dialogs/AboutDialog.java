@@ -17,7 +17,6 @@ public class AboutDialog extends DialogFragment {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
-        // Todo Fix text
         builder.setMessage(getString(R.string.license))
                 .setNeutralButton(getString(R.string.permissionAllow), (dialog, id) -> {
                     dismiss();
