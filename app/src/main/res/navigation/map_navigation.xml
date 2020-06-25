@@ -6,7 +6,7 @@
     app:startDestination="@id/mapFragment2">
     <fragment
         android:id="@+id/mapFragment2"
-        android:name="com.alex_borzikov.newhorizonstourism.fragments.MapFragment"
+        android:name="com.sibdever.algo_android.fragments.MapFragment"
         android:label="fragment_map"
         tools:layout="@layout/fragment_map" >
         <action
@@ -15,7 +15,7 @@
     </fragment>
     <fragment
         android:id="@+id/shortMapFragment"
-        android:name="com.alex_borzikov.newhorizonstourism.fragments.ShortMapFragment"
+        android:name="com.sibdever.algo_android.fragments.ShortMapFragment"
         android:label="fragment_short_map"
         tools:layout="@layout/fragment_short_map" />
 </navigation>

@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/preLoginFragment"
-        android:name="com.alex_borzikov.newhorizonstourism.fragments.pre_login.PreLoginFragment"
+        android:name="com.sibdever.algo_android.fragments.pre_login.PreLoginFragment"
         android:label="fragment_pre_login"
         tools:layout="@layout/fragment_pre_login" >
 
@@ -31,7 +31,7 @@
 
     <fragment
         android:id="@+id/registrationFragment"
-        android:name="com.alex_borzikov.newhorizonstourism.fragments.pre_login.RegistrationFragment"
+        android:name="com.sibdever.algo_android.fragments.pre_login.RegistrationFragment"
         android:label="fragment_registration"
         tools:layout="@layout/fragment_registration">
 
@@ -41,7 +41,7 @@
 
     <fragment
         android:id="@+id/loginFragment"
-        android:name="com.alex_borzikov.newhorizonstourism.fragments.pre_login.LoginFragment"
+        android:name="com.sibdever.algo_android.fragments.pre_login.LoginFragment"
         android:label="fragment_login"
         tools:layout="@layout/fragment_login" >
 
@@ -51,7 +51,7 @@
 
     <fragment
         android:id="@+id/languageFragment"
-        android:name="com.alex_borzikov.newhorizonstourism.fragments.pre_login.LanguageFragment"
+        android:name="com.sibdever.algo_android.fragments.pre_login.LanguageFragment"
         android:label="fragment_language"
         tools:layout="@layout/fragment_language" >
 

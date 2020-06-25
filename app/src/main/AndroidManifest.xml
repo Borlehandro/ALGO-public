@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.alex_borzikov.newhorizonstourism">
+    package="com.sibdever.algo_android">
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
@@ -15,18 +15,18 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-        <activity android:name=".activities.MainActivity" >
+        <activity android:name="com.sibdever.algo_android.activities.MainActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".activities.UserProfileActivity"/>
-        <activity android:name=".activities.PreLoginActivity"/>
-        <activity android:name=".activities.CodeScanActivity" />
-        <activity android:name=".activities.TaskActivity" />
-        <activity android:name=".activities.PointActivity" />
+        <activity android:name="com.sibdever.algo_android.activities.UserProfileActivity"/>
+        <activity android:name="com.sibdever.algo_android.activities.PreLoginActivity"/>
+        <activity android:name="com.sibdever.algo_android.activities.CodeScanActivity" />
+        <activity android:name="com.sibdever.algo_android.activities.TaskActivity" />
+        <activity android:name="com.sibdever.algo_android.activities.PointActivity" />
 
     </application>
 
