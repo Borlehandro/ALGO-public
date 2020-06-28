@@ -1,16 +1,25 @@
 package com.sibdever.algo_android;
 
+import com.sibdever.algo_android.api.ApiClient;
+import com.sibdever.algo_android.api.Command;
+
 import org.junit.Test;
 
-import response.UserResponse;
-
-import static org.junit.Assert.assertEquals;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ResourcesTest {
 
     @Test
-    public void testPicture() {
-        UserResponse response = UserResponse.ALREADY_EXIST;
-        assertEquals(response.toString(), "ALREADY_EXIST");
+    public void test() {
+        Command command = Command.LOGIN;
+
+        Map<String, String> args = new HashMap<>();
+        args.put("name", "test");
+        args.put("password", "123456");
+        command.setArguments(args);
+
+        System.out.println(ApiClient.send(command));
+
     }
 }
