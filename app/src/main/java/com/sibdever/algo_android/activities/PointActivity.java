@@ -15,6 +15,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.sibdever.algo_android.R;
+import com.sibdever.algo_android.api.Command;
 import com.sibdever.algo_android.api.DescriptionTask;
 import com.sibdever.algo_android.api.InfoTask;
 import com.sibdever.algo_android.api.JsonParser;
@@ -84,6 +85,8 @@ public class PointActivity extends AppCompatActivity {
         imageView.setVisibility(View.INVISIBLE);
         showTaskButton.setVisibility(View.INVISIBLE);
 
+        // Todo: FIX ALL!
+
         if (!pointId.equals("-1")) {
 
             Map<String, String> infoParams = new HashMap<>();
@@ -129,7 +132,10 @@ public class PointActivity extends AppCompatActivity {
 
             });
 
-            pointInfoTask.execute(infoParams);
+            Command command = Command.GET_POINT_INFO;
+            command.setArguments(infoParams);
+
+            pointInfoTask.execute(command);
 
         } else {
             Log.e(TAG, "onCreate: ERROR POINT_ID == -1");

@@ -2,6 +2,7 @@ package com.sibdever.algo_android.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -16,6 +17,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.sibdever.algo_android.R;
+import com.sibdever.algo_android.api.Command;
 import com.sibdever.algo_android.api.InfoTask;
 import com.sibdever.algo_android.api.JsonParser;
 import com.sibdever.algo_android.data.TaskInfoItem;
@@ -66,10 +68,9 @@ public class TaskActivity extends AppCompatActivity {
         checkButton.setOnClickListener((View v) -> {
 
             Map<String, String> params = new HashMap<>();
-            params.put("mode", "CHECK_ANSWER");
             params.put("taskId", taskId);
 
-            params.put("answerIndex", String.valueOf(group.indexOfChild(
+            params.put("variant", String.valueOf(group.indexOfChild(
                     group.findViewById(group.getCheckedRadioButtonId())
             ) + 1));
 
@@ -77,7 +78,7 @@ public class TaskActivity extends AppCompatActivity {
                     group.findViewById(group.getCheckedRadioButtonId())
             ));
 
-            params.put("userTicket", userTicket);
+            params.put("ticket", userTicket);
 
             InfoTask checkAnswer = new InfoTask(result -> {
 
@@ -94,7 +95,10 @@ public class TaskActivity extends AppCompatActivity {
                 }
             });
 
-            checkAnswer.execute(params);
+            Command command = Command.CHECK_TASK;
+            command.setArguments(params);
+
+            checkAnswer.execute(command);
 
         });
     }
@@ -114,10 +118,9 @@ public class TaskActivity extends AppCompatActivity {
         checkButton.setVisibility(View.INVISIBLE);
 
         Map<String, String> args = new HashMap<>();
-        args.put("mode", "GET_TASK_INFO");
         args.put("taskId", taskId);
         args.put("language", language);
-        args.put("userTicket", userTicket);
+        args.put("ticket", userTicket);
 
         Log.w(TAG, "onCreate: task " + userTicket);
 
@@ -145,7 +148,10 @@ public class TaskActivity extends AppCompatActivity {
 
         });
 
-        taskInfo.execute(args);
+        Command command = Command.GET_TASK_INFO;
+        command.setArguments(args);
+
+        taskInfo.execute(command);
     }
 
     @Override

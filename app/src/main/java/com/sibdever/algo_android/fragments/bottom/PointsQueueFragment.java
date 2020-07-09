@@ -1,5 +1,6 @@
 package com.sibdever.algo_android.fragments.bottom;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 
@@ -24,6 +25,7 @@ import android.widget.TextView;
 import com.sibdever.algo_android.MainViewModel;
 import com.sibdever.algo_android.R;
 import com.sibdever.algo_android.adapters.PointRecycleAdapter;
+import com.sibdever.algo_android.api.Command;
 import com.sibdever.algo_android.api.InfoTask;
 import com.sibdever.algo_android.api.JsonParser;
 import com.sibdever.algo_android.api.PictureTask;
@@ -117,8 +119,9 @@ public class PointsQueueFragment extends Fragment {
         questGoButton.setText(getResources().getString(R.string.pointQueueButton));
 
         Map<String, String> codeParams = new HashMap<>();
-        codeParams.put("mode", "GET_POINTS_QUEUE");
         codeParams.put("questId", questId);
+        codeParams.put("ticket", getActivity().getSharedPreferences("User", Context.MODE_PRIVATE)
+                .getString("ticket", "0"));
         codeParams.put("language", language);
 
         InfoTask queueTask = new InfoTask(result -> {
@@ -182,7 +185,10 @@ public class PointsQueueFragment extends Fragment {
             }
         });
 
-        queueTask.execute(codeParams);
+        Command command = Command.GET_POINTS_QUEUE;
+        command.setArguments(codeParams);
+
+        queueTask.execute(command);
 
         super.onStart();
     }

@@ -23,6 +23,7 @@ import android.widget.ProgressBar;
 
 import com.sibdever.algo_android.R;
 import com.sibdever.algo_android.activities.MainActivity;
+import com.sibdever.algo_android.api.Command;
 import com.sibdever.algo_android.api.InfoTask;
 import com.sibdever.algo_android.dialogs.PermissionDialog;
 
@@ -85,11 +86,8 @@ public class RegistrationFragment extends Fragment {
                 String userName = registerUser.getText().toString();
                 String password = registerPassword.getText().toString();
 
-                params.put("mode", "REGISTER");
-                params.put("username", userName);
+                params.put("name", userName);
                 params.put("password", password);
-
-                params.put("language", language);
 
                 Log.d(TAG, "Language set to :" + language);
 
@@ -118,7 +116,9 @@ public class RegistrationFragment extends Fragment {
                     }
                 });
 
-                task.execute(params);
+                Command command = Command.REGISTER;
+                command.setArguments(params);
+                task.execute(command);
             }
 
         });

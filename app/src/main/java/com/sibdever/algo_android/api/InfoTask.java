@@ -9,7 +9,7 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.Objects;
 
-public class InfoTask extends AsyncTask<Map<String, String>, Void, String> {
+public class InfoTask extends AsyncTask<Command, Void, String> {
 
     private ResponsibleTask responder;
 
@@ -19,9 +19,9 @@ public class InfoTask extends AsyncTask<Map<String, String>, Void, String> {
         this.responder = responder;
     }
 
-    @SafeVarargs
     @Override
-    protected final String doInBackground(Map<String, String>... params) {
+    protected final String doInBackground(Command... commands) {
+        return ApiClient.send(commands[0]);
 //        try {
 //            switch (Objects.requireNonNull(params[0].get("mode"))) {
 //
@@ -82,7 +82,6 @@ public class InfoTask extends AsyncTask<Map<String, String>, Void, String> {
 //            Log.e(TAG, "doInBackground: " + e.getMessage());
 //            // e.printStackTrace();
 //        }
-        return null;
     }
 
     @Override

@@ -7,13 +7,16 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.CAMERA" />
 
+    <!--Todo: Make icon ROUND.-->
+    <!--Todo: What is android:usesCleartextTraffic?-->
     <application
         android:allowBackup="true"
         android:icon="@mipmap/algo"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/algo"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+        android:usesCleartextTraffic="true">
 
         <activity android:name="com.sibdever.algo_android.activities.MainActivity" >
             <intent-filter>

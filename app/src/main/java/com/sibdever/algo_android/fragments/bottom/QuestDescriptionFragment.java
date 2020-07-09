@@ -20,6 +20,7 @@ import android.widget.TextView;
 
 import com.sibdever.algo_android.MainViewModel;
 import com.sibdever.algo_android.R;
+import com.sibdever.algo_android.api.Command;
 import com.sibdever.algo_android.api.DescriptionTask;
 import com.sibdever.algo_android.api.InfoTask;
 import com.sibdever.algo_android.api.JsonParser;
@@ -101,11 +102,11 @@ public class QuestDescriptionFragment extends Fragment {
         language = getResources().getConfiguration().getLocales().get(0).getLanguage();
         startButton.setText(getResources().getString(R.string.showQuestButton));
 
-        Map<String, String> getQuestparams = new HashMap<>();
+        //TODO: FIX ALL!
+        Map<String, String> getQuestParams = new HashMap<>();
 
-        getQuestparams.put("mode", "GET_QUEST_INFO");
-        getQuestparams.put("language", language);
-        getQuestparams.put("questId", questId);
+        getQuestParams.put("language", language);
+        getQuestParams.put("id", questId);
 
         InfoTask getQuestInfoTask = new InfoTask(result -> {
             try {
@@ -145,7 +146,10 @@ public class QuestDescriptionFragment extends Fragment {
             }
         });
 
-        getQuestInfoTask.execute(getQuestparams);
+        Command command = Command.GET_QUEST_DESCRIPTION;
+        command.setArguments(getQuestParams);
+
+        getQuestInfoTask.execute(command);
 
         super.onStart();
     }

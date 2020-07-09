@@ -20,6 +20,7 @@ import androidx.fragment.app.Fragment;
 
 import com.sibdever.algo_android.R;
 import com.sibdever.algo_android.activities.MainActivity;
+import com.sibdever.algo_android.api.Command;
 import com.sibdever.algo_android.api.InfoTask;
 import com.sibdever.algo_android.dialogs.PermissionDialog;
 
@@ -101,16 +102,20 @@ public class LoginFragment extends Fragment {
                     }
                 });
 
+                // Todo make shorter
+
                 Map<String, String> params = new HashMap<>();
 
                 userName = loginUser.getText().toString();
                 password = loginPassword.getText().toString();
 
-                params.put("mode", "LOGIN");
-                params.put("username", userName);
+                params.put("name", userName);
                 params.put("password", password);
 
-                task.execute(params);
+                Command command = Command.LOGIN;
+                command.setArguments(params);
+
+                task.execute(command);
 
             }
         });

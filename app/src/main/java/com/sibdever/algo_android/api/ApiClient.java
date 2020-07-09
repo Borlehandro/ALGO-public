@@ -1,7 +1,5 @@
 package com.sibdever.algo_android.api;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.util.Log;
 
 import java.io.BufferedReader;
@@ -14,15 +12,13 @@ import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 
 public class ApiClient {
 
     private static final String TAG = "Sibdever";
 
-    private static final String SERVER_URL = "http://algo-data.herokuapp.com";
+    private static final String SERVER_URL = "http://Algo-env.eba-iaghw6qa.eu-west-2.elasticbeanstalk.com";
 
     public static String send(Command command) {
 
@@ -52,7 +48,6 @@ public class ApiClient {
             InputStream content = connection.getInputStream();
 
             BufferedReader reader = new BufferedReader(new InputStreamReader(content));
-            String line;
             StringBuilder builder;
             builder = reader.lines().collect(StringBuilder::new, StringBuilder::append, StringBuilder::append);
             reader.close();

@@ -22,6 +22,7 @@ import com.sibdever.algo_android.MainViewModel;
 import com.sibdever.algo_android.R;
 import com.sibdever.algo_android.RecyclerViewClickListener;
 import com.sibdever.algo_android.adapters.QuestRecycleAdapter;
+import com.sibdever.algo_android.api.Command;
 import com.sibdever.algo_android.api.InfoTask;
 import com.sibdever.algo_android.api.JsonParser;
 import com.sibdever.algo_android.data.QuestListItem;
@@ -95,9 +96,8 @@ public class QuestListFragment extends Fragment implements RecyclerViewClickList
         title.setText(getResources().getString(R.string.questListHeader));
 
         Map<String, String> questListParams = new HashMap<>();
-        questListParams.put("mode", "GET_QUESTS_LIST");
-        questListParams.put("language", language);
-        questListParams.put("userTicket", getActivity().getSharedPreferences("User", Context.MODE_PRIVATE)
+        questListParams.put("language", language); // Unused in current server version
+        questListParams.put("ticket", getActivity().getSharedPreferences("User", Context.MODE_PRIVATE)
                 .getString("ticket", "0"));
 
         InfoTask getListTask = new InfoTask(result -> {
@@ -149,7 +149,10 @@ public class QuestListFragment extends Fragment implements RecyclerViewClickList
             }
         });
 
-        getListTask.execute(questListParams);
+        Command command = Command.GET_QUEST_LIST;
+        command.setArguments(questListParams);
+
+        getListTask.execute(command);
 
         super.onStart();
     }

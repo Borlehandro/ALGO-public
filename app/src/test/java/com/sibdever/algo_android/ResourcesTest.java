@@ -15,7 +15,7 @@ public class ResourcesTest {
         Command command = Command.LOGIN;
 
         Map<String, String> args = new HashMap<>();
-        args.put("name", "test");
+        args.put("name", "newUserAmazon");
         args.put("password", "123456");
         command.setArguments(args);
 

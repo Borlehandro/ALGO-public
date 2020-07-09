@@ -18,6 +18,7 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import com.sibdever.algo_android.R;
+import com.sibdever.algo_android.api.Command;
 import com.sibdever.algo_android.api.InfoTask;
 import com.sibdever.algo_android.api.JsonParser;
 import com.sibdever.algo_android.data.UserInfo;
@@ -171,6 +172,8 @@ public class UserProfileActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
 
+        // Todo: Fix and add in server!
+
         Map<String, String> args = new HashMap<>();
         args.put("mode", "GET_USER_INFO");
         args.put("userTicket", userTicket);
@@ -211,7 +214,10 @@ public class UserProfileActivity extends AppCompatActivity {
 
         });
 
-        userInfo.execute(args);
+        Command command = Command.NEXT_POINT;
+        command.setArguments(args);
+
+        userInfo.execute(command);
 
         super.onStart();
     }

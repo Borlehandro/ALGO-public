@@ -20,6 +20,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.sibdever.algo_android.MainViewModel;
 import com.sibdever.algo_android.R;
+import com.sibdever.algo_android.api.Command;
 import com.sibdever.algo_android.api.InfoTask;
 import com.sibdever.algo_android.data.PointInfoItem;
 import com.sibdever.algo_android.dialogs.AboutDialog;
@@ -156,8 +157,8 @@ public class MainActivity extends AppCompatActivity {
             // Toast.makeText(getApplicationContext(), "Get code: " + pointCode, Toast.LENGTH_LONG).show();
 
             Map<String, String> codeParams = new HashMap<>();
-            codeParams.put("mode", "CHECK_CODE");
             codeParams.put("code", pointCode);
+            codeParams.put("ticket", preferences.getString("ticket", "0"));
 
             InfoTask codeTask = new InfoTask(result -> {
 
@@ -176,7 +177,10 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
 
-            codeTask.execute(codeParams);
+            Command command = Command.GET_POINT_INFO;
+            command.setArguments(codeParams);
+
+            codeTask.execute(command);
 
         }
     }
@@ -187,6 +191,7 @@ public class MainActivity extends AppCompatActivity {
         Log.d(TAG, "onActivityResult: in main " + requestCode + " res: " + resultCode);
         // viewModel.setNeedPointsQueue(false);
 
+        // Todo FIX!
         if (requestCode == 1 && resultCode == 1) {
 
             LinkedList<PointInfoItem> points = viewModel.getPointsQueue().getValue();
@@ -213,7 +218,10 @@ public class MainActivity extends AppCompatActivity {
 
                 });
 
-                completedTask.execute(codeParams);
+                Command command = Command.NEXT_POINT;
+                command.setArguments(codeParams);
+
+                completedTask.execute(command);
 
                 viewModel.setQuestFinished(true);
 
