@@ -1,5 +1,7 @@
 package com.sibdever.algo_android.api;
 
+import android.util.Log;
+
 import com.sibdever.algo_android.data.PointInfoItem;
 import com.sibdever.algo_android.data.QuestInfoItem;
 import com.sibdever.algo_android.data.QuestListItem;
@@ -24,14 +26,20 @@ public class JsonParser {
 
         for (int i = 0; i < array.length(); ++i) {
             JSONObject object = array.getJSONObject(i);
-            res.add(new QuestListItem(object.getString("id"), object.getString("name"),
-                    object.getString("short_description"), object.getString("points_count"),
-                    object.getBoolean("completed")));
+            JSONObject quest = object.getJSONObject("quest");
+            JSONObject status = object.getJSONObject("status");
+            // Todo chose language here
+            // Todo fix status
+            res.add(new QuestListItem(quest.getString("questId"), quest.getString("enName"),
+                    quest.getString("shortDescEn"), quest.getString("pointsCount"),
+                    status.getString("status").equals("FINISHED")));
+            Log.d("Sibdever", "parseQuestList: " + status.getString("status"));
         }
 
         return res;
     }
 
+    // Todo: Check where I need it and remove!
     public static QuestInfoItem parseQuestInfo(String json) throws JSONException {
 
         JSONObject info = new JSONObject(json);
@@ -40,17 +48,17 @@ public class JsonParser {
                 info.getString("big_description"), info.getString("pic"),
                 info.getString("points_count"));
 
-
     }
+
 
     public static PointInfoItem parsePointInfo(String json) throws JSONException {
 
         JSONObject info = new JSONObject(json);
 
-        return new PointInfoItem(info.getString("name"),info.getString("big_description"),
-                info.getString("pic"), info.getString("geolocation_x"),
-                info.getString("geolocation_y"), info.getString("point_task"),
-                info.getString("id"));
+        return new PointInfoItem(info.getString("nameEn"), info.getString("descName"),
+                info.getString("picName"), info.getString("latitude"),
+                info.getString("longitude"), info.getString("taskId"),
+                info.getString("pointId"));
 
     }
 
@@ -58,8 +66,8 @@ public class JsonParser {
 
         JSONObject info = new JSONObject(json);
 
-        return new TaskInfoItem(info.getString("desc"), info.getString("pic"),
-                info.getString("chose1"), info.getString("chose2"), info.getString("chose3"));
+        return new TaskInfoItem(info.getString("taskDescEn"), info.getString("pic"),
+                info.getString("chose1En"), info.getString("chose2En"), info.getString("chose3En"));
 
     }
 
@@ -71,9 +79,9 @@ public class JsonParser {
 
         for (int i = 0; i < array.length(); ++i) {
             JSONObject object = array.getJSONObject(i);
-            res.add(new PointInfoItem(object.getString("name"),object.getString("big_description"),
-                    object.getString("pic"), object.getString("geolocation_x"),
-                    object.getString("geolocation_y"), object.getString("point_task"),
+            res.add(new PointInfoItem(object.getString("nameEn"),object.getString("big_description"),
+                    object.getString("picName"), object.getString("latitude"),
+                    object.getString("longitude"), object.getString("point_task"),
                     object.getString("id")));
         }
 

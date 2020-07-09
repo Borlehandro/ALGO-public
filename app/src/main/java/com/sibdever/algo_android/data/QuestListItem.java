@@ -8,6 +8,7 @@ public class QuestListItem {
     private int pointsNumber;
     private boolean completed;
 
+    // Todo FIX.
     public QuestListItem(String id, String name, String descriptionShort, String pointsNumber, boolean completed) {
 
         this.id = Integer.parseInt(id);
