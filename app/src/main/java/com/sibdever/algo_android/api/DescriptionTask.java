@@ -21,7 +21,7 @@ public class DescriptionTask extends AsyncTask<String, Void, StringBuffer> {
 //        } catch (IOException e) {
 //            e.printStackTrace();
 //        }
-        return null;
+        return new StringBuffer("Lorem ipsum dolor sit amet");
     }
 
     @Override

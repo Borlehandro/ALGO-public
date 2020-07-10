@@ -19,14 +19,15 @@ public class PictureTask extends AsyncTask<String, Void, Bitmap> {
     @Override
     protected Bitmap doInBackground(String... params) {
 
-//        try {
-//            Bitmap bm = ApiClient.getImage(params[0]);
-//            Log.d("Borlehandro", String.valueOf(bm==null));
-//            Log.d("Borlehandro", "doInBackground: " + bm.getHeight());
-//            return ApiClient.getImage(params[0]);
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
+        try {
+            Bitmap bm = ApiClient.getImage(params[0]);
+            Log.d("Borlehandro", String.valueOf(bm==null));
+            Log.d("Borlehandro", "doInBackground: " + bm.getHeight());
+            return ApiClient.getImage(params[0]);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         return null;
 
     }

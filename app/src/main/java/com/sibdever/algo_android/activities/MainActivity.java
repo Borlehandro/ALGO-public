@@ -22,11 +22,14 @@ import com.sibdever.algo_android.MainViewModel;
 import com.sibdever.algo_android.R;
 import com.sibdever.algo_android.api.Command;
 import com.sibdever.algo_android.api.InfoTask;
-import com.sibdever.algo_android.data.PointInfoItem;
+import com.sibdever.algo_android.data.Point;
+import com.sibdever.algo_android.data.ShortPoint;
 import com.sibdever.algo_android.dialogs.AboutDialog;
 import com.sibdever.algo_android.dialogs.FinishDialog;
 import com.sibdever.algo_android.dialogs.LocationDialog;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
+
+import org.json.JSONException;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -37,8 +40,6 @@ import java.util.Map;
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "Borlehandro";
-
-    private String pointId;
 
     public static String pointCode;
 
@@ -162,18 +163,21 @@ public class MainActivity extends AppCompatActivity {
 
             InfoTask codeTask = new InfoTask(result -> {
 
-                pointId = result;
-                Log.d(TAG, "onRestart: get pointId: " + pointId);
+                try {
+                    Point point = Point.valueOf(result, preferences.getString("language", "en"));
 
-                if (viewModel.getPointsQueue().getValue() != null && Integer.parseInt(pointId) == viewModel.getPointsQueue().getValue()
-                        .peek().getId()) {
+                Log.d(TAG, "onRestart: get point: " + point.getName());
+
 
                     Intent toPoint = new Intent(getApplicationContext(), PointActivity.class);
-                    toPoint.putExtra("pointId", pointId);
+                    toPoint.putExtra("point", point);
 
                     // It can not repeat!
                     pointCode = null;
                     startActivityForResult(toPoint, 1);
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
                 }
             });
 
@@ -194,7 +198,7 @@ public class MainActivity extends AppCompatActivity {
         // Todo FIX!
         if (requestCode == 1 && resultCode == 1) {
 
-            LinkedList<PointInfoItem> points = viewModel.getPointsQueue().getValue();
+            LinkedList<ShortPoint> points = viewModel.getPointsQueue().getValue();
 
             if (points != null && points.size() != 1) {
                 points.pop();

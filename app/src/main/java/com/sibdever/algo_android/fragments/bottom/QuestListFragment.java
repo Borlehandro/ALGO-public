@@ -24,8 +24,7 @@ import com.sibdever.algo_android.RecyclerViewClickListener;
 import com.sibdever.algo_android.adapters.QuestRecycleAdapter;
 import com.sibdever.algo_android.api.Command;
 import com.sibdever.algo_android.api.InfoTask;
-import com.sibdever.algo_android.api.JsonParser;
-import com.sibdever.algo_android.data.QuestListItem;
+import com.sibdever.algo_android.data.Quest;
 
 import org.json.JSONException;
 
@@ -105,18 +104,18 @@ public class QuestListFragment extends Fragment implements RecyclerViewClickList
 
                 Log.d(TAG, "Activity get " + result);
 
-                List<QuestListItem> parsingResult = JsonParser.parseQuestList(result);
+                List<Quest> parsingResult = Quest.listOf(result, language);
 
-                List<String> questsNames = parsingResult.stream().map(QuestListItem::getName)
+                List<String> questsNames = parsingResult.stream().map(Quest::getName)
                         .collect(Collectors.toList());
 
                 List<String> questsDescriptions = parsingResult.stream()
-                        .map(QuestListItem::getDescriptionShort).collect(Collectors.toList());
+                        .map(Quest::getDescriptionShort).collect(Collectors.toList());
 
-                List<Integer> questsId = parsingResult.stream().map(QuestListItem::getId)
+                List<Long> questsId = parsingResult.stream().map(Quest::getId)
                         .collect(Collectors.toList());
 
-                List<Boolean> completed = parsingResult.stream().map(QuestListItem::isCompleted)
+                List<Boolean> completed = parsingResult.stream().map(item -> item.getStatus().equals(Quest.StatusType.FINISHED))
                         .collect(Collectors.toList());
 
                 for (String item : questsNames) {
@@ -128,6 +127,9 @@ public class QuestListFragment extends Fragment implements RecyclerViewClickList
                     Log.d(TAG, "Click on " + position);
 
                     viewModel.setQuestId(String.valueOf(questsId.get(position)));
+
+                    // Test
+                    viewModel.setQuest(parsingResult.get(position));
 
                     viewModel.setBottomSheetState(MainViewModel.BottomStates.QUEST_DESCRIPTION_STATE);
 

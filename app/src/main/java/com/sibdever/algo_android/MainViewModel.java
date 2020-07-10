@@ -3,7 +3,9 @@ package com.sibdever.algo_android;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.sibdever.algo_android.data.PointInfoItem;
+import com.sibdever.algo_android.data.Quest;
+import com.sibdever.algo_android.data.ShortPoint;
+
 import java.util.LinkedList;
 
 public class MainViewModel extends ViewModel {
@@ -31,7 +33,18 @@ public class MainViewModel extends ViewModel {
     private final MutableLiveData<Boolean> questFinished = new MutableLiveData<>();
     private final MutableLiveData<Boolean> queueOpened = new MutableLiveData<>();
     private final MutableLiveData<String> questId = new MutableLiveData<>();
-    private final MutableLiveData<LinkedList<PointInfoItem>> pointsQueue = new MutableLiveData<>();
+    private final MutableLiveData<LinkedList<ShortPoint>> pointsQueue = new MutableLiveData<>();
+
+    // Test
+    private final MutableLiveData<Quest> quest = new MutableLiveData<>();
+
+    public MutableLiveData<Quest> getQuest() {
+        return quest;
+    }
+
+    public void setQuest(Quest quest) {
+        this.quest.setValue(quest);
+    }
 
     public MutableLiveData<Boolean> getShowOpened() {
         return showOpened;
@@ -57,11 +70,11 @@ public class MainViewModel extends ViewModel {
         questStarted.setValue(item);
     }
 
-    public MutableLiveData<LinkedList<PointInfoItem>> getPointsQueue() {
+    public MutableLiveData<LinkedList<ShortPoint>> getPointsQueue() {
         return pointsQueue;
     }
 
-    public void setPointsQueue(LinkedList<PointInfoItem> item) {
+    public void setPointsQueue(LinkedList<ShortPoint> item) {
         pointsQueue.setValue(item);
     }
 

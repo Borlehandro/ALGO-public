@@ -29,7 +29,8 @@ import com.sibdever.algo_android.api.Command;
 import com.sibdever.algo_android.api.InfoTask;
 import com.sibdever.algo_android.api.JsonParser;
 import com.sibdever.algo_android.api.PictureTask;
-import com.sibdever.algo_android.data.PointInfoItem;
+import com.sibdever.algo_android.data.Point;
+import com.sibdever.algo_android.data.ShortPoint;
 
 import org.json.JSONException;
 
@@ -129,14 +130,14 @@ public class PointsQueueFragment extends Fragment {
 
                 Log.d(TAG, "Activity get " + result);
 
-                LinkedList<PointInfoItem> queue = JsonParser.parsePointsQueue(result);
+                LinkedList<ShortPoint> queue = ShortPoint.listOf(result, language);
 
                 if(viewModel.getQuestStarted().getValue()==null || !viewModel.getQuestStarted().getValue()) {
                     viewModel.setPointsQueue(queue);
                     viewModel.setBottomSheetState(MainViewModel.BottomStates.POINTS_QUEUE_IN_PROCESS);
                 }
 
-                List<String> pointsNames = queue.stream().map(PointInfoItem::getName)
+                List<String> pointsNames = queue.stream().map(ShortPoint::getName)
                         .collect(Collectors.toList());
 
                 // Todo CAN WE ADD SHORT POINT DESCRIPTION
@@ -150,7 +151,7 @@ public class PointsQueueFragment extends Fragment {
 
                 // For all names download image
                 for (String name : queue.stream()
-                        .map(PointInfoItem::getPictureName).collect(Collectors.toList())) {
+                        .map(ShortPoint::getPictureName).collect(Collectors.toList())) {
 
                     PictureTask pictureTask = new PictureTask(bitmapResult -> {
                         pictures.add(bitmapResult);
@@ -177,6 +178,8 @@ public class PointsQueueFragment extends Fragment {
                     Log.d(TAG, "onStart: IT'S TIME TO START!!! ");
                     viewModel.setPointsQueue(queue);
                     viewModel.setQuestStarted(true);
+
+                    // Todo write start here!
 
                 });
 
