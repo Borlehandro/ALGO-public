@@ -107,7 +107,10 @@ public class RegistrationFragment extends Fragment {
                     registerConfirm.setVisibility(View.VISIBLE);
                     registerButton.setVisibility(View.VISIBLE);
 
-                    if (!result.equals("-1")) {
+                    // Todo Use UserResponse
+                    if (!result.equals("Already exist")) {
+
+                        // Todo get cookies and save in Cookies Store
                         userTicket = result;
                         SharedPreferences.Editor editor = preferences.edit();
                         editor.putString("ticket", userTicket);

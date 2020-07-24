@@ -1,34 +1,38 @@
 package com.sibdever.algo_android.data;
 
-public class UserInfo {
-    private String userName;
-    private int questsCompleted;
-    private int bonuses;
-    private int pointsCompleted;
-    private float kilometersCompleted;
+import org.json.JSONException;
+import org.json.JSONObject;
 
-    public UserInfo(String userName, int questsCompleted, int bonuses, int pointsCompleted, float kilometersCompleted) {
-        this.userName = userName;
-        this.questsCompleted = questsCompleted;
+public class UserInfo {
+    private String name;
+    private int bonuses;
+    private int questsPassed;
+    private int pointsPassed;
+    private double kilometersCompleted;
+
+    private UserInfo(String name, int bonuses, int questsPassed, int pointsPassed, double kilometersCompleted) {
+        this.name = name;
         this.bonuses = bonuses;
-        this.pointsCompleted = pointsCompleted;
+        this.questsPassed = questsPassed;
+        this.pointsPassed = pointsPassed;
         this.kilometersCompleted = kilometersCompleted;
     }
 
-    public String getUserName() {
-        return userName;
+    public static UserInfo valueOf(String json) throws JSONException {
+        JSONObject object = new JSONObject(json);
+        return new UserInfo(object.getString("name"),
+                object.getInt("bonuses"),
+                object.getInt("questsPassed"),
+                object.getInt("pointsPassed"),
+                object.getDouble("kilometersCompleted"));
     }
 
-    public void setUserName(String userName) {
-        this.userName = userName;
+    public String getName() {
+        return name;
     }
 
-    public int getQuestsCompleted() {
-        return questsCompleted;
-    }
-
-    public void setQuestsCompleted(int questsCompleted) {
-        this.questsCompleted = questsCompleted;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public int getBonuses() {
@@ -39,19 +43,28 @@ public class UserInfo {
         this.bonuses = bonuses;
     }
 
-    public int getPointsCompleted() {
-        return pointsCompleted;
+    public int getQuestsPassed() {
+        return questsPassed;
     }
 
-    public void setPointsCompleted(int pointsCompleted) {
-        this.pointsCompleted = pointsCompleted;
+    public void setQuestsPassed(int questsPassed) {
+        this.questsPassed = questsPassed;
     }
 
-    public float getKilometersCompleted() {
+    public int getPointsPassed() {
+        return pointsPassed;
+    }
+
+    public void setPointsPassed(int pointsPassed) {
+        this.pointsPassed = pointsPassed;
+    }
+
+    public double getKilometersCompleted() {
         return kilometersCompleted;
     }
 
     public void setKilometersCompleted(int kilometersCompleted) {
         this.kilometersCompleted = kilometersCompleted;
     }
+
 }

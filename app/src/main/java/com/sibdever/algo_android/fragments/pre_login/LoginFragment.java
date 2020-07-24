@@ -91,8 +91,8 @@ public class LoginFragment extends Fragment {
 
                     Log.d(TAG, "!!!" + result);
 
-                    // Todo Check answer correctly!
-                    if (!result.equals("-1")) {
+                    // Todo Use UserResponse
+                    if (!(result.equals("Incorrect name") || result.equals("Incorrect password"))) {
                         userTicket = result;
 
                         // Todo get cookies and save in Cookies Store

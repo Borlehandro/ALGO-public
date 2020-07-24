@@ -1,8 +1,5 @@
 package com.sibdever.algo_android.activities;
 
-import androidx.appcompat.app.AppCompatActivity;
-
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -16,13 +13,13 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.sibdever.algo_android.R;
 import com.sibdever.algo_android.api.Command;
 import com.sibdever.algo_android.api.InfoTask;
-import com.sibdever.algo_android.api.JsonParser;
 import com.sibdever.algo_android.data.QuestStatus;
 import com.sibdever.algo_android.data.Task;
-import com.sibdever.algo_android.data.TaskInfoItem;
 import com.sibdever.algo_android.dialogs.AboutDialog;
 
 import org.json.JSONException;

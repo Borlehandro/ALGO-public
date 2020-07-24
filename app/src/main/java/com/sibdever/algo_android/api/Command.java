@@ -8,6 +8,7 @@ public enum Command {
 
     LOGIN("/user/login/", ContentType.STANDARD),
     REGISTER("/user/register/", ContentType.STANDARD),
+    USER_INFO("/user/info/", ContentType.STANDARD),
     GET_QUEST_LIST("/quest/list/", ContentType.STANDARD),
     GET_QUEST_DESCRIPTION("/quest/description/", ContentType.TEXT),
     GET_QUEST_PICTURE("/quest/picture/", ContentType.PICTURE),
