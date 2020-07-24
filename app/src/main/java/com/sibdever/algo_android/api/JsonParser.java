@@ -12,15 +12,6 @@ import java.util.LinkedList;
 
 public class JsonParser {
 
-    public static TaskInfoItem parseTaskInfo(String json) throws JSONException {
-
-        JSONObject info = new JSONObject(json);
-
-        return new TaskInfoItem(info.getString("taskDescEn"), info.getString("pic"),
-                info.getString("chose1En"), info.getString("chose2En"), info.getString("chose3En"));
-
-    }
-
     public static UserInfo parseUserInfo(String json) throws JSONException {
 
         JSONObject info = new JSONObject(json);

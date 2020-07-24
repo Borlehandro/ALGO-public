@@ -16,10 +16,9 @@ public class Quest {
     private String pictureName;
     private int bonuses;
     private int pointsCount;
-    private StatusType status;
-    private ShortPoint lastPoint;
+    private QuestStatus status;
 
-    private Quest(long id, String name, String descriptionShort, String descriptionName, String pictureName, int bonuses, int pointsCount, StatusType status, ShortPoint lastPoint) {
+    private Quest(long id, String name, String descriptionShort, String descriptionName, String pictureName, int bonuses, int pointsCount, QuestStatus status) {
         this.id = id;
         this.name = name;
         this.descriptionName = descriptionName;
@@ -28,28 +27,14 @@ public class Quest {
         this.bonuses = bonuses;
         this.pointsCount = pointsCount;
         this.status = status;
-        this.lastPoint = lastPoint;
     }
 
-    public StatusType getStatus() {
-        return status;
+    public QuestStatus.StatusType getStatus() {
+        return status.getStatus();
     }
 
     public ShortPoint getLastPoint() {
-        return lastPoint;
-    }
-
-    // Copy from algo-data.QuestStatus
-    public enum StatusType {
-        NOT_STARTED,
-        NEW,
-        IN_PROGRESS_NOT_FINISHED,
-        IN_PROGRESS_AGAIN,
-        FINISHED,
-        FINISHED_FIRST_TIME,
-        FINISHED_AGAIN,
-        NOT_CHANGED,
-        ERROR
+        return status.getPoint();
     }
 
     private static Quest valueOf(JSONObject info, String language) throws JSONException {
@@ -80,12 +65,10 @@ public class Quest {
                 quest.getString("picName"),
                 quest.getInt("bonuses"),
                 quest.getInt("pointsCount"),
-                StatusType.valueOf(status.getString("status")),
-                ShortPoint.valueOf(status.getJSONObject("point"), language));
+                QuestStatus.valueOf(status, language));
     }
 
     public static Quest valueOf(String json, String language) throws JSONException {
-
         JSONObject info = new JSONObject(json);
         return valueOf(info, language);
     }

@@ -20,6 +20,8 @@ import com.sibdever.algo_android.R;
 import com.sibdever.algo_android.api.Command;
 import com.sibdever.algo_android.api.InfoTask;
 import com.sibdever.algo_android.api.JsonParser;
+import com.sibdever.algo_android.data.QuestStatus;
+import com.sibdever.algo_android.data.Task;
 import com.sibdever.algo_android.data.TaskInfoItem;
 import com.sibdever.algo_android.dialogs.AboutDialog;
 
@@ -81,17 +83,33 @@ public class TaskActivity extends AppCompatActivity {
             params.put("ticket", userTicket);
 
             InfoTask checkAnswer = new InfoTask(result -> {
+                try {
 
-                if (result.equals("1")) {
-                    Toast.makeText(TaskActivity.this, getString(R.string.taskSuccess), Toast.LENGTH_SHORT)
-                            .show();
+                    QuestStatus status = QuestStatus.valueOf(result, language);
 
-                    setResult(1);
-                    finish();
+                    if(!status.getStatus().equals(QuestStatus.StatusType.NOT_CHANGED)) {
 
-                } else {
-                    Toast.makeText(TaskActivity.this, getString(R.string.taskFail), Toast.LENGTH_SHORT)
-                            .show();
+                        // OK
+                        Toast.makeText(TaskActivity.this, getString(R.string.taskSuccess), Toast.LENGTH_SHORT)
+                                .show();
+
+                        Intent resultIntent = new Intent();
+                        resultIntent.putExtra("questStatus", status);
+
+                        setResult(1, resultIntent);
+
+                        finish();
+
+                    } else {
+
+                        // NOT OK
+                        Toast.makeText(TaskActivity.this, getString(R.string.taskFail), Toast.LENGTH_SHORT)
+                                .show();
+
+                    }
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
                 }
             });
 
@@ -130,9 +148,9 @@ public class TaskActivity extends AppCompatActivity {
 
                 Log.w(TAG, "Result: " + result);
 
-                TaskInfoItem info = JsonParser.parseTaskInfo(result);
+                Task info = Task.valueOf(result, language);
 
-                descriptionTask.setText(info.getDescriptionShort());
+                descriptionTask.setText(info.getDescription());
                 choice1.setText(info.getChoice1());
                 choice2.setText(info.getChoice2());
                 choice3.setText(info.getChoice3());

@@ -4,9 +4,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.Serializable;
 import java.util.LinkedList;
 
-public class ShortPoint {
+public class ShortPoint implements Serializable {
 
     private String pictureName;
     private String name;

@@ -91,9 +91,11 @@ public class LoginFragment extends Fragment {
 
                     Log.d(TAG, "!!!" + result);
 
+                    // Todo Check answer correctly!
                     if (!result.equals("-1")) {
                         userTicket = result;
 
+                        // Todo get cookies and save in Cookies Store
                         SharedPreferences.Editor editor = preferences.edit();
                         editor.putString("ticket", userTicket);
                         editor.apply();

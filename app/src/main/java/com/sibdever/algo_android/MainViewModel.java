@@ -18,6 +18,14 @@ public class MainViewModel extends ViewModel {
         bottomSheetState.setValue(state);
     }
 
+    public MutableLiveData<ShortPoint> getNextPoint() {
+        return nextPoint;
+    }
+
+    public void setNextPoint(ShortPoint shortPoint) {
+        this.nextPoint.setValue(shortPoint);
+    }
+
     public enum BottomStates {
         QUEST_LIST_STATE,
         QUEST_DESCRIPTION_STATE,
@@ -34,6 +42,7 @@ public class MainViewModel extends ViewModel {
     private final MutableLiveData<Boolean> queueOpened = new MutableLiveData<>();
     private final MutableLiveData<String> questId = new MutableLiveData<>();
     private final MutableLiveData<LinkedList<ShortPoint>> pointsQueue = new MutableLiveData<>();
+    private final MutableLiveData<ShortPoint> nextPoint = new MutableLiveData<>();
 
     // Test
     private final MutableLiveData<Quest> quest = new MutableLiveData<>();

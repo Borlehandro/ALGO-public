@@ -97,6 +97,8 @@ public class MapFragment extends Fragment implements Session.RouteListener {
         @Override
         public void onLocationUpdated(@NonNull Location location) {
 
+            //
+
             Log.d(TAG, "onLocationUpdated: " + location.getPosition().getLatitude() + ";"
                     + location.getPosition().getLongitude());
 
@@ -112,24 +114,27 @@ public class MapFragment extends Fragment implements Session.RouteListener {
                 focused = true;
             }
 
-            LinkedList<ShortPoint> currentPointsQueue = viewModel.getPointsQueue().getValue();
+            // LinkedList<ShortPoint> currentPointsQueue = viewModel.getPointsQueue().getValue();
+            ShortPoint nextPoint = viewModel.getNextPoint().getValue();
 
-            if (currentPointsQueue != null && currentPointsQueue.size() > 0) {
+            if (nextPoint != null) {
+
+                // Manage user routing in quest
 
                 Log.d(TAG, "onLocationUpdated: Try to build router with it `|` ");
 
                 List<RequestPoint> points = new ArrayList<>();
                 points.add(new RequestPoint(location.getPosition(), RequestPointType.WAYPOINT, null));
 
-                points.add(new RequestPoint(new com.yandex.mapkit.geometry.Point(currentPointsQueue.peek().getLatitude(),
-                        currentPointsQueue.peek().getLongitude()), RequestPointType.WAYPOINT, null));
+                points.add(new RequestPoint(new com.yandex.mapkit.geometry.Point(nextPoint.getLatitude(),
+                        nextPoint.getLongitude()), RequestPointType.WAYPOINT, null));
 
                 if (mark != null)
                     mapObjects.remove(mark);
 
                 mark = mapObjects.addPlacemark(
-                        new com.yandex.mapkit.geometry.Point(currentPointsQueue.peek().getLatitude(),
-                                currentPointsQueue.peek().getLongitude()));
+                        new com.yandex.mapkit.geometry.Point(nextPoint.getLatitude(),
+                                nextPoint.getLongitude()));
 
                 mark.setOpacity(0.9f);
                 mark.setIcon(ImageProvider.fromResource(getActivity(), R.drawable.placemark_mini));
@@ -138,8 +143,8 @@ public class MapFragment extends Fragment implements Session.RouteListener {
                 if (withoutRouters) {
                     mapView.getMap().move(
                             new CameraPosition(
-                                    new com.yandex.mapkit.geometry.Point(currentPointsQueue.peek().getLatitude(),
-                                            currentPointsQueue.peek().getLongitude()),
+                                    new com.yandex.mapkit.geometry.Point(nextPoint.getLatitude(),
+                                            nextPoint.getLongitude()),
                                     18.0f, 0.0f, 0.0f),
                             new Animation(Animation.Type.SMOOTH, 5),
                             null);
@@ -202,7 +207,7 @@ public class MapFragment extends Fragment implements Session.RouteListener {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        // Todo encrypt config.properties
+        // Todo encrypt config.properties or use another secure method
 
         try(InputStream input = getContext().getAssets().open("config.properties")) {
 
@@ -302,6 +307,8 @@ public class MapFragment extends Fragment implements Session.RouteListener {
         viewModel.getBottomSheetState().observe(getViewLifecycleOwner(), state -> {
             if (state == MainViewModel.BottomStates.POINTS_QUEUE_IN_PROCESS) {
 
+                // Manage points queue
+
                 showButton.setText(getActivity().getString(R.string.pointsListHeader));
 
                 LinkedList<ShortPoint> currentPointsQueue = viewModel.getPointsQueue().getValue();
@@ -351,9 +358,7 @@ public class MapFragment extends Fragment implements Session.RouteListener {
                     + viewModel.getPointsQueue().getValue().get(0).getLatitude() + ";"
                     + viewModel.getPointsQueue().getValue().get(0).getLongitude());
 
-            LinkedList<ShortPoint> currentPointsQueue = viewModel.getPointsQueue().getValue();
-
-            Log.d(TAG, "onCreate: GET POINTS QUEUE: " + currentPointsQueue.get(0).getName());
+            Log.d(TAG, "onCreate: GET POINTS QUEUE: " + viewModel.getNextPoint().getValue().getName());
 
             // Todo set normal value
             locationManager.subscribeForLocationUpdates(0.0d, 100, 0.0d, false,

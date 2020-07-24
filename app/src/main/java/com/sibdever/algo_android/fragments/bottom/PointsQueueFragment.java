@@ -25,11 +25,14 @@ import android.widget.TextView;
 import com.sibdever.algo_android.MainViewModel;
 import com.sibdever.algo_android.R;
 import com.sibdever.algo_android.adapters.PointRecycleAdapter;
+import com.sibdever.algo_android.api.ApiClient;
 import com.sibdever.algo_android.api.Command;
 import com.sibdever.algo_android.api.InfoTask;
 import com.sibdever.algo_android.api.JsonParser;
 import com.sibdever.algo_android.api.PictureTask;
 import com.sibdever.algo_android.data.Point;
+import com.sibdever.algo_android.data.Quest;
+import com.sibdever.algo_android.data.QuestStatus;
 import com.sibdever.algo_android.data.ShortPoint;
 
 import org.json.JSONException;
@@ -95,12 +98,9 @@ public class PointsQueueFragment extends Fragment {
 
         viewModel.setQueueOpened(true);
 
-        viewModel.getQuestFinished().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
-            @Override
-            public void onChanged(Boolean aBoolean) {
-                if(aBoolean)
-                    controller.navigate(R.id.toBegin);
-            }
+        viewModel.getQuestFinished().observe(getViewLifecycleOwner(), aBoolean -> {
+            if(aBoolean)
+                controller.navigate(R.id.toBegin);
         });
 
         Log.d(TAG, "onActivityCreated: queue get lang: " + language + " questId: " + questId);
@@ -132,6 +132,8 @@ public class PointsQueueFragment extends Fragment {
 
                 LinkedList<ShortPoint> queue = ShortPoint.listOf(result, language);
 
+                // Send points to show in the map
+
                 if(viewModel.getQuestStarted().getValue()==null || !viewModel.getQuestStarted().getValue()) {
                     viewModel.setPointsQueue(queue);
                     viewModel.setBottomSheetState(MainViewModel.BottomStates.POINTS_QUEUE_IN_PROCESS);
@@ -140,7 +142,7 @@ public class PointsQueueFragment extends Fragment {
                 List<String> pointsNames = queue.stream().map(ShortPoint::getName)
                         .collect(Collectors.toList());
 
-                // Todo CAN WE ADD SHORT POINT DESCRIPTION
+                // Todo CAN WE ADD SHORT POINT DESCRIPTION?
 
                 Log.d(TAG, "onCreate. Points names: ");
                 for (String item : pointsNames) {
@@ -149,7 +151,7 @@ public class PointsQueueFragment extends Fragment {
 
                 List<Bitmap> pictures = new ArrayList<>();
 
-                // For all names download image
+                // For all names download image and insert into RecyclerView
                 for (String name : queue.stream()
                         .map(ShortPoint::getPictureName).collect(Collectors.toList())) {
 
@@ -176,10 +178,32 @@ public class PointsQueueFragment extends Fragment {
                 questGoButton.setOnClickListener((View v) -> {
 
                     Log.d(TAG, "onStart: IT'S TIME TO START!!! ");
-                    viewModel.setPointsQueue(queue);
-                    viewModel.setQuestStarted(true);
 
-                    // Todo write start here!
+                    // Quest start here!
+                    // viewModel.setPointsQueue(queue);
+
+                    Command command = Command.START_QUEST;
+                    Map<String, String> args = new HashMap<>();
+                    args.put("ticket", getActivity().getSharedPreferences("User", Context.MODE_PRIVATE).getString("ticket", "0"));
+                    args.put("questId", questId);
+
+                    InfoTask questStartTask = new InfoTask(res -> {
+                        Log.d(TAG, "onStart: Start quest with res: " + res);
+                        // Parse Status
+                        try {
+                            QuestStatus status = QuestStatus.valueOf(res, language);
+                            Log.d(TAG, "onStart: " + status.getStatus());
+                            viewModel.setNextPoint(status.getPoint());
+                            viewModel.setQuestStarted(true);
+                        } catch (JSONException e) {
+                            // Todo: Say we can not start quest.
+                            e.printStackTrace();
+                        }
+
+                    });
+
+                    command.setArguments(args);
+                    questStartTask.execute(command);
 
                 });
 

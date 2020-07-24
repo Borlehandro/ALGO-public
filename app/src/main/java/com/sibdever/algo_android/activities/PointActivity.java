@@ -82,8 +82,6 @@ public class PointActivity extends AppCompatActivity {
         imageView.setVisibility(View.INVISIBLE);
         showTaskButton.setVisibility(View.INVISIBLE);
 
-        // Todo: FIX ALL!
-
         nameView.setText(point.getName());
 
         PictureTask pictureTask = new PictureTask(bitmapResult -> {
@@ -116,7 +114,7 @@ public class PointActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         Log.d(TAG, "onActivityResult: point " + resultCode);
-        setResult(resultCode);
+        setResult(resultCode, data);
         finish();
     }
 

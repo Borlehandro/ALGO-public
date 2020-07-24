@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -23,6 +24,8 @@ import com.sibdever.algo_android.R;
 import com.sibdever.algo_android.api.Command;
 import com.sibdever.algo_android.api.InfoTask;
 import com.sibdever.algo_android.data.Point;
+import com.sibdever.algo_android.data.Quest;
+import com.sibdever.algo_android.data.QuestStatus;
 import com.sibdever.algo_android.data.ShortPoint;
 import com.sibdever.algo_android.dialogs.AboutDialog;
 import com.sibdever.algo_android.dialogs.FinishDialog;
@@ -156,6 +159,7 @@ public class MainActivity extends AppCompatActivity {
         if (pointCode != null) {
 
             // Toast.makeText(getApplicationContext(), "Get code: " + pointCode, Toast.LENGTH_LONG).show();
+            Log.d(TAG, "onRestart: " + "Get code: " + pointCode);
 
             Map<String, String> codeParams = new HashMap<>();
             codeParams.put("code", pointCode);
@@ -163,7 +167,10 @@ public class MainActivity extends AppCompatActivity {
 
             InfoTask codeTask = new InfoTask(result -> {
 
+                Log.w(TAG, "GET RESULT IN LAMBDA: " + result);
+
                 try {
+
                     Point point = Point.valueOf(result, preferences.getString("language", "en"));
 
                 Log.d(TAG, "onRestart: get point: " + point.getName());
@@ -195,43 +202,47 @@ public class MainActivity extends AppCompatActivity {
         Log.d(TAG, "onActivityResult: in main " + requestCode + " res: " + resultCode);
         // viewModel.setNeedPointsQueue(false);
 
-        // Todo FIX!
         if (requestCode == 1 && resultCode == 1) {
 
-            LinkedList<ShortPoint> points = viewModel.getPointsQueue().getValue();
+            // Return result from task
 
-            if (points != null && points.size() != 1) {
-                points.pop();
+            QuestStatus status = (QuestStatus) data.getSerializableExtra("questStatus");
+
+            if (status.getStatus() != QuestStatus.StatusType.FINISHED
+                    && status.getStatus() != QuestStatus.StatusType.FINISHED_AGAIN
+                    && status.getStatus() != QuestStatus.StatusType.FINISHED_FIRST_TIME) {
+                viewModel.setNextPoint(status.getPoint());
             } else {
+
                 // Send update to server
+                Toast.makeText(getApplicationContext(), "FINISHED", Toast.LENGTH_SHORT).show();
 
-                Map<String, String> codeParams = new HashMap<>();
-                codeParams.put("mode", "SET_COMPLETED");
-                codeParams.put("userTicket",
-                        preferences.getString("ticket", "0"));
-                codeParams.put("questId", viewModel.getQuestId().getValue());
-
-                InfoTask completedTask = new InfoTask(result -> {
-
-                    if (!result.equals("-1")) {
-
-                        FinishDialog finish = new FinishDialog(result);
-                        finish.show(getSupportFragmentManager(), "finish");
-
-                    } else Log.e(TAG, "onActivityResult: WRONG UPDATE RESULT");
-
-                });
-
-                Command command = Command.NEXT_POINT;
-                command.setArguments(codeParams);
-
-                completedTask.execute(command);
+                // Todo show message with bonuses.
+//                Map<String, String> codeParams = new HashMap<>();
+//                codeParams.put("mode", "SET_COMPLETED");
+//                codeParams.put("userTicket",
+//                        preferences.getString("ticket", "0"));
+//                codeParams.put("questId", viewModel.getQuestId().getValue());
+//
+//                InfoTask completedTask = new InfoTask(result -> {
+//
+//                    if (!result.equals("-1")) {
+//
+//                        FinishDialog finish = new FinishDialog(result);
+//                        finish.show(getSupportFragmentManager(), "finish");
+//
+//                    } else Log.e(TAG, "onActivityResult: WRONG UPDATE RESULT");
+//
+//                });
+//
+//                Command command = Command.NEXT_POINT;
+//                command.setArguments(codeParams);
+//
+//                completedTask.execute(command);
 
                 viewModel.setQuestFinished(true);
 
             }
-
-            viewModel.setPointsQueue(points);
         }
     }
 

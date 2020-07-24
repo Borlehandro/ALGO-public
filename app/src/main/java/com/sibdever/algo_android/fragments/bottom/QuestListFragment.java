@@ -1,6 +1,7 @@
 package com.sibdever.algo_android.fragments.bottom;
 
 import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -25,6 +26,7 @@ import com.sibdever.algo_android.adapters.QuestRecycleAdapter;
 import com.sibdever.algo_android.api.Command;
 import com.sibdever.algo_android.api.InfoTask;
 import com.sibdever.algo_android.data.Quest;
+import com.sibdever.algo_android.data.QuestStatus;
 
 import org.json.JSONException;
 
@@ -115,7 +117,8 @@ public class QuestListFragment extends Fragment implements RecyclerViewClickList
                 List<Long> questsId = parsingResult.stream().map(Quest::getId)
                         .collect(Collectors.toList());
 
-                List<Boolean> completed = parsingResult.stream().map(item -> item.getStatus().equals(Quest.StatusType.FINISHED))
+                // Todo Change to real status (not only boolean)
+                List<Boolean> completed = parsingResult.stream().map(item -> item.getStatus().equals(QuestStatus.StatusType.FINISHED))
                         .collect(Collectors.toList());
 
                 for (String item : questsNames) {
