@@ -8,13 +8,16 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
 
 import com.sibdever.algo_android.R;
+import com.sibdever.algo_android.data.QuestFinishMessage;
 
 public class FinishDialog extends DialogFragment {
 
-    private String bonuses;
+    private final int bonuses;
+    private final String message;
 
-    public FinishDialog(String bonuses) {
-        this.bonuses = bonuses;
+    public FinishDialog(QuestFinishMessage message) {
+        this.bonuses = message.getBonuses();
+        this.message = message.getFinishMessage();
     }
 
     @NonNull
@@ -23,7 +26,7 @@ public class FinishDialog extends DialogFragment {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
-        builder.setMessage(getString(R.string.completedMessage) + "\n" + getString(R.string.bonusesCollectedTitle) + " " + bonuses)
+        builder.setMessage(message + "\n" + getString(R.string.bonusesCollectedTitle) + " " + bonuses)
                 .setNeutralButton(getString(R.string.permissionAllow), (dialog, id) -> dismiss());
 
         return builder.create();

@@ -21,11 +21,14 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.sibdever.algo_android.MainViewModel;
 import com.sibdever.algo_android.R;
+import com.sibdever.algo_android.api.commands.QuestFinishMessageCommand;
 import com.sibdever.algo_android.api.tasks.InfoTask;
 import com.sibdever.algo_android.api.commands.PointByCodeCommand;
 import com.sibdever.algo_android.data.Point;
+import com.sibdever.algo_android.data.QuestFinishMessage;
 import com.sibdever.algo_android.data.QuestStatus;
 import com.sibdever.algo_android.dialogs.AboutDialog;
+import com.sibdever.algo_android.dialogs.FinishDialog;
 import com.sibdever.algo_android.dialogs.LocationDialog;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 
@@ -133,13 +136,11 @@ public class MainActivity extends AppCompatActivity {
 
                 if (newState == BottomSheetBehavior.STATE_HIDDEN)
                     viewModel.setShowOpened(false);
-
             }
 
             @Override
             public void onSlide(@NonNull View bottomSheet, float slideOffset) {
                 Log.d(TAG, "onSlide: ");
-
             }
         });
 
@@ -211,28 +212,26 @@ public class MainActivity extends AppCompatActivity {
                 // Send update to server
                 Toast.makeText(getApplicationContext(), "FINISHED", Toast.LENGTH_SHORT).show();
 
-                // Todo show message with bonuses.
-//                Map<String, String> codeParams = new HashMap<>();
-//                codeParams.put("mode", "SET_COMPLETED");
-//                codeParams.put("userTicket",
-//                        preferences.getString("ticket", "0"));
-//                codeParams.put("questId", viewModel.getQuestId().getValue());
-//
-//                InfoTask completedTask = new InfoTask(result -> {
-//
-//                    if (!result.equals("-1")) {
-//
-//                        FinishDialog finish = new FinishDialog(result);
-//                        finish.show(getSupportFragmentManager(), "finish");
-//
-//                    } else Log.e(TAG, "onActivityResult: WRONG UPDATE RESULT");
-//
-//                });
-//
-//                Command command = Command.NEXT_POINT;
-//                command.setArguments(codeParams);
-//
-//                completedTask.execute(command);
+                Map<String, String> args = new HashMap<>();
+                args.put("ticket", preferences.getString("ticket", "0"));
+                args.put("questId", viewModel.getQuestId().getValue());
+                args.put("language", preferences.getString("language", "en"));
+
+                QuestFinishMessageCommand command = new QuestFinishMessageCommand(args);
+                InfoTask completedTask = new InfoTask(result -> {
+                    try {
+                        if (!result.equals("-1")) {
+                        FinishDialog finish = new FinishDialog(QuestFinishMessage.valueOf(result));
+                        finish.show(getSupportFragmentManager(), "finish");
+                    } else Log.e(TAG, "onActivityResult: WRONG UPDATE RESULT");
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                });
+
+
+                completedTask.execute(command);
 
                 viewModel.setQuestFinished(true);
 
