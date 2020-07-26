@@ -18,8 +18,8 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import com.sibdever.algo_android.R;
-import com.sibdever.algo_android.api.Command;
-import com.sibdever.algo_android.api.InfoTask;
+import com.sibdever.algo_android.api.tasks.InfoTask;
+import com.sibdever.algo_android.api.commands.UserInfoCommand;
 import com.sibdever.algo_android.data.UserInfo;
 
 import org.json.JSONException;
@@ -210,8 +210,7 @@ public class UserProfileActivity extends AppCompatActivity {
 
         });
 
-        Command command = Command.USER_INFO;
-        command.setArguments(args);
+        UserInfoCommand command = new UserInfoCommand(args);
 
         userInfo.execute(command);
 

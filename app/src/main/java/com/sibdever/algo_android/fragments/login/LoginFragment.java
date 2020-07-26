@@ -1,4 +1,4 @@
-package com.sibdever.algo_android.fragments.pre_login;
+package com.sibdever.algo_android.fragments.login;
 
 import android.Manifest;
 import android.content.Intent;
@@ -20,8 +20,8 @@ import androidx.fragment.app.Fragment;
 
 import com.sibdever.algo_android.R;
 import com.sibdever.algo_android.activities.MainActivity;
-import com.sibdever.algo_android.api.Command;
-import com.sibdever.algo_android.api.InfoTask;
+import com.sibdever.algo_android.api.tasks.InfoTask;
+import com.sibdever.algo_android.api.commands.LoginCommand;
 import com.sibdever.algo_android.dialogs.PermissionDialog;
 
 import java.util.ArrayList;
@@ -114,8 +114,7 @@ public class LoginFragment extends Fragment {
                 params.put("name", userName);
                 params.put("password", password);
 
-                Command command = Command.LOGIN;
-                command.setArguments(params);
+                LoginCommand command = new LoginCommand(params);
 
                 task.execute(command);
 

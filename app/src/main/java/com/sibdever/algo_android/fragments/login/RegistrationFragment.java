@@ -1,4 +1,4 @@
-package com.sibdever.algo_android.fragments.pre_login;
+package com.sibdever.algo_android.fragments.login;
 
 import android.Manifest;
 import android.content.Intent;
@@ -23,8 +23,8 @@ import android.widget.ProgressBar;
 
 import com.sibdever.algo_android.R;
 import com.sibdever.algo_android.activities.MainActivity;
-import com.sibdever.algo_android.api.Command;
-import com.sibdever.algo_android.api.InfoTask;
+import com.sibdever.algo_android.api.tasks.InfoTask;
+import com.sibdever.algo_android.api.commands.RegisterCommand;
 import com.sibdever.algo_android.dialogs.PermissionDialog;
 
 import java.util.ArrayList;
@@ -119,8 +119,8 @@ public class RegistrationFragment extends Fragment {
                     }
                 });
 
-                Command command = Command.REGISTER;
-                command.setArguments(params);
+                RegisterCommand command = new RegisterCommand(params);
+
                 task.execute(command);
             }
 

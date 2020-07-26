@@ -15,10 +15,15 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.sibdever.algo_android.R;
-import com.sibdever.algo_android.api.DescriptionTask;
-import com.sibdever.algo_android.api.PictureTask;
+import com.sibdever.algo_android.api.tasks.DescriptionTask;
+import com.sibdever.algo_android.api.tasks.PictureTask;
+import com.sibdever.algo_android.api.commands.PointDescriptionCommand;
+import com.sibdever.algo_android.api.commands.PointPictureCommand;
 import com.sibdever.algo_android.data.Point;
 import com.sibdever.algo_android.dialogs.AboutDialog;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class PointActivity extends AppCompatActivity {
 
@@ -94,13 +99,25 @@ public class PointActivity extends AppCompatActivity {
 
             });
 
-            task.execute(point.getDescriptionName().replace("\\\\", "\\"));
+            Map<String, String> args = new HashMap<>();
+            args.put("id", String.valueOf(point.getId()));
+            args.put("language", language);
+            args.put("ticket", getSharedPreferences("User", MODE_PRIVATE).getString("ticket", "0"));
+
+            PointDescriptionCommand command = new PointDescriptionCommand(args);
+            task.execute(command);
 
         });
 
-        pictureTask.execute(point.getPictureName().replace("\\\\", "\\"));
+        Map<String, String> args = new HashMap<>();
+        args.put("picName", point.getPictureName());
+        args.put("ticket", getSharedPreferences("User", MODE_PRIVATE).getString("ticket", "0"));
+
+        PointPictureCommand command = new PointPictureCommand(args);
+        pictureTask.execute(command);
 
     }
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {

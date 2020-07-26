@@ -1,7 +1,6 @@
 package com.sibdever.algo_android.fragments.bottom;
 
 import android.content.Context;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -23,8 +22,8 @@ import com.sibdever.algo_android.MainViewModel;
 import com.sibdever.algo_android.R;
 import com.sibdever.algo_android.RecyclerViewClickListener;
 import com.sibdever.algo_android.adapters.QuestRecycleAdapter;
-import com.sibdever.algo_android.api.Command;
-import com.sibdever.algo_android.api.InfoTask;
+import com.sibdever.algo_android.api.tasks.InfoTask;
+import com.sibdever.algo_android.api.commands.QuestListCommand;
 import com.sibdever.algo_android.data.Quest;
 import com.sibdever.algo_android.data.QuestStatus;
 
@@ -154,8 +153,7 @@ public class QuestListFragment extends Fragment implements RecyclerViewClickList
             }
         });
 
-        Command command = Command.GET_QUEST_LIST;
-        command.setArguments(questListParams);
+        QuestListCommand command = new QuestListCommand(questListParams);
 
         getListTask.execute(command);
 

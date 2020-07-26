@@ -1,7 +1,6 @@
 package com.sibdever.algo_android.fragments.bottom;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -23,9 +22,11 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.sibdever.algo_android.MainViewModel;
 import com.sibdever.algo_android.R;
 import com.sibdever.algo_android.adapters.PointRecycleAdapter;
-import com.sibdever.algo_android.api.Command;
-import com.sibdever.algo_android.api.InfoTask;
-import com.sibdever.algo_android.api.PictureTask;
+import com.sibdever.algo_android.api.tasks.InfoTask;
+import com.sibdever.algo_android.api.tasks.PictureListTask;
+import com.sibdever.algo_android.api.commands.PointPictureCommand;
+import com.sibdever.algo_android.api.commands.PointsQueueCommand;
+import com.sibdever.algo_android.api.commands.StartQuestCommand;
 import com.sibdever.algo_android.data.QuestStatus;
 import com.sibdever.algo_android.data.ShortPoint;
 
@@ -143,31 +144,39 @@ public class PointsQueueFragment extends Fragment {
                     Log.d(TAG, item);
                 }
 
-                List<Bitmap> pictures = new ArrayList<>();
-
                 // For all names download image and insert into RecyclerView
-                for (String name : queue.stream()
-                        .map(ShortPoint::getPictureName).collect(Collectors.toList())) {
+                List<PointPictureCommand> commands = new ArrayList<>();
+                queue.stream().map(ShortPoint::getPictureName).forEach(pictureName -> {
 
-                    PictureTask pictureTask = new PictureTask(bitmapResult -> {
-                        pictures.add(bitmapResult);
-                        if (pictures.size() == pointsNames.size()) {
+                    Log.d(TAG, "Prepare pic name: " + pictureName);
 
-                            PointRecycleAdapter adapter = new PointRecycleAdapter(pointsNames.size(),
-                                    pointsNames, pictures);
+                    Map<String, String> args = new HashMap<>();
+                    args.put("picName", pictureName);
+                    args.put(
+                            "ticket",
+                            getActivity()
+                                    .getSharedPreferences("User", Context.MODE_PRIVATE)
+                                    .getString("ticket", "0"));
 
-                            pointsQueueView.setAdapter(adapter);
+                    PointPictureCommand command = new PointPictureCommand(args);
+                    commands.add(command);
+                });
 
-                            progressBar.setVisibility(View.INVISIBLE);
-                            pointsQueueView.setVisibility(View.VISIBLE);
-                            questGoButton.setVisibility(View.VISIBLE);
+                // Log.d(TAG, "DownloadPictureList commands: " );
+                commands.forEach(item -> Log.w(TAG, "Warning: " + item.getArguments().get("picName")));
 
-                        }
-                    });
+                PictureListTask pictureListTask = new PictureListTask(bitmaps -> {
+                    PointRecycleAdapter adapter = new PointRecycleAdapter(pointsNames.size(), pointsNames, bitmaps);
 
-                    pictureTask.execute(name.replace("\\\\", "\\"));
+                    pointsQueueView.setAdapter(adapter);
 
-                }
+                    progressBar.setVisibility(View.INVISIBLE);
+                    pointsQueueView.setVisibility(View.VISIBLE);
+                    questGoButton.setVisibility(View.VISIBLE);
+
+                });
+
+                pictureListTask.execute(commands.toArray(new PointPictureCommand[0]));
 
                 questGoButton.setOnClickListener((View v) -> {
 
@@ -175,11 +184,6 @@ public class PointsQueueFragment extends Fragment {
 
                     // Quest start here!
                     // viewModel.setPointsQueue(queue);
-
-                    Command command = Command.START_QUEST;
-                    Map<String, String> args = new HashMap<>();
-                    args.put("ticket", getActivity().getSharedPreferences("User", Context.MODE_PRIVATE).getString("ticket", "0"));
-                    args.put("questId", questId);
 
                     InfoTask questStartTask = new InfoTask(res -> {
                         Log.d(TAG, "onStart: Start quest with res: " + res);
@@ -196,7 +200,12 @@ public class PointsQueueFragment extends Fragment {
 
                     });
 
-                    command.setArguments(args);
+                    Map<String, String> args = new HashMap<>();
+                    args.put("ticket", getActivity().getSharedPreferences("User", Context.MODE_PRIVATE).getString("ticket", "0"));
+                    args.put("questId", questId);
+
+                    StartQuestCommand command = new StartQuestCommand(args);
+
                     questStartTask.execute(command);
 
                 });
@@ -206,8 +215,7 @@ public class PointsQueueFragment extends Fragment {
             }
         });
 
-        Command command = Command.GET_POINTS_QUEUE;
-        command.setArguments(codeParams);
+        PointsQueueCommand command = new PointsQueueCommand(codeParams);
 
         queueTask.execute(command);
 

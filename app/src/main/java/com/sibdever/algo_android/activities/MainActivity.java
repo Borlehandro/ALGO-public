@@ -21,21 +21,17 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.sibdever.algo_android.MainViewModel;
 import com.sibdever.algo_android.R;
-import com.sibdever.algo_android.api.Command;
-import com.sibdever.algo_android.api.InfoTask;
+import com.sibdever.algo_android.api.tasks.InfoTask;
+import com.sibdever.algo_android.api.commands.PointByCodeCommand;
 import com.sibdever.algo_android.data.Point;
-import com.sibdever.algo_android.data.Quest;
 import com.sibdever.algo_android.data.QuestStatus;
-import com.sibdever.algo_android.data.ShortPoint;
 import com.sibdever.algo_android.dialogs.AboutDialog;
-import com.sibdever.algo_android.dialogs.FinishDialog;
 import com.sibdever.algo_android.dialogs.LocationDialog;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 
 import org.json.JSONException;
 
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.Locale;
 import java.util.Map;
 
@@ -188,8 +184,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
 
-            Command command = Command.GET_POINT_INFO;
-            command.setArguments(codeParams);
+            PointByCodeCommand command = new PointByCodeCommand(codeParams);
 
             codeTask.execute(command);
 
@@ -204,8 +199,7 @@ public class MainActivity extends AppCompatActivity {
 
         if (requestCode == 1 && resultCode == 1) {
 
-            // Return result from task
-
+            // Return result from task. Next ShortPoint or finish status.
             QuestStatus status = (QuestStatus) data.getSerializableExtra("questStatus");
 
             if (status.getStatus() != QuestStatus.StatusType.FINISHED

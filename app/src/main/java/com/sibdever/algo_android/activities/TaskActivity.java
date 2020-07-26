@@ -16,8 +16,9 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.sibdever.algo_android.R;
-import com.sibdever.algo_android.api.Command;
-import com.sibdever.algo_android.api.InfoTask;
+import com.sibdever.algo_android.api.tasks.InfoTask;
+import com.sibdever.algo_android.api.commands.TaskCheckCommand;
+import com.sibdever.algo_android.api.commands.TaskInfoCommand;
 import com.sibdever.algo_android.data.QuestStatus;
 import com.sibdever.algo_android.data.Task;
 import com.sibdever.algo_android.dialogs.AboutDialog;
@@ -110,8 +111,7 @@ public class TaskActivity extends AppCompatActivity {
                 }
             });
 
-            Command command = Command.CHECK_TASK;
-            command.setArguments(params);
+            TaskCheckCommand command = new TaskCheckCommand(params);
 
             checkAnswer.execute(command);
 
@@ -163,8 +163,7 @@ public class TaskActivity extends AppCompatActivity {
 
         });
 
-        Command command = Command.GET_TASK_INFO;
-        command.setArguments(args);
+        TaskInfoCommand command = new TaskInfoCommand(args);
 
         taskInfo.execute(command);
     }

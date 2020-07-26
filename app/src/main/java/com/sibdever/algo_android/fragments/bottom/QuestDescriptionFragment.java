@@ -19,9 +19,14 @@ import androidx.navigation.Navigation;
 
 import com.sibdever.algo_android.MainViewModel;
 import com.sibdever.algo_android.R;
-import com.sibdever.algo_android.api.DescriptionTask;
-import com.sibdever.algo_android.api.PictureTask;
+import com.sibdever.algo_android.api.tasks.DescriptionTask;
+import com.sibdever.algo_android.api.tasks.PictureTask;
+import com.sibdever.algo_android.api.commands.QuestDescriptionCommand;
+import com.sibdever.algo_android.api.commands.QuestPictureCommand;
 import com.sibdever.algo_android.data.Quest;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class QuestDescriptionFragment extends Fragment {
 
@@ -121,11 +126,22 @@ public class QuestDescriptionFragment extends Fragment {
 
             });
 
-            task.execute(quest.getDescriptionName().replace("\\\\", "\\"));
+            Map<String, String> args = new HashMap<>();
+            args.put("id", String.valueOf(quest.getId()));
+            args.put("language", language);
+
+            QuestDescriptionCommand command = new QuestDescriptionCommand(args);
+
+            task.execute(command);
 
         });
 
-        pictureTask.execute(quest.getPictureName().replace("\\\\", "\\"));
+        Map<String, String> args = new HashMap<>();
+        args.put("id", String.valueOf(quest.getId()));
+
+        QuestPictureCommand command = new QuestPictureCommand(args);
+
+        pictureTask.execute(command);
 
 
         super.onStart();
