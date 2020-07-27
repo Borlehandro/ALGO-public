@@ -7,8 +7,8 @@ import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Consumer;
 
 abstract class Command {
 
@@ -23,8 +23,23 @@ abstract class Command {
     protected Map<String, String> arguments;
     protected String path;
 
-    public Command(Map<String, String> arguments) {
+    protected Command(Map<String, String> arguments) {
         this.arguments = arguments;
+    }
+
+    public abstract static class CommandBuilder<T extends  CommandBuilder<T>> {
+
+        protected Map<String, String> arguments = new HashMap<>();
+
+        public T param(String key, String value) {
+            arguments.put(key, value);
+            return getThis();
+        }
+
+        public abstract Command build();
+
+        protected abstract T getThis();
+
     }
 
     protected HttpURLConnection send(String connectionMethod) throws IOException {
@@ -56,7 +71,6 @@ abstract class Command {
 
         return connection;
     }
-
 
     public Map<String, String> getArguments() {
         return arguments;

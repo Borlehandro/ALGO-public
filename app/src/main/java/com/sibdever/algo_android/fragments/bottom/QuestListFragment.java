@@ -95,11 +95,6 @@ public class QuestListFragment extends Fragment implements RecyclerViewClickList
 
         title.setText(getResources().getString(R.string.questListHeader));
 
-        Map<String, String> questListParams = new HashMap<>();
-        questListParams.put("language", language); // Unused in current server version
-        questListParams.put("ticket", getActivity().getSharedPreferences("User", Context.MODE_PRIVATE)
-                .getString("ticket", "0"));
-
         InfoTask getListTask = new InfoTask(result -> {
             try {
 
@@ -153,7 +148,11 @@ public class QuestListFragment extends Fragment implements RecyclerViewClickList
             }
         });
 
-        QuestListCommand command = new QuestListCommand(questListParams);
+        QuestListCommand command = QuestListCommand.builder()
+                .param("language", language)
+                .param("ticket", getActivity().getSharedPreferences("User", Context.MODE_PRIVATE)
+                        .getString("ticket", "0"))
+                .build();
 
         getListTask.execute(command);
 

@@ -11,8 +11,12 @@ import java.util.Map;
 
 public abstract class PictureCommand extends Command {
 
-    public PictureCommand(Map<String, String> arguments) {
+    protected PictureCommand(Map<String, String> arguments) {
         super(arguments);
+    }
+
+    public abstract static class PictureBuilder<T extends PictureBuilder<T>> extends CommandBuilder<T> {
+        // empty
     }
 
     public Bitmap execute() {

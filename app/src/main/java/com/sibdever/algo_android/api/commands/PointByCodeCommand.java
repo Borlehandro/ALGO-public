@@ -7,7 +7,23 @@ public class PointByCodeCommand extends InfoCommand {
         path = "/point/info/";
     }
 
-    public PointByCodeCommand(Map<String, String> arguments) {
+    private PointByCodeCommand(Map<String, String> arguments) {
         super(arguments);
+    }
+
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    public static class Builder extends InfoBuilder<Builder>{
+        @Override
+        public PointByCodeCommand build() {
+            return new PointByCodeCommand(arguments);
+        }
+
+        @Override
+        protected Builder getThis() {
+            return this;
+        }
     }
 }

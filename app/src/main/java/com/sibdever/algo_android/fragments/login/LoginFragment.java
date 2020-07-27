@@ -104,17 +104,13 @@ public class LoginFragment extends Fragment {
                     }
                 });
 
-                // Todo make shorter
-
-                Map<String, String> params = new HashMap<>();
-
                 userName = loginUser.getText().toString();
                 password = loginPassword.getText().toString();
 
-                params.put("name", userName);
-                params.put("password", password);
-
-                LoginCommand command = new LoginCommand(params);
+                LoginCommand command = LoginCommand.builder()
+                        .param("name", userName)
+                        .param("password", password)
+                        .build();
 
                 task.execute(command);
 

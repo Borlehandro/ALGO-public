@@ -114,12 +114,6 @@ public class PointsQueueFragment extends Fragment {
         title.setText(getResources().getString(R.string.pointsListHeader));
         questGoButton.setText(getResources().getString(R.string.pointQueueButton));
 
-        Map<String, String> codeParams = new HashMap<>();
-        codeParams.put("questId", questId);
-        codeParams.put("ticket", getActivity().getSharedPreferences("User", Context.MODE_PRIVATE)
-                .getString("ticket", "0"));
-        codeParams.put("language", language);
-
         InfoTask queueTask = new InfoTask(result -> {
             try {
 
@@ -150,15 +144,13 @@ public class PointsQueueFragment extends Fragment {
 
                     Log.d(TAG, "Prepare pic name: " + pictureName);
 
-                    Map<String, String> args = new HashMap<>();
-                    args.put("picName", pictureName);
-                    args.put(
-                            "ticket",
-                            getActivity()
+                    PointPictureCommand command = PointPictureCommand.builder()
+                            .param("picName", pictureName)
+                            .param("ticket", getActivity()
                                     .getSharedPreferences("User", Context.MODE_PRIVATE)
-                                    .getString("ticket", "0"));
+                                    .getString("ticket", "0"))
+                            .build();
 
-                    PointPictureCommand command = new PointPictureCommand(args);
                     commands.add(command);
                 });
 
@@ -200,11 +192,10 @@ public class PointsQueueFragment extends Fragment {
 
                     });
 
-                    Map<String, String> args = new HashMap<>();
-                    args.put("ticket", getActivity().getSharedPreferences("User", Context.MODE_PRIVATE).getString("ticket", "0"));
-                    args.put("questId", questId);
-
-                    StartQuestCommand command = new StartQuestCommand(args);
+                    StartQuestCommand command = StartQuestCommand.builder()
+                            .param("ticket", getActivity().getSharedPreferences("User", Context.MODE_PRIVATE).getString("ticket", "0"))
+                            .param("questId", questId)
+                            .build();
 
                     questStartTask.execute(command);
 
@@ -215,7 +206,13 @@ public class PointsQueueFragment extends Fragment {
             }
         });
 
-        PointsQueueCommand command = new PointsQueueCommand(codeParams);
+        PointsQueueCommand command = PointsQueueCommand.builder()
+                .param("questId", questId)
+                .param("ticket", getActivity()
+                        .getSharedPreferences("User", Context.MODE_PRIVATE)
+                        .getString("ticket", "0"))
+                .param("language", language)
+                .build();
 
         queueTask.execute(command);
 

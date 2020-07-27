@@ -171,9 +171,6 @@ public class UserProfileActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
 
-        Map<String, String> args = new HashMap<>();
-        args.put("ticket", userTicket);
-
         Log.w(TAG, "onCreate: task " + userTicket);
 
         InfoTask userInfo = new InfoTask(result -> {
@@ -210,7 +207,9 @@ public class UserProfileActivity extends AppCompatActivity {
 
         });
 
-        UserInfoCommand command = new UserInfoCommand(args);
+        UserInfoCommand command = UserInfoCommand.builder()
+                .param("ticket", userTicket)
+                .build();
 
         userInfo.execute(command);
 

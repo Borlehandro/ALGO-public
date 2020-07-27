@@ -158,10 +158,6 @@ public class MainActivity extends AppCompatActivity {
             // Toast.makeText(getApplicationContext(), "Get code: " + pointCode, Toast.LENGTH_LONG).show();
             Log.d(TAG, "onRestart: " + "Get code: " + pointCode);
 
-            Map<String, String> codeParams = new HashMap<>();
-            codeParams.put("code", pointCode);
-            codeParams.put("ticket", preferences.getString("ticket", "0"));
-
             InfoTask codeTask = new InfoTask(result -> {
 
                 Log.w(TAG, "GET RESULT IN LAMBDA: " + result);
@@ -185,7 +181,10 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
 
-            PointByCodeCommand command = new PointByCodeCommand(codeParams);
+            PointByCodeCommand command = PointByCodeCommand.builder()
+                    .param("code", pointCode)
+                    .param("ticket", preferences.getString("ticket", "0"))
+                    .build();
 
             codeTask.execute(command);
 
@@ -212,12 +211,12 @@ public class MainActivity extends AppCompatActivity {
                 // Send update to server
                 Toast.makeText(getApplicationContext(), "FINISHED", Toast.LENGTH_SHORT).show();
 
-                Map<String, String> args = new HashMap<>();
-                args.put("ticket", preferences.getString("ticket", "0"));
-                args.put("questId", viewModel.getQuestId().getValue());
-                args.put("language", preferences.getString("language", "en"));
+                QuestFinishMessageCommand command = QuestFinishMessageCommand.builder()
+                        .param("ticket", preferences.getString("ticket", "0"))
+                        .param("questId", viewModel.getQuestId().getValue())
+                        .param("language", preferences.getString("language", "en"))
+                        .build();
 
-                QuestFinishMessageCommand command = new QuestFinishMessageCommand(args);
                 InfoTask completedTask = new InfoTask(result -> {
                     try {
                         if (!result.equals("-1")) {

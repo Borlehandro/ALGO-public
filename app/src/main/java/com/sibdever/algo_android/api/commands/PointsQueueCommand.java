@@ -7,7 +7,25 @@ public class PointsQueueCommand extends InfoCommand {
         path = "/point/queue/";
     }
 
-    public PointsQueueCommand(Map<String, String> arguments) {
+    private PointsQueueCommand(Map<String, String> arguments) {
         super(arguments);
     }
+
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    public static class Builder extends InfoBuilder<Builder> {
+
+        @Override
+        public PointsQueueCommand build() {
+            return new PointsQueueCommand(arguments);
+        }
+
+        @Override
+        protected Builder getThis() {
+            return this;
+        }
+    }
+
 }

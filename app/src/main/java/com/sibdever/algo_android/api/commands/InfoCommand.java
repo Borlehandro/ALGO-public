@@ -9,8 +9,12 @@ import java.util.Map;
 
 public abstract class InfoCommand extends Command {
 
-    public InfoCommand(Map<String, String> arguments) {
+    protected InfoCommand(Map<String, String> arguments) {
         super(arguments);
+    }
+
+    public abstract static class InfoBuilder<T extends InfoBuilder<T>> extends CommandBuilder<T> {
+        // empty
     }
 
     public String execute() {

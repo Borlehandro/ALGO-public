@@ -81,13 +81,8 @@ public class RegistrationFragment extends Fragment {
                     && !registerPassword.getText().toString().equals("")
                     && registerConfirm.getText().toString().equals(registerPassword.getText().toString())) {
 
-                Map<String, String> params = new HashMap<>();
-
                 String userName = registerUser.getText().toString();
                 String password = registerPassword.getText().toString();
-
-                params.put("name", userName);
-                params.put("password", password);
 
                 Log.d(TAG, "Language set to :" + language);
 
@@ -119,7 +114,10 @@ public class RegistrationFragment extends Fragment {
                     }
                 });
 
-                RegisterCommand command = new RegisterCommand(params);
+                RegisterCommand command = RegisterCommand.builder()
+                        .param("name", userName)
+                        .param("password", password)
+                        .build();
 
                 task.execute(command);
             }

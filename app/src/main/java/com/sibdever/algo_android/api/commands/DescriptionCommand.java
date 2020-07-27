@@ -8,7 +8,11 @@ import java.util.Map;
 
 public abstract class DescriptionCommand extends Command {
 
-    public DescriptionCommand(Map<String, String> arguments) {
+    public abstract static class DescriptionBuilder<T extends DescriptionBuilder<T>> extends CommandBuilder<T> {
+        // empty
+    }
+
+    protected DescriptionCommand(Map<String, String> arguments) {
         super(arguments);
     }
 

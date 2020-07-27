@@ -126,23 +126,20 @@ public class QuestDescriptionFragment extends Fragment {
 
             });
 
-            Map<String, String> args = new HashMap<>();
-            args.put("id", String.valueOf(quest.getId()));
-            args.put("language", language);
-
-            QuestDescriptionCommand command = new QuestDescriptionCommand(args);
+            QuestDescriptionCommand command = QuestDescriptionCommand.builder()
+                    .param("id", String.valueOf(quest.getId()))
+                    .param("language", language)
+                    .build();
 
             task.execute(command);
 
         });
 
-        Map<String, String> args = new HashMap<>();
-        args.put("id", String.valueOf(quest.getId()));
-
-        QuestPictureCommand command = new QuestPictureCommand(args);
+        QuestPictureCommand command = QuestPictureCommand.builder()
+                .param("id", String.valueOf(quest.getId()))
+                .build();
 
         pictureTask.execute(command);
-
 
         super.onStart();
     }

@@ -99,21 +99,20 @@ public class PointActivity extends AppCompatActivity {
 
             });
 
-            Map<String, String> args = new HashMap<>();
-            args.put("id", String.valueOf(point.getId()));
-            args.put("language", language);
-            args.put("ticket", getSharedPreferences("User", MODE_PRIVATE).getString("ticket", "0"));
-
-            PointDescriptionCommand command = new PointDescriptionCommand(args);
+            PointDescriptionCommand command = PointDescriptionCommand.builder()
+                    .param("id", String.valueOf(point.getId()))
+                    .param("language", language)
+                    .param("ticket", getSharedPreferences("User", MODE_PRIVATE).getString("ticket", "0"))
+                    .build();
             task.execute(command);
 
         });
 
-        Map<String, String> args = new HashMap<>();
-        args.put("picName", point.getPictureName());
-        args.put("ticket", getSharedPreferences("User", MODE_PRIVATE).getString("ticket", "0"));
+        PointPictureCommand command = PointPictureCommand.builder()
+                .param("picName", point.getPictureName())
+                .param("ticket", getSharedPreferences("User", MODE_PRIVATE).getString("ticket", "0"))
+                .build();
 
-        PointPictureCommand command = new PointPictureCommand(args);
         pictureTask.execute(command);
 
     }

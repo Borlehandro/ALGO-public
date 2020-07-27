@@ -67,18 +67,10 @@ public class TaskActivity extends AppCompatActivity {
 
         checkButton.setOnClickListener((View v) -> {
 
-            Map<String, String> params = new HashMap<>();
-            params.put("taskId", taskId);
-
-            params.put("variant", String.valueOf(group.indexOfChild(
-                    group.findViewById(group.getCheckedRadioButtonId())
-            ) + 1));
 
             Log.d(TAG, "onCreate: Answer index: " + group.indexOfChild(
                     group.findViewById(group.getCheckedRadioButtonId())
             ));
-
-            params.put("ticket", userTicket);
 
             InfoTask checkAnswer = new InfoTask(result -> {
                 try {
@@ -111,7 +103,11 @@ public class TaskActivity extends AppCompatActivity {
                 }
             });
 
-            TaskCheckCommand command = new TaskCheckCommand(params);
+            TaskCheckCommand command = TaskCheckCommand.builder()
+                    .param("taskId", taskId)
+                    .param("variant", String.valueOf(group.indexOfChild(group.findViewById(group.getCheckedRadioButtonId())) + 1))
+                    .param("ticket", userTicket)
+                    .build();
 
             checkAnswer.execute(command);
 
@@ -131,11 +127,6 @@ public class TaskActivity extends AppCompatActivity {
         descriptionTask.setVisibility(View.INVISIBLE);
         group.setVisibility(View.INVISIBLE);
         checkButton.setVisibility(View.INVISIBLE);
-
-        Map<String, String> args = new HashMap<>();
-        args.put("taskId", taskId);
-        args.put("language", language);
-        args.put("ticket", userTicket);
 
         Log.w(TAG, "onCreate: task " + userTicket);
 
@@ -163,7 +154,11 @@ public class TaskActivity extends AppCompatActivity {
 
         });
 
-        TaskInfoCommand command = new TaskInfoCommand(args);
+        TaskInfoCommand command = TaskInfoCommand.builder()
+                .param("taskId", taskId)
+                .param("language", language)
+                .param("ticket", userTicket)
+                .build();
 
         taskInfo.execute(command);
     }

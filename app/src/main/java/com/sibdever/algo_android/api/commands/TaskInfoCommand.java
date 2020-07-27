@@ -7,7 +7,25 @@ public class TaskInfoCommand extends InfoCommand {
         path = "/task/info/";
     }
 
-    public TaskInfoCommand(Map<String, String> arguments) {
+    private TaskInfoCommand(Map<String, String> arguments) {
         super(arguments);
     }
+
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    public static class Builder extends InfoBuilder<Builder>{
+
+        @Override
+        public TaskInfoCommand build() {
+            return new TaskInfoCommand(arguments);
+        }
+
+        @Override
+        protected Builder getThis() {
+            return this;
+        }
+    }
+
 }

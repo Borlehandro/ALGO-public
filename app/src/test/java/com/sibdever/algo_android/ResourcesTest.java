@@ -16,7 +16,10 @@ public class ResourcesTest {
         args.put("name", "postman");
         args.put("password", "123456");
 
-        LoginCommand command = new LoginCommand(args);
+        LoginCommand command = LoginCommand.builder()
+                .param("name", "postman")
+                .param("password", "123456")
+                .build();
 
         System.out.println(command.execute());
 
