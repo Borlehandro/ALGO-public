@@ -18,8 +18,8 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import com.sibdever.algo_android.R;
-import com.sibdever.algo_android.api.InfoTask;
-import com.sibdever.algo_android.api.JsonParser;
+import com.sibdever.algo_android.api.tasks.InfoTask;
+import com.sibdever.algo_android.api.commands.UserInfoCommand;
 import com.sibdever.algo_android.data.UserInfo;
 
 import org.json.JSONException;
@@ -171,10 +171,6 @@ public class UserProfileActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
 
-        Map<String, String> args = new HashMap<>();
-        args.put("mode", "GET_USER_INFO");
-        args.put("userTicket", userTicket);
-
         Log.w(TAG, "onCreate: task " + userTicket);
 
         InfoTask userInfo = new InfoTask(result -> {
@@ -183,12 +179,12 @@ public class UserProfileActivity extends AppCompatActivity {
 
                 Log.w(TAG, "Result: " + result);
 
-                UserInfo info = JsonParser.parseUserInfo(result);
+                UserInfo info = UserInfo.valueOf(result);
 
-                profileTitle.setText(getString(R.string.helloText, info.getUserName()));
+                profileTitle.setText(getString(R.string.helloText, info.getName()));
                 bonusesCollectedText.setText(String.valueOf(info.getBonuses()));
-                questsCollectedText.setText(String.valueOf(info.getQuestsCompleted()));
-                pointCollectedText.setText(String.valueOf(info.getPointsCompleted()));
+                questsCollectedText.setText(String.valueOf(info.getQuestsPassed()));
+                pointCollectedText.setText(String.valueOf(info.getPointsPassed()));
                 kilometersCompletedText.setText(String.valueOf(info.getKilometersCompleted()));
 
                 progressBar.setVisibility(View.INVISIBLE);
@@ -211,7 +207,11 @@ public class UserProfileActivity extends AppCompatActivity {
 
         });
 
-        userInfo.execute(args);
+        UserInfoCommand command = UserInfoCommand.builder()
+                .param("ticket", userTicket)
+                .build();
+
+        userInfo.execute(command);
 
         super.onStart();
     }

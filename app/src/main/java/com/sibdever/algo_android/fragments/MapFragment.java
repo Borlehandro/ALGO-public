@@ -4,6 +4,10 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.PointF;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -11,24 +15,18 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-
+import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.sibdever.algo_android.MainViewModel;
 import com.sibdever.algo_android.R;
 import com.sibdever.algo_android.activities.CodeScanActivity;
-import com.sibdever.algo_android.data.PointInfoItem;
+import com.sibdever.algo_android.data.ShortPoint;
 import com.sibdever.algo_android.dialogs.WithoutRouteDialog;
-import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.yandex.mapkit.Animation;
 import com.yandex.mapkit.MapKit;
 import com.yandex.mapkit.MapKitFactory;
 import com.yandex.mapkit.RequestPoint;
 import com.yandex.mapkit.RequestPointType;
-import com.yandex.mapkit.geometry.Point;
 import com.yandex.mapkit.geometry.SubpolylineHelper;
 import com.yandex.mapkit.layers.ObjectEvent;
 import com.yandex.mapkit.location.FilteringMode;
@@ -97,6 +95,8 @@ public class MapFragment extends Fragment implements Session.RouteListener {
         @Override
         public void onLocationUpdated(@NonNull Location location) {
 
+            //
+
             Log.d(TAG, "onLocationUpdated: " + location.getPosition().getLatitude() + ";"
                     + location.getPosition().getLongitude());
 
@@ -112,24 +112,26 @@ public class MapFragment extends Fragment implements Session.RouteListener {
                 focused = true;
             }
 
-            LinkedList<PointInfoItem> currentPointsQueue = viewModel.getPointsQueue().getValue();
+            ShortPoint nextPoint = viewModel.getNextPoint().getValue();
 
-            if (currentPointsQueue != null && currentPointsQueue.size() > 0) {
+            if (nextPoint != null) {
+
+                // Manage user routing in quest
 
                 Log.d(TAG, "onLocationUpdated: Try to build router with it `|` ");
 
                 List<RequestPoint> points = new ArrayList<>();
                 points.add(new RequestPoint(location.getPosition(), RequestPointType.WAYPOINT, null));
 
-                points.add(new RequestPoint(new Point(currentPointsQueue.peek().getLocationX(),
-                        currentPointsQueue.peek().getLocationY()), RequestPointType.WAYPOINT, null));
+                points.add(new RequestPoint(new com.yandex.mapkit.geometry.Point(nextPoint.getLatitude(),
+                        nextPoint.getLongitude()), RequestPointType.WAYPOINT, null));
 
                 if (mark != null)
                     mapObjects.remove(mark);
 
                 mark = mapObjects.addPlacemark(
-                        new Point(currentPointsQueue.peek().getLocationX(),
-                                currentPointsQueue.peek().getLocationY()));
+                        new com.yandex.mapkit.geometry.Point(nextPoint.getLatitude(),
+                                nextPoint.getLongitude()));
 
                 mark.setOpacity(0.9f);
                 mark.setIcon(ImageProvider.fromResource(getActivity(), R.drawable.placemark_mini));
@@ -138,8 +140,8 @@ public class MapFragment extends Fragment implements Session.RouteListener {
                 if (withoutRouters) {
                     mapView.getMap().move(
                             new CameraPosition(
-                                    new Point(currentPointsQueue.peek().getLocationX(),
-                                            currentPointsQueue.peek().getLocationY()),
+                                    new com.yandex.mapkit.geometry.Point(nextPoint.getLatitude(),
+                                            nextPoint.getLongitude()),
                                     18.0f, 0.0f, 0.0f),
                             new Animation(Animation.Type.SMOOTH, 5),
                             null);
@@ -202,7 +204,7 @@ public class MapFragment extends Fragment implements Session.RouteListener {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        // Todo encrypt config.properties
+        // Todo encrypt config.properties or use another secure method
 
         try(InputStream input = getContext().getAssets().open("config.properties")) {
 
@@ -302,9 +304,11 @@ public class MapFragment extends Fragment implements Session.RouteListener {
         viewModel.getBottomSheetState().observe(getViewLifecycleOwner(), state -> {
             if (state == MainViewModel.BottomStates.POINTS_QUEUE_IN_PROCESS) {
 
+                // Manage points queue
+
                 showButton.setText(getActivity().getString(R.string.pointsListHeader));
 
-                LinkedList<PointInfoItem> currentPointsQueue = viewModel.getPointsQueue().getValue();
+                LinkedList<ShortPoint> currentPointsQueue = viewModel.getPointsQueue().getValue();
 
                 List<RequestPoint> points = new ArrayList<>();
 
@@ -313,7 +317,7 @@ public class MapFragment extends Fragment implements Session.RouteListener {
                         RequestPointType.WAYPOINT, null));
 
                 points.addAll(currentPointsQueue.stream()
-                        .map(i -> new RequestPoint(new Point(i.getLocationX(), i.getLocationY()),
+                        .map(i -> new RequestPoint(new com.yandex.mapkit.geometry.Point(i.getLatitude(), i.getLongitude()),
                                 RequestPointType.WAYPOINT, null))
                         .collect(Collectors.toList()));
 
@@ -348,12 +352,10 @@ public class MapFragment extends Fragment implements Session.RouteListener {
             mapObjects.clear();
 
             Log.d(TAG, "onCreate: FIRST POINT IN "
-                    + viewModel.getPointsQueue().getValue().get(0).getLocationX() + ";"
-                    + viewModel.getPointsQueue().getValue().get(0).getLocationY());
+                    + viewModel.getPointsQueue().getValue().get(0).getLatitude() + ";"
+                    + viewModel.getPointsQueue().getValue().get(0).getLongitude());
 
-            LinkedList<PointInfoItem> currentPointsQueue = viewModel.getPointsQueue().getValue();
-
-            Log.d(TAG, "onCreate: GET POINTS QUEUE: " + currentPointsQueue.get(0).getName());
+            Log.d(TAG, "onCreate: GET POINTS QUEUE: " + viewModel.getNextPoint().getValue().getName());
 
             // Todo set normal value
             locationManager.subscribeForLocationUpdates(0.0d, 100, 0.0d, false,
@@ -364,6 +366,7 @@ public class MapFragment extends Fragment implements Session.RouteListener {
             if (finished) {
                 locationManager.unsubscribe(locationListener);
                 mapObjects.clear();
+                showButton.setText(getString(R.string.questListHeader));
             }
         });
 
@@ -411,9 +414,9 @@ public class MapFragment extends Fragment implements Session.RouteListener {
             Log.w(TAG, "onActivityCreated: WITHOUT ROUTERS ");
 
             mapView.getMap().move(
-                    new CameraPosition(new Point(
-                            viewModel.getPointsQueue().getValue().peek().getLocationX(),
-                            viewModel.getPointsQueue().getValue().peek().getLocationY()),
+                    new CameraPosition(new com.yandex.mapkit.geometry.Point(
+                            viewModel.getPointsQueue().getValue().peek().getLatitude(),
+                            viewModel.getPointsQueue().getValue().peek().getLongitude()),
                             20.0f, 0.0f, 0.0f),
                     new Animation(Animation.Type.LINEAR, 0),
                     null);

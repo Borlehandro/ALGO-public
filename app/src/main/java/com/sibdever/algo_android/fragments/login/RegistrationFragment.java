@@ -1,4 +1,4 @@
-package com.sibdever.algo_android.fragments.pre_login;
+package com.sibdever.algo_android.fragments.login;
 
 import android.Manifest;
 import android.content.Intent;
@@ -23,7 +23,8 @@ import android.widget.ProgressBar;
 
 import com.sibdever.algo_android.R;
 import com.sibdever.algo_android.activities.MainActivity;
-import com.sibdever.algo_android.api.InfoTask;
+import com.sibdever.algo_android.api.tasks.InfoTask;
+import com.sibdever.algo_android.api.commands.RegisterCommand;
 import com.sibdever.algo_android.dialogs.PermissionDialog;
 
 import java.util.ArrayList;
@@ -80,16 +81,8 @@ public class RegistrationFragment extends Fragment {
                     && !registerPassword.getText().toString().equals("")
                     && registerConfirm.getText().toString().equals(registerPassword.getText().toString())) {
 
-                Map<String, String> params = new HashMap<>();
-
                 String userName = registerUser.getText().toString();
                 String password = registerPassword.getText().toString();
-
-                params.put("mode", "REGISTER");
-                params.put("username", userName);
-                params.put("password", password);
-
-                params.put("language", language);
 
                 Log.d(TAG, "Language set to :" + language);
 
@@ -109,7 +102,10 @@ public class RegistrationFragment extends Fragment {
                     registerConfirm.setVisibility(View.VISIBLE);
                     registerButton.setVisibility(View.VISIBLE);
 
-                    if (!result.equals("-1")) {
+                    // Todo Use UserResponse
+                    if (!result.equals("Already exist")) {
+
+                        // Todo get cookies and save in Cookies Store
                         userTicket = result;
                         SharedPreferences.Editor editor = preferences.edit();
                         editor.putString("ticket", userTicket);
@@ -118,7 +114,12 @@ public class RegistrationFragment extends Fragment {
                     }
                 });
 
-                task.execute(params);
+                RegisterCommand command = RegisterCommand.builder()
+                        .param("name", userName)
+                        .param("password", password)
+                        .build();
+
+                task.execute(command);
             }
 
         });

@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -20,15 +21,20 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.sibdever.algo_android.MainViewModel;
 import com.sibdever.algo_android.R;
-import com.sibdever.algo_android.api.InfoTask;
-import com.sibdever.algo_android.data.PointInfoItem;
+import com.sibdever.algo_android.api.commands.QuestFinishMessageCommand;
+import com.sibdever.algo_android.api.tasks.InfoTask;
+import com.sibdever.algo_android.api.commands.PointByCodeCommand;
+import com.sibdever.algo_android.data.Point;
+import com.sibdever.algo_android.data.QuestFinishMessage;
+import com.sibdever.algo_android.data.QuestStatus;
 import com.sibdever.algo_android.dialogs.AboutDialog;
 import com.sibdever.algo_android.dialogs.FinishDialog;
 import com.sibdever.algo_android.dialogs.LocationDialog;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 
+import org.json.JSONException;
+
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.Locale;
 import java.util.Map;
 
@@ -36,8 +42,6 @@ import java.util.Map;
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "Borlehandro";
-
-    private String pointId;
 
     public static String pointCode;
 
@@ -132,13 +136,11 @@ public class MainActivity extends AppCompatActivity {
 
                 if (newState == BottomSheetBehavior.STATE_HIDDEN)
                     viewModel.setShowOpened(false);
-
             }
 
             @Override
             public void onSlide(@NonNull View bottomSheet, float slideOffset) {
                 Log.d(TAG, "onSlide: ");
-
             }
         });
 
@@ -154,29 +156,37 @@ public class MainActivity extends AppCompatActivity {
         if (pointCode != null) {
 
             // Toast.makeText(getApplicationContext(), "Get code: " + pointCode, Toast.LENGTH_LONG).show();
-
-            Map<String, String> codeParams = new HashMap<>();
-            codeParams.put("mode", "CHECK_CODE");
-            codeParams.put("code", pointCode);
+            Log.d(TAG, "onRestart: " + "Get code: " + pointCode);
 
             InfoTask codeTask = new InfoTask(result -> {
 
-                pointId = result;
-                Log.d(TAG, "onRestart: get pointId: " + pointId);
+                Log.w(TAG, "GET RESULT IN LAMBDA: " + result);
 
-                if (viewModel.getPointsQueue().getValue() != null && Integer.parseInt(pointId) == viewModel.getPointsQueue().getValue()
-                        .peek().getId()) {
+                try {
+
+                    Point point = Point.valueOf(result, preferences.getString("language", "en"));
+
+                    Log.d(TAG, "onRestart: get point: " + point.getName());
+
 
                     Intent toPoint = new Intent(getApplicationContext(), PointActivity.class);
-                    toPoint.putExtra("pointId", pointId);
+                    toPoint.putExtra("point", point);
 
                     // It can not repeat!
                     pointCode = null;
                     startActivityForResult(toPoint, 1);
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
                 }
             });
 
-            codeTask.execute(codeParams);
+            PointByCodeCommand command = PointByCodeCommand.builder()
+                    .param("code", pointCode)
+                    .param("ticket", preferences.getString("ticket", "0"))
+                    .build();
+
+            codeTask.execute(command);
 
         }
     }
@@ -189,37 +199,46 @@ public class MainActivity extends AppCompatActivity {
 
         if (requestCode == 1 && resultCode == 1) {
 
-            LinkedList<PointInfoItem> points = viewModel.getPointsQueue().getValue();
+            // Return result from task. Next ShortPoint or finish status.
+            QuestStatus status = (QuestStatus) data.getSerializableExtra("questStatus");
 
-            if (points != null && points.size() != 1) {
-                points.pop();
+            if (status.getStatus() != QuestStatus.StatusType.FINISHED
+                    && status.getStatus() != QuestStatus.StatusType.FINISHED_AGAIN
+                    && status.getStatus() != QuestStatus.StatusType.FINISHED_FIRST_TIME) {
+                viewModel.setNextPoint(status.getPoint());
             } else {
-                // Send update to server
 
-                Map<String, String> codeParams = new HashMap<>();
-                codeParams.put("mode", "SET_COMPLETED");
-                codeParams.put("userTicket",
-                        preferences.getString("ticket", "0"));
-                codeParams.put("questId", viewModel.getQuestId().getValue());
+                // Send update to server
+                Toast.makeText(getApplicationContext(), "FINISHED", Toast.LENGTH_SHORT).show();
+
+                QuestFinishMessageCommand command = QuestFinishMessageCommand.builder()
+                        .param("ticket", preferences.getString("ticket", "0"))
+                        .param("questId", viewModel.getQuestId().getValue())
+                        .param("language", preferences.getString("language", "en"))
+                        .build();
 
                 InfoTask completedTask = new InfoTask(result -> {
+                    try {
 
-                    if (!result.equals("-1")) {
+                        // TODO: Check correct
+                        if (!result.equals("-1")) {
 
-                        FinishDialog finish = new FinishDialog(result);
-                        finish.show(getSupportFragmentManager(), "finish");
+                            // Show finish message.
+                            FinishDialog finish = new FinishDialog(QuestFinishMessage.valueOf(result));
+                            finish.show(getSupportFragmentManager(), "finish");
+                        } else
+                            Log.e(TAG, "onActivityResult: WRONG UPDATE RESULT");
 
-                    } else Log.e(TAG, "onActivityResult: WRONG UPDATE RESULT");
-
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
                 });
 
-                completedTask.execute(codeParams);
+                completedTask.execute(command);
 
                 viewModel.setQuestFinished(true);
 
             }
-
-            viewModel.setPointsQueue(points);
         }
     }
 
@@ -243,7 +262,7 @@ public class MainActivity extends AppCompatActivity {
         finish();
     }
 
-    private void checkLocationEnabled(){
+    private void checkLocationEnabled() {
         if (!((android.location.LocationManager) getSystemService(LOCATION_SERVICE))
                 .isProviderEnabled(android.location.LocationManager.GPS_PROVIDER)) {
             LocationDialog dialog = new LocationDialog();

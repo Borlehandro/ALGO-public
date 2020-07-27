@@ -1,18 +1,7 @@
 package com.sibdever.algo_android.fragments.bottom;
 
-import android.graphics.Bitmap;
+import android.content.Context;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,13 +10,25 @@ import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.sibdever.algo_android.MainViewModel;
 import com.sibdever.algo_android.R;
 import com.sibdever.algo_android.adapters.PointRecycleAdapter;
-import com.sibdever.algo_android.api.InfoTask;
-import com.sibdever.algo_android.api.JsonParser;
-import com.sibdever.algo_android.api.PictureTask;
-import com.sibdever.algo_android.data.PointInfoItem;
+import com.sibdever.algo_android.api.tasks.InfoTask;
+import com.sibdever.algo_android.api.tasks.PictureListTask;
+import com.sibdever.algo_android.api.commands.PointPictureCommand;
+import com.sibdever.algo_android.api.commands.PointsQueueCommand;
+import com.sibdever.algo_android.api.commands.StartQuestCommand;
+import com.sibdever.algo_android.data.QuestStatus;
+import com.sibdever.algo_android.data.ShortPoint;
 
 import org.json.JSONException;
 
@@ -92,12 +93,9 @@ public class PointsQueueFragment extends Fragment {
 
         viewModel.setQueueOpened(true);
 
-        viewModel.getQuestFinished().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
-            @Override
-            public void onChanged(Boolean aBoolean) {
-                if(aBoolean)
-                    controller.navigate(R.id.toBegin);
-            }
+        viewModel.getQuestFinished().observe(getViewLifecycleOwner(), aBoolean -> {
+            if(aBoolean)
+                controller.navigate(R.id.toBegin);
         });
 
         Log.d(TAG, "onActivityCreated: queue get lang: " + language + " questId: " + questId);
@@ -116,64 +114,90 @@ public class PointsQueueFragment extends Fragment {
         title.setText(getResources().getString(R.string.pointsListHeader));
         questGoButton.setText(getResources().getString(R.string.pointQueueButton));
 
-        Map<String, String> codeParams = new HashMap<>();
-        codeParams.put("mode", "GET_POINTS_QUEUE");
-        codeParams.put("questId", questId);
-        codeParams.put("language", language);
-
         InfoTask queueTask = new InfoTask(result -> {
             try {
 
                 Log.d(TAG, "Activity get " + result);
 
-                LinkedList<PointInfoItem> queue = JsonParser.parsePointsQueue(result);
+                LinkedList<ShortPoint> queue = ShortPoint.listOf(result, language);
+
+                // Send points to show in the map
 
                 if(viewModel.getQuestStarted().getValue()==null || !viewModel.getQuestStarted().getValue()) {
                     viewModel.setPointsQueue(queue);
                     viewModel.setBottomSheetState(MainViewModel.BottomStates.POINTS_QUEUE_IN_PROCESS);
                 }
 
-                List<String> pointsNames = queue.stream().map(PointInfoItem::getName)
+                List<String> pointsNames = queue.stream().map(ShortPoint::getName)
                         .collect(Collectors.toList());
 
-                // Todo CAN WE ADD SHORT POINT DESCRIPTION
+                // Todo CAN WE ADD SHORT POINT DESCRIPTION?
 
                 Log.d(TAG, "onCreate. Points names: ");
                 for (String item : pointsNames) {
                     Log.d(TAG, item);
                 }
 
-                List<Bitmap> pictures = new ArrayList<>();
+                // For all names download image and insert into RecyclerView
+                List<PointPictureCommand> commands = new ArrayList<>();
+                queue.stream().map(ShortPoint::getPictureName).forEach(pictureName -> {
 
-                // For all names download image
-                for (String name : queue.stream()
-                        .map(PointInfoItem::getPictureName).collect(Collectors.toList())) {
+                    Log.d(TAG, "Prepare pic name: " + pictureName);
 
-                    PictureTask pictureTask = new PictureTask(bitmapResult -> {
-                        pictures.add(bitmapResult);
-                        if (pictures.size() == pointsNames.size()) {
+                    PointPictureCommand command = PointPictureCommand.builder()
+                            .param("picName", pictureName)
+                            .param("ticket", getActivity()
+                                    .getSharedPreferences("User", Context.MODE_PRIVATE)
+                                    .getString("ticket", "0"))
+                            .build();
 
-                            PointRecycleAdapter adapter = new PointRecycleAdapter(pointsNames.size(),
-                                    pointsNames, pictures);
+                    commands.add(command);
+                });
 
-                            pointsQueueView.setAdapter(adapter);
+                // Log.d(TAG, "DownloadPictureList commands: " );
+                commands.forEach(item -> Log.w(TAG, "Warning: " + item.getArguments().get("picName")));
 
-                            progressBar.setVisibility(View.INVISIBLE);
-                            pointsQueueView.setVisibility(View.VISIBLE);
-                            questGoButton.setVisibility(View.VISIBLE);
+                PictureListTask pictureListTask = new PictureListTask(bitmaps -> {
+                    PointRecycleAdapter adapter = new PointRecycleAdapter(pointsNames.size(), pointsNames, bitmaps);
 
-                        }
-                    });
+                    pointsQueueView.setAdapter(adapter);
 
-                    pictureTask.execute(name.replace("\\\\", "\\"));
+                    progressBar.setVisibility(View.INVISIBLE);
+                    pointsQueueView.setVisibility(View.VISIBLE);
+                    questGoButton.setVisibility(View.VISIBLE);
 
-                }
+                });
+
+                pictureListTask.execute(commands.toArray(new PointPictureCommand[0]));
 
                 questGoButton.setOnClickListener((View v) -> {
 
                     Log.d(TAG, "onStart: IT'S TIME TO START!!! ");
-                    viewModel.setPointsQueue(queue);
-                    viewModel.setQuestStarted(true);
+
+                    // Quest start here!
+                    // viewModel.setPointsQueue(queue);
+
+                    InfoTask questStartTask = new InfoTask(res -> {
+                        Log.d(TAG, "onStart: Start quest with res: " + res);
+                        // Parse Status
+                        try {
+                            QuestStatus status = QuestStatus.valueOf(res, language);
+                            Log.d(TAG, "onStart: " + status.getStatus());
+                            viewModel.setNextPoint(status.getPoint());
+                            viewModel.setQuestStarted(true);
+                        } catch (JSONException e) {
+                            // Todo: Say we can not start quest.
+                            e.printStackTrace();
+                        }
+
+                    });
+
+                    StartQuestCommand command = StartQuestCommand.builder()
+                            .param("ticket", getActivity().getSharedPreferences("User", Context.MODE_PRIVATE).getString("ticket", "0"))
+                            .param("questId", questId)
+                            .build();
+
+                    questStartTask.execute(command);
 
                 });
 
@@ -182,7 +206,15 @@ public class PointsQueueFragment extends Fragment {
             }
         });
 
-        queueTask.execute(codeParams);
+        PointsQueueCommand command = PointsQueueCommand.builder()
+                .param("questId", questId)
+                .param("ticket", getActivity()
+                        .getSharedPreferences("User", Context.MODE_PRIVATE)
+                        .getString("ticket", "0"))
+                .param("language", language)
+                .build();
+
+        queueTask.execute(command);
 
         super.onStart();
     }

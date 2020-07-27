@@ -1,7 +1,5 @@
 package com.sibdever.algo_android.activities;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -15,10 +13,14 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.sibdever.algo_android.R;
-import com.sibdever.algo_android.api.InfoTask;
-import com.sibdever.algo_android.api.JsonParser;
-import com.sibdever.algo_android.data.TaskInfoItem;
+import com.sibdever.algo_android.api.tasks.InfoTask;
+import com.sibdever.algo_android.api.commands.TaskCheckCommand;
+import com.sibdever.algo_android.api.commands.TaskInfoCommand;
+import com.sibdever.algo_android.data.QuestStatus;
+import com.sibdever.algo_android.data.Task;
 import com.sibdever.algo_android.dialogs.AboutDialog;
 
 import org.json.JSONException;
@@ -65,36 +67,49 @@ public class TaskActivity extends AppCompatActivity {
 
         checkButton.setOnClickListener((View v) -> {
 
-            Map<String, String> params = new HashMap<>();
-            params.put("mode", "CHECK_ANSWER");
-            params.put("taskId", taskId);
-
-            params.put("answerIndex", String.valueOf(group.indexOfChild(
-                    group.findViewById(group.getCheckedRadioButtonId())
-            ) + 1));
 
             Log.d(TAG, "onCreate: Answer index: " + group.indexOfChild(
                     group.findViewById(group.getCheckedRadioButtonId())
             ));
 
-            params.put("userTicket", userTicket);
-
             InfoTask checkAnswer = new InfoTask(result -> {
+                try {
 
-                if (result.equals("1")) {
-                    Toast.makeText(TaskActivity.this, getString(R.string.taskSuccess), Toast.LENGTH_SHORT)
-                            .show();
+                    QuestStatus status = QuestStatus.valueOf(result, language);
 
-                    setResult(1);
-                    finish();
+                    if(!status.getStatus().equals(QuestStatus.StatusType.NOT_CHANGED)) {
 
-                } else {
-                    Toast.makeText(TaskActivity.this, getString(R.string.taskFail), Toast.LENGTH_SHORT)
-                            .show();
+                        // OK
+                        Toast.makeText(TaskActivity.this, getString(R.string.taskSuccess), Toast.LENGTH_SHORT)
+                                .show();
+
+                        Intent resultIntent = new Intent();
+                        resultIntent.putExtra("questStatus", status);
+
+                        setResult(1, resultIntent);
+
+                        finish();
+
+                    } else {
+
+                        // NOT OK
+                        Toast.makeText(TaskActivity.this, getString(R.string.taskFail), Toast.LENGTH_SHORT)
+                                .show();
+
+                    }
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
                 }
             });
 
-            checkAnswer.execute(params);
+            TaskCheckCommand command = TaskCheckCommand.builder()
+                    .param("taskId", taskId)
+                    .param("variant", String.valueOf(group.indexOfChild(group.findViewById(group.getCheckedRadioButtonId())) + 1))
+                    .param("ticket", userTicket)
+                    .build();
+
+            checkAnswer.execute(command);
 
         });
     }
@@ -113,12 +128,6 @@ public class TaskActivity extends AppCompatActivity {
         group.setVisibility(View.INVISIBLE);
         checkButton.setVisibility(View.INVISIBLE);
 
-        Map<String, String> args = new HashMap<>();
-        args.put("mode", "GET_TASK_INFO");
-        args.put("taskId", taskId);
-        args.put("language", language);
-        args.put("userTicket", userTicket);
-
         Log.w(TAG, "onCreate: task " + userTicket);
 
         InfoTask taskInfo = new InfoTask(result -> {
@@ -127,9 +136,9 @@ public class TaskActivity extends AppCompatActivity {
 
                 Log.w(TAG, "Result: " + result);
 
-                TaskInfoItem info = JsonParser.parseTaskInfo(result);
+                Task info = Task.valueOf(result, language);
 
-                descriptionTask.setText(info.getDescriptionShort());
+                descriptionTask.setText(info.getDescription());
                 choice1.setText(info.getChoice1());
                 choice2.setText(info.getChoice2());
                 choice3.setText(info.getChoice3());
@@ -145,7 +154,13 @@ public class TaskActivity extends AppCompatActivity {
 
         });
 
-        taskInfo.execute(args);
+        TaskInfoCommand command = TaskInfoCommand.builder()
+                .param("taskId", taskId)
+                .param("language", language)
+                .param("ticket", userTicket)
+                .build();
+
+        taskInfo.execute(command);
     }
 
     @Override

@@ -1,4 +1,4 @@
-package com.sibdever.algo_android.fragments.pre_login;
+package com.sibdever.algo_android.fragments.login;
 
 import android.Manifest;
 import android.content.Intent;
@@ -20,7 +20,8 @@ import androidx.fragment.app.Fragment;
 
 import com.sibdever.algo_android.R;
 import com.sibdever.algo_android.activities.MainActivity;
-import com.sibdever.algo_android.api.InfoTask;
+import com.sibdever.algo_android.api.tasks.InfoTask;
+import com.sibdever.algo_android.api.commands.LoginCommand;
 import com.sibdever.algo_android.dialogs.PermissionDialog;
 
 import java.util.ArrayList;
@@ -90,9 +91,11 @@ public class LoginFragment extends Fragment {
 
                     Log.d(TAG, "!!!" + result);
 
-                    if (!result.equals("-1")) {
+                    // Todo Use UserResponse
+                    if (!(result.equals("Incorrect name") || result.equals("Incorrect password"))) {
                         userTicket = result;
 
+                        // Todo get cookies and save in Cookies Store
                         SharedPreferences.Editor editor = preferences.edit();
                         editor.putString("ticket", userTicket);
                         editor.apply();
@@ -101,16 +104,15 @@ public class LoginFragment extends Fragment {
                     }
                 });
 
-                Map<String, String> params = new HashMap<>();
-
                 userName = loginUser.getText().toString();
                 password = loginPassword.getText().toString();
 
-                params.put("mode", "LOGIN");
-                params.put("username", userName);
-                params.put("password", password);
+                LoginCommand command = LoginCommand.builder()
+                        .param("name", userName)
+                        .param("password", password)
+                        .build();
 
-                task.execute(params);
+                task.execute(command);
 
             }
         });

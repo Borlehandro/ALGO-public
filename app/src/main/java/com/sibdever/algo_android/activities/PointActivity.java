@@ -1,8 +1,5 @@
 package com.sibdever.algo_android.activities;
 
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -14,15 +11,16 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.sibdever.algo_android.R;
-import com.sibdever.algo_android.api.DescriptionTask;
-import com.sibdever.algo_android.api.InfoTask;
-import com.sibdever.algo_android.api.JsonParser;
-import com.sibdever.algo_android.api.PictureTask;
-import com.sibdever.algo_android.data.PointInfoItem;
-import com.sibdever.algo_android.dialogs.AboutDialog;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 
-import org.json.JSONException;
+import com.sibdever.algo_android.R;
+import com.sibdever.algo_android.api.tasks.DescriptionTask;
+import com.sibdever.algo_android.api.tasks.PictureTask;
+import com.sibdever.algo_android.api.commands.PointDescriptionCommand;
+import com.sibdever.algo_android.api.commands.PointPictureCommand;
+import com.sibdever.algo_android.data.Point;
+import com.sibdever.algo_android.dialogs.AboutDialog;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -31,14 +29,12 @@ public class PointActivity extends AppCompatActivity {
 
     private static final String TAG = "Borlehandro";
     private String language;
-    private String pointId, userTicket;
+    private Point point;
 
     private TextView descriptionView, nameView;
     private ImageView imageView;
     private Button showTaskButton;
     private ProgressBar progressBar;
-
-    private PointInfoItem info;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,19 +49,18 @@ public class PointActivity extends AppCompatActivity {
 
         progressBar = findViewById(R.id.pointProgress);
 
-        pointId = getIntent().getStringExtra("pointId");
-        userTicket = getSharedPreferences("User", MODE_PRIVATE).getString("user", "0");
+        point = (Point) getIntent().getSerializableExtra("point");
 
-        Log.d(TAG, "onCreate: id in Point " + pointId);
+        Log.d(TAG, "onCreate: point in Point " + point.getName());
         Log.d(TAG, "onCreate: lang in Point " + language);
 
         showTaskButton.setOnClickListener((View v) -> {
 
             Intent toTask = new Intent(this, TaskActivity.class);
 
-            Log.d(TAG, "onCreate: Point: " + info.getTaskId());
+            Log.d(TAG, "onCreate: Point: " + point.getTaskId());
 
-            toTask.putExtra("taskId", String.valueOf(info.getTaskId()));
+            toTask.putExtra("taskId", String.valueOf(point.getTaskId()));
 
             startActivityForResult(toTask, 1);
         });
@@ -84,64 +79,50 @@ public class PointActivity extends AppCompatActivity {
         imageView.setVisibility(View.INVISIBLE);
         showTaskButton.setVisibility(View.INVISIBLE);
 
-        if (!pointId.equals("-1")) {
+        nameView.setText(point.getName());
 
-            Map<String, String> infoParams = new HashMap<>();
-            infoParams.put("mode", "GET_POINT_INFO");
-            infoParams.put("pointId", pointId);
-            infoParams.put("language", language);
+        PictureTask pictureTask = new PictureTask(bitmapResult -> {
 
-            InfoTask pointInfoTask = new InfoTask(result -> {
+            Log.d(TAG, "onCreate: " + bitmapResult.getHeight());
 
-                try {
+            imageView.setImageBitmap(bitmapResult);
 
-                    info = JsonParser.parsePointInfo(result);
+            DescriptionTask task = new DescriptionTask(descriptionResult -> {
+                String res = descriptionResult.toString();
+                descriptionView.setText(res);
 
-                    nameView.setText(info.getName());
-
-                    PictureTask pictureTask = new PictureTask(bitmapResult -> {
-
-                        Log.d(TAG, "onCreate: " + bitmapResult.getHeight());
-
-                        imageView.setImageBitmap(bitmapResult);
-
-                        DescriptionTask task = new DescriptionTask(descriptionResult -> {
-                            String res = descriptionResult.toString();
-                            descriptionView.setText(res);
-
-                            progressBar.setVisibility(View.INVISIBLE);
-                            descriptionView.setVisibility(View.VISIBLE);
-                            nameView.setVisibility(View.VISIBLE);
-                            imageView.setVisibility(View.VISIBLE);
-                            showTaskButton.setVisibility(View.VISIBLE);
-
-                        });
-
-                        task.execute(info.getDescriptionName().replace("\\\\", "\\"));
-
-                    });
-
-                    pictureTask.execute(info.getPictureName().replace("\\\\", "\\"));
-
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+                progressBar.setVisibility(View.INVISIBLE);
+                descriptionView.setVisibility(View.VISIBLE);
+                nameView.setVisibility(View.VISIBLE);
+                imageView.setVisibility(View.VISIBLE);
+                showTaskButton.setVisibility(View.VISIBLE);
 
             });
 
-            pointInfoTask.execute(infoParams);
+            PointDescriptionCommand command = PointDescriptionCommand.builder()
+                    .param("id", String.valueOf(point.getId()))
+                    .param("language", language)
+                    .param("ticket", getSharedPreferences("User", MODE_PRIVATE).getString("ticket", "0"))
+                    .build();
+            task.execute(command);
 
-        } else {
-            Log.e(TAG, "onCreate: ERROR POINT_ID == -1");
-            finish();
-        }
+        });
+
+        PointPictureCommand command = PointPictureCommand.builder()
+                .param("picName", point.getPictureName())
+                .param("ticket", getSharedPreferences("User", MODE_PRIVATE).getString("ticket", "0"))
+                .build();
+
+        pictureTask.execute(command);
+
     }
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         Log.d(TAG, "onActivityResult: point " + resultCode);
-        setResult(resultCode);
+        setResult(resultCode, data);
         finish();
     }
 

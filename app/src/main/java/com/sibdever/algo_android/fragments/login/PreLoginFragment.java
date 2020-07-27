@@ -1,4 +1,4 @@
-package com.sibdever.algo_android.fragments.pre_login;
+package com.sibdever.algo_android.fragments.login;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;

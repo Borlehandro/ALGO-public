@@ -1,14 +1,6 @@
 package com.sibdever.algo_android.fragments.bottom;
 
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
-
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,15 +10,20 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
+
 import com.sibdever.algo_android.MainViewModel;
 import com.sibdever.algo_android.R;
-import com.sibdever.algo_android.api.DescriptionTask;
-import com.sibdever.algo_android.api.InfoTask;
-import com.sibdever.algo_android.api.JsonParser;
-import com.sibdever.algo_android.api.PictureTask;
-import com.sibdever.algo_android.data.QuestInfoItem;
-
-import org.json.JSONException;
+import com.sibdever.algo_android.api.tasks.DescriptionTask;
+import com.sibdever.algo_android.api.tasks.PictureTask;
+import com.sibdever.algo_android.api.commands.QuestDescriptionCommand;
+import com.sibdever.algo_android.api.commands.QuestPictureCommand;
+import com.sibdever.algo_android.data.Quest;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -42,6 +39,9 @@ public class QuestDescriptionFragment extends Fragment {
     private TextView descriptionView, nameView;
     private ImageView questImage;
     private ProgressBar progressBar;
+
+    // Test
+    private Quest quest;
 
     private String language, questId;
 
@@ -83,6 +83,11 @@ public class QuestDescriptionFragment extends Fragment {
         viewModel = new ViewModelProvider(getActivity()).get(MainViewModel.class);
 
         questId = viewModel.getQuestId().getValue();
+
+        // Test
+        quest = viewModel.getQuest().getValue();
+        Log.w(TAG, "onActivityCreated: QUEST: " + quest.getName());
+
         Log.w(TAG, "onActivityCreated: " + language);
 
         Log.d(TAG, "onActivityCreated: desc get lang: " + language + " questId: " + questId);
@@ -101,51 +106,40 @@ public class QuestDescriptionFragment extends Fragment {
         language = getResources().getConfiguration().getLocales().get(0).getLanguage();
         startButton.setText(getResources().getString(R.string.showQuestButton));
 
-        Map<String, String> getQuestparams = new HashMap<>();
+        nameView.setText(quest.getName());
 
-        getQuestparams.put("mode", "GET_QUEST_INFO");
-        getQuestparams.put("language", language);
-        getQuestparams.put("questId", questId);
+        PictureTask pictureTask = new PictureTask(bitmapResult -> {
 
-        InfoTask getQuestInfoTask = new InfoTask(result -> {
-            try {
+            Log.d(TAG, "onCreate: " + bitmapResult.getHeight());
 
-                Log.d(TAG, "Quest info : " + result);
+            questImage.setImageBitmap(bitmapResult);
 
-                QuestInfoItem info = JsonParser.parseQuestInfo(result);
+            DescriptionTask task = new DescriptionTask(descriptionResult -> {
+                String res = descriptionResult.toString();
+                descriptionView.setText(res);
 
-                nameView.setText(info.getName());
+                progressBar.setVisibility(View.INVISIBLE);
+                descriptionView.setVisibility(View.VISIBLE);
+                nameView.setVisibility(View.VISIBLE);
+                questImage.setVisibility(View.VISIBLE);
+                startButton.setVisibility(View.VISIBLE);
 
-                PictureTask pictureTask = new PictureTask(bitmapResult -> {
+            });
 
-                    Log.d(TAG, "onCreate: " + bitmapResult.getHeight());
+            QuestDescriptionCommand command = QuestDescriptionCommand.builder()
+                    .param("id", String.valueOf(quest.getId()))
+                    .param("language", language)
+                    .build();
 
-                    questImage.setImageBitmap(bitmapResult);
+            task.execute(command);
 
-                    DescriptionTask task = new DescriptionTask(descriptionResult -> {
-                        String res = descriptionResult.toString();
-                        descriptionView.setText(res);
-
-                        progressBar.setVisibility(View.INVISIBLE);
-                        descriptionView.setVisibility(View.VISIBLE);
-                        nameView.setVisibility(View.VISIBLE);
-                        questImage.setVisibility(View.VISIBLE);
-                        startButton.setVisibility(View.VISIBLE);
-
-                    });
-
-                    task.execute(info.getDescriptionName().replace("\\\\", "\\"));
-
-                });
-
-                pictureTask.execute(info.getPictureName().replace("\\\\", "\\"));
-
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
         });
 
-        getQuestInfoTask.execute(getQuestparams);
+        QuestPictureCommand command = QuestPictureCommand.builder()
+                .param("id", String.valueOf(quest.getId()))
+                .build();
+
+        pictureTask.execute(command);
 
         super.onStart();
     }

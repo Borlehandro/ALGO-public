@@ -22,9 +22,10 @@ import com.sibdever.algo_android.MainViewModel;
 import com.sibdever.algo_android.R;
 import com.sibdever.algo_android.RecyclerViewClickListener;
 import com.sibdever.algo_android.adapters.QuestRecycleAdapter;
-import com.sibdever.algo_android.api.InfoTask;
-import com.sibdever.algo_android.api.JsonParser;
-import com.sibdever.algo_android.data.QuestListItem;
+import com.sibdever.algo_android.api.tasks.InfoTask;
+import com.sibdever.algo_android.api.commands.QuestListCommand;
+import com.sibdever.algo_android.data.Quest;
+import com.sibdever.algo_android.data.QuestStatus;
 
 import org.json.JSONException;
 
@@ -94,29 +95,24 @@ public class QuestListFragment extends Fragment implements RecyclerViewClickList
 
         title.setText(getResources().getString(R.string.questListHeader));
 
-        Map<String, String> questListParams = new HashMap<>();
-        questListParams.put("mode", "GET_QUESTS_LIST");
-        questListParams.put("language", language);
-        questListParams.put("userTicket", getActivity().getSharedPreferences("User", Context.MODE_PRIVATE)
-                .getString("ticket", "0"));
-
         InfoTask getListTask = new InfoTask(result -> {
             try {
 
                 Log.d(TAG, "Activity get " + result);
 
-                List<QuestListItem> parsingResult = JsonParser.parseQuestList(result);
+                List<Quest> parsingResult = Quest.listOf(result, language);
 
-                List<String> questsNames = parsingResult.stream().map(QuestListItem::getName)
+                List<String> questsNames = parsingResult.stream().map(Quest::getName)
                         .collect(Collectors.toList());
 
                 List<String> questsDescriptions = parsingResult.stream()
-                        .map(QuestListItem::getDescriptionShort).collect(Collectors.toList());
+                        .map(Quest::getDescriptionShort).collect(Collectors.toList());
 
-                List<Integer> questsId = parsingResult.stream().map(QuestListItem::getId)
+                List<Long> questsId = parsingResult.stream().map(Quest::getId)
                         .collect(Collectors.toList());
 
-                List<Boolean> completed = parsingResult.stream().map(QuestListItem::isCompleted)
+                // Todo Change to real status (not only boolean)
+                List<Boolean> completed = parsingResult.stream().map(item -> item.getStatus().equals(QuestStatus.StatusType.FINISHED))
                         .collect(Collectors.toList());
 
                 for (String item : questsNames) {
@@ -128,6 +124,9 @@ public class QuestListFragment extends Fragment implements RecyclerViewClickList
                     Log.d(TAG, "Click on " + position);
 
                     viewModel.setQuestId(String.valueOf(questsId.get(position)));
+
+                    // Test
+                    viewModel.setQuest(parsingResult.get(position));
 
                     viewModel.setBottomSheetState(MainViewModel.BottomStates.QUEST_DESCRIPTION_STATE);
 
@@ -149,7 +148,13 @@ public class QuestListFragment extends Fragment implements RecyclerViewClickList
             }
         });
 
-        getListTask.execute(questListParams);
+        QuestListCommand command = QuestListCommand.builder()
+                .param("language", language)
+                .param("ticket", getActivity().getSharedPreferences("User", Context.MODE_PRIVATE)
+                        .getString("ticket", "0"))
+                .build();
+
+        getListTask.execute(command);
 
         super.onStart();
     }

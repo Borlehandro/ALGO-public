@@ -7,7 +7,6 @@
     android:background="@drawable/start_background"
     tools:context=".activities.PreLoginActivity">
 
-
     <TextView
         android:id="@+id/algoText"
         android:layout_width="match_parent"
@@ -20,6 +19,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <!-- Todo Make it scrollable -->
     <fragment
         android:id="@+id/mapNavFragment"
         android:name="androidx.navigation.fragment.NavHostFragment"
