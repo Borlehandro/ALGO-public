@@ -4,6 +4,10 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.PointF;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -11,19 +15,13 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-
+import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.sibdever.algo_android.MainViewModel;
 import com.sibdever.algo_android.R;
 import com.sibdever.algo_android.activities.CodeScanActivity;
-import com.sibdever.algo_android.data.Point;
 import com.sibdever.algo_android.data.ShortPoint;
 import com.sibdever.algo_android.dialogs.WithoutRouteDialog;
-import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.yandex.mapkit.Animation;
 import com.yandex.mapkit.MapKit;
 import com.yandex.mapkit.MapKitFactory;
@@ -114,7 +112,6 @@ public class MapFragment extends Fragment implements Session.RouteListener {
                 focused = true;
             }
 
-            // LinkedList<ShortPoint> currentPointsQueue = viewModel.getPointsQueue().getValue();
             ShortPoint nextPoint = viewModel.getNextPoint().getValue();
 
             if (nextPoint != null) {
@@ -369,6 +366,7 @@ public class MapFragment extends Fragment implements Session.RouteListener {
             if (finished) {
                 locationManager.unsubscribe(locationListener);
                 mapObjects.clear();
+                showButton.setText(getString(R.string.questListHeader));
             }
         });
 

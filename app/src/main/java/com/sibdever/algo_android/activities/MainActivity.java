@@ -166,7 +166,7 @@ public class MainActivity extends AppCompatActivity {
 
                     Point point = Point.valueOf(result, preferences.getString("language", "en"));
 
-                Log.d(TAG, "onRestart: get point: " + point.getName());
+                    Log.d(TAG, "onRestart: get point: " + point.getName());
 
 
                     Intent toPoint = new Intent(getApplicationContext(), PointActivity.class);
@@ -219,16 +219,20 @@ public class MainActivity extends AppCompatActivity {
 
                 InfoTask completedTask = new InfoTask(result -> {
                     try {
+
+                        // TODO: Check correct
                         if (!result.equals("-1")) {
-                        FinishDialog finish = new FinishDialog(QuestFinishMessage.valueOf(result));
-                        finish.show(getSupportFragmentManager(), "finish");
-                    } else Log.e(TAG, "onActivityResult: WRONG UPDATE RESULT");
+
+                            // Show finish message.
+                            FinishDialog finish = new FinishDialog(QuestFinishMessage.valueOf(result));
+                            finish.show(getSupportFragmentManager(), "finish");
+                        } else
+                            Log.e(TAG, "onActivityResult: WRONG UPDATE RESULT");
 
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
                 });
-
 
                 completedTask.execute(command);
 
@@ -258,7 +262,7 @@ public class MainActivity extends AppCompatActivity {
         finish();
     }
 
-    private void checkLocationEnabled(){
+    private void checkLocationEnabled() {
         if (!((android.location.LocationManager) getSystemService(LOCATION_SERVICE))
                 .isProviderEnabled(android.location.LocationManager.GPS_PROVIDER)) {
             LocationDialog dialog = new LocationDialog();
