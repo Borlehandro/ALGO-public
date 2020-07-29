@@ -16,17 +16,14 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.sibdever.algo_android.R;
+import com.sibdever.algo_android.api.commands.Command;
+import com.sibdever.algo_android.api.commands.InfoCommand;
 import com.sibdever.algo_android.api.tasks.InfoTask;
-import com.sibdever.algo_android.api.commands.TaskCheckCommand;
-import com.sibdever.algo_android.api.commands.TaskInfoCommand;
 import com.sibdever.algo_android.data.QuestStatus;
 import com.sibdever.algo_android.data.Task;
 import com.sibdever.algo_android.dialogs.AboutDialog;
 
 import org.json.JSONException;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class TaskActivity extends AppCompatActivity {
 
@@ -103,7 +100,7 @@ public class TaskActivity extends AppCompatActivity {
                 }
             });
 
-            TaskCheckCommand command = TaskCheckCommand.builder()
+            InfoCommand command = InfoCommand.builder(Command.CommandType.CHECK_TASK)
                     .param("taskId", taskId)
                     .param("variant", String.valueOf(group.indexOfChild(group.findViewById(group.getCheckedRadioButtonId())) + 1))
                     .param("ticket", userTicket)
@@ -154,7 +151,8 @@ public class TaskActivity extends AppCompatActivity {
 
         });
 
-        TaskInfoCommand command = TaskInfoCommand.builder()
+        // TaskInfoCommand
+        InfoCommand command = InfoCommand.builder(Command.CommandType.GET_TASK_INFO)
                 .param("taskId", taskId)
                 .param("language", language)
                 .param("ticket", userTicket)

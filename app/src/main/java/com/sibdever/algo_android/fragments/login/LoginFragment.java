@@ -20,14 +20,13 @@ import androidx.fragment.app.Fragment;
 
 import com.sibdever.algo_android.R;
 import com.sibdever.algo_android.activities.MainActivity;
+import com.sibdever.algo_android.api.commands.Command;
+import com.sibdever.algo_android.api.commands.InfoCommand;
 import com.sibdever.algo_android.api.tasks.InfoTask;
-import com.sibdever.algo_android.api.commands.LoginCommand;
 import com.sibdever.algo_android.dialogs.PermissionDialog;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static android.content.Context.MODE_PRIVATE;
 
@@ -107,7 +106,7 @@ public class LoginFragment extends Fragment {
                 userName = loginUser.getText().toString();
                 password = loginPassword.getText().toString();
 
-                LoginCommand command = LoginCommand.builder()
+                InfoCommand command = InfoCommand.builder(Command.CommandType.LOGIN)
                         .param("name", userName)
                         .param("password", password)
                         .build();

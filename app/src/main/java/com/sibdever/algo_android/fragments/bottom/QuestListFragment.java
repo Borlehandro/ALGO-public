@@ -22,16 +22,15 @@ import com.sibdever.algo_android.MainViewModel;
 import com.sibdever.algo_android.R;
 import com.sibdever.algo_android.RecyclerViewClickListener;
 import com.sibdever.algo_android.adapters.QuestRecycleAdapter;
+import com.sibdever.algo_android.api.commands.Command;
+import com.sibdever.algo_android.api.commands.InfoCommand;
 import com.sibdever.algo_android.api.tasks.InfoTask;
-import com.sibdever.algo_android.api.commands.QuestListCommand;
 import com.sibdever.algo_android.data.Quest;
 import com.sibdever.algo_android.data.QuestStatus;
 
 import org.json.JSONException;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 public class QuestListFragment extends Fragment implements RecyclerViewClickListener {
@@ -148,7 +147,7 @@ public class QuestListFragment extends Fragment implements RecyclerViewClickList
             }
         });
 
-        QuestListCommand command = QuestListCommand.builder()
+        InfoCommand command = InfoCommand.builder(Command.CommandType.GET_QUEST_LIST)
                 .param("language", language)
                 .param("ticket", getActivity().getSharedPreferences("User", Context.MODE_PRIVATE)
                         .getString("ticket", "0"))

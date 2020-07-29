@@ -19,14 +19,12 @@ import androidx.navigation.Navigation;
 
 import com.sibdever.algo_android.MainViewModel;
 import com.sibdever.algo_android.R;
+import com.sibdever.algo_android.api.commands.Command;
+import com.sibdever.algo_android.api.commands.DescriptionCommand;
+import com.sibdever.algo_android.api.commands.PictureCommand;
 import com.sibdever.algo_android.api.tasks.DescriptionTask;
 import com.sibdever.algo_android.api.tasks.PictureTask;
-import com.sibdever.algo_android.api.commands.QuestDescriptionCommand;
-import com.sibdever.algo_android.api.commands.QuestPictureCommand;
 import com.sibdever.algo_android.data.Quest;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class QuestDescriptionFragment extends Fragment {
 
@@ -126,7 +124,7 @@ public class QuestDescriptionFragment extends Fragment {
 
             });
 
-            QuestDescriptionCommand command = QuestDescriptionCommand.builder()
+            DescriptionCommand command = DescriptionCommand.builder(Command.CommandType.GET_QUEST_DESCRIPTION)
                     .param("id", String.valueOf(quest.getId()))
                     .param("language", language)
                     .build();
@@ -135,7 +133,7 @@ public class QuestDescriptionFragment extends Fragment {
 
         });
 
-        QuestPictureCommand command = QuestPictureCommand.builder()
+        PictureCommand command = PictureCommand.builder(Command.CommandType.GET_QUEST_PICTURE)
                 .param("id", String.valueOf(quest.getId()))
                 .build();
 

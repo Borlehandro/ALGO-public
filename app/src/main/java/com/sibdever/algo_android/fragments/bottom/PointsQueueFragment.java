@@ -22,21 +22,19 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.sibdever.algo_android.MainViewModel;
 import com.sibdever.algo_android.R;
 import com.sibdever.algo_android.adapters.PointRecycleAdapter;
+import com.sibdever.algo_android.api.commands.Command;
+import com.sibdever.algo_android.api.commands.InfoCommand;
+import com.sibdever.algo_android.api.commands.PictureCommand;
 import com.sibdever.algo_android.api.tasks.InfoTask;
 import com.sibdever.algo_android.api.tasks.PictureListTask;
-import com.sibdever.algo_android.api.commands.PointPictureCommand;
-import com.sibdever.algo_android.api.commands.PointsQueueCommand;
-import com.sibdever.algo_android.api.commands.StartQuestCommand;
 import com.sibdever.algo_android.data.QuestStatus;
 import com.sibdever.algo_android.data.ShortPoint;
 
 import org.json.JSONException;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 public class PointsQueueFragment extends Fragment {
@@ -139,12 +137,12 @@ public class PointsQueueFragment extends Fragment {
                 }
 
                 // For all names download image and insert into RecyclerView
-                List<PointPictureCommand> commands = new ArrayList<>();
+                List<PictureCommand> commands = new ArrayList<>();
                 queue.stream().map(ShortPoint::getPictureName).forEach(pictureName -> {
 
                     Log.d(TAG, "Prepare pic name: " + pictureName);
 
-                    PointPictureCommand command = PointPictureCommand.builder()
+                    PictureCommand command = PictureCommand.builder(Command.CommandType.GET_POINT_PICTURE)
                             .param("picName", pictureName)
                             .param("ticket", getActivity()
                                     .getSharedPreferences("User", Context.MODE_PRIVATE)
@@ -168,7 +166,7 @@ public class PointsQueueFragment extends Fragment {
 
                 });
 
-                pictureListTask.execute(commands.toArray(new PointPictureCommand[0]));
+                pictureListTask.execute(commands.toArray(new PictureCommand[0]));
 
                 questGoButton.setOnClickListener((View v) -> {
 
@@ -192,7 +190,7 @@ public class PointsQueueFragment extends Fragment {
 
                     });
 
-                    StartQuestCommand command = StartQuestCommand.builder()
+                    InfoCommand command = InfoCommand.builder(Command.CommandType.START_QUEST)
                             .param("ticket", getActivity().getSharedPreferences("User", Context.MODE_PRIVATE).getString("ticket", "0"))
                             .param("questId", questId)
                             .build();
@@ -206,7 +204,8 @@ public class PointsQueueFragment extends Fragment {
             }
         });
 
-        PointsQueueCommand command = PointsQueueCommand.builder()
+
+        InfoCommand command = InfoCommand.builder(Command.CommandType.GET_POINTS_QUEUE)
                 .param("questId", questId)
                 .param("ticket", getActivity()
                         .getSharedPreferences("User", Context.MODE_PRIVATE)

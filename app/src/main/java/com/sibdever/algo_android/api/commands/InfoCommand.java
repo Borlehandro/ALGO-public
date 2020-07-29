@@ -7,14 +7,33 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.util.Map;
 
-public abstract class InfoCommand extends Command {
+public class InfoCommand extends Command {
 
-    protected InfoCommand(Map<String, String> arguments) {
-        super(arguments);
+    public static InfoBuilder builder(CommandType type) {
+        return new InfoBuilder(type);
     }
 
-    public abstract static class InfoBuilder<T extends InfoBuilder<T>> extends CommandBuilder<T> {
-        // empty
+    public static class InfoBuilder extends CommandBuilder<InfoBuilder> {
+
+        protected InfoBuilder(CommandType type) {
+            super(type);
+        }
+
+        @Override
+        public InfoCommand build() {
+            InfoCommand command = new InfoCommand(type);
+            command.setArguments(arguments);
+            return command;
+        }
+
+        @Override
+        protected InfoBuilder getThis() {
+            return this;
+        }
+    }
+
+    protected InfoCommand(CommandType type) {
+        super(type);
     }
 
     public String execute() {

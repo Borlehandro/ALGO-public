@@ -15,15 +15,13 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.sibdever.algo_android.R;
+import com.sibdever.algo_android.api.commands.Command;
+import com.sibdever.algo_android.api.commands.DescriptionCommand;
+import com.sibdever.algo_android.api.commands.PictureCommand;
 import com.sibdever.algo_android.api.tasks.DescriptionTask;
 import com.sibdever.algo_android.api.tasks.PictureTask;
-import com.sibdever.algo_android.api.commands.PointDescriptionCommand;
-import com.sibdever.algo_android.api.commands.PointPictureCommand;
 import com.sibdever.algo_android.data.Point;
 import com.sibdever.algo_android.dialogs.AboutDialog;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class PointActivity extends AppCompatActivity {
 
@@ -99,7 +97,8 @@ public class PointActivity extends AppCompatActivity {
 
             });
 
-            PointDescriptionCommand command = PointDescriptionCommand.builder()
+            // PointDescriptionCommand
+            DescriptionCommand command = DescriptionCommand.builder(Command.CommandType.GET_POINT_DESCRIPTION)
                     .param("id", String.valueOf(point.getId()))
                     .param("language", language)
                     .param("ticket", getSharedPreferences("User", MODE_PRIVATE).getString("ticket", "0"))
@@ -108,7 +107,8 @@ public class PointActivity extends AppCompatActivity {
 
         });
 
-        PointPictureCommand command = PointPictureCommand.builder()
+        // PointPictureCommand
+        PictureCommand command = PictureCommand.builder(Command.CommandType.GET_POINT_PICTURE)
                 .param("picName", point.getPictureName())
                 .param("ticket", getSharedPreferences("User", MODE_PRIVATE).getString("ticket", "0"))
                 .build();
