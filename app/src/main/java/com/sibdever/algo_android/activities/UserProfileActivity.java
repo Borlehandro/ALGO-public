@@ -18,15 +18,14 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import com.sibdever.algo_android.R;
+import com.sibdever.algo_android.api.commands.Command;
+import com.sibdever.algo_android.api.commands.InfoCommand;
 import com.sibdever.algo_android.api.tasks.InfoTask;
-import com.sibdever.algo_android.api.commands.UserInfoCommand;
 import com.sibdever.algo_android.data.UserInfo;
 
 import org.json.JSONException;
 
-import java.util.HashMap;
 import java.util.Locale;
-import java.util.Map;
 
 public class UserProfileActivity extends AppCompatActivity {
 
@@ -207,7 +206,7 @@ public class UserProfileActivity extends AppCompatActivity {
 
         });
 
-        UserInfoCommand command = UserInfoCommand.builder()
+        InfoCommand command = InfoCommand.builder(Command.CommandType.USER_INFO)
                 .param("ticket", userTicket)
                 .build();
 

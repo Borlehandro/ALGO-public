@@ -6,14 +6,33 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.util.Map;
 
-public abstract class DescriptionCommand extends Command {
+public class DescriptionCommand extends Command {
 
-    public abstract static class DescriptionBuilder<T extends DescriptionBuilder<T>> extends CommandBuilder<T> {
-        // empty
+    public static DescriptionBuilder builder(CommandType type) {
+        return new DescriptionBuilder(type);
     }
 
-    protected DescriptionCommand(Map<String, String> arguments) {
-        super(arguments);
+    public static class DescriptionBuilder extends CommandBuilder<DescriptionBuilder> {
+
+        protected DescriptionBuilder(CommandType type) {
+            super(type);
+        }
+
+        @Override
+        public DescriptionCommand build() {
+            DescriptionCommand command = new DescriptionCommand(type);
+            command.setArguments(arguments);
+            return command;
+        }
+
+        @Override
+        protected DescriptionBuilder getThis() {
+            return this;
+        }
+    }
+
+    protected DescriptionCommand(CommandType type) {
+        super(type);
     }
 
     public StringBuffer execute(){

@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.icu.text.IDNA;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -23,14 +24,13 @@ import android.widget.ProgressBar;
 
 import com.sibdever.algo_android.R;
 import com.sibdever.algo_android.activities.MainActivity;
+import com.sibdever.algo_android.api.commands.Command;
+import com.sibdever.algo_android.api.commands.InfoCommand;
 import com.sibdever.algo_android.api.tasks.InfoTask;
-import com.sibdever.algo_android.api.commands.RegisterCommand;
 import com.sibdever.algo_android.dialogs.PermissionDialog;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static android.content.Context.MODE_PRIVATE;
 
@@ -114,7 +114,7 @@ public class RegistrationFragment extends Fragment {
                     }
                 });
 
-                RegisterCommand command = RegisterCommand.builder()
+                InfoCommand command = InfoCommand.builder(Command.CommandType.REGISTER)
                         .param("name", userName)
                         .param("password", password)
                         .build();

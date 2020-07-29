@@ -7,16 +7,34 @@ import android.util.Log;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
-import java.util.Map;
 
-public abstract class PictureCommand extends Command {
+public class PictureCommand extends Command {
 
-    protected PictureCommand(Map<String, String> arguments) {
-        super(arguments);
+    public static PictureBuilder builder(CommandType type) {
+        return new PictureBuilder(type);
     }
 
-    public abstract static class PictureBuilder<T extends PictureBuilder<T>> extends CommandBuilder<T> {
-        // empty
+    public static class PictureBuilder extends CommandBuilder<PictureBuilder> {
+
+        protected PictureBuilder(CommandType type) {
+            super(type);
+        }
+
+        @Override
+        public PictureCommand build() {
+            PictureCommand command = new PictureCommand(type);
+            command.setArguments(arguments);
+            return command;
+        }
+
+        @Override
+        protected PictureBuilder getThis() {
+            return this;
+        }
+    }
+
+    protected PictureCommand(CommandType type) {
+        super(type);
     }
 
     public Bitmap execute() {

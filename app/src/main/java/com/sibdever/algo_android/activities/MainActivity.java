@@ -21,9 +21,9 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.sibdever.algo_android.MainViewModel;
 import com.sibdever.algo_android.R;
-import com.sibdever.algo_android.api.commands.QuestFinishMessageCommand;
+import com.sibdever.algo_android.api.commands.Command;
+import com.sibdever.algo_android.api.commands.InfoCommand;
 import com.sibdever.algo_android.api.tasks.InfoTask;
-import com.sibdever.algo_android.api.commands.PointByCodeCommand;
 import com.sibdever.algo_android.data.Point;
 import com.sibdever.algo_android.data.QuestFinishMessage;
 import com.sibdever.algo_android.data.QuestStatus;
@@ -34,9 +34,7 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior;
 
 import org.json.JSONException;
 
-import java.util.HashMap;
 import java.util.Locale;
-import java.util.Map;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -181,7 +179,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
 
-            PointByCodeCommand command = PointByCodeCommand.builder()
+            InfoCommand command = InfoCommand.builder(Command.CommandType.GET_POINT_INFO)
                     .param("code", pointCode)
                     .param("ticket", preferences.getString("ticket", "0"))
                     .build();
@@ -209,9 +207,8 @@ public class MainActivity extends AppCompatActivity {
             } else {
 
                 // Send update to server
-                Toast.makeText(getApplicationContext(), "FINISHED", Toast.LENGTH_SHORT).show();
 
-                QuestFinishMessageCommand command = QuestFinishMessageCommand.builder()
+                InfoCommand command = InfoCommand.builder(Command.CommandType.GET_QUEST_FINISH_MESSAGE)
                         .param("ticket", preferences.getString("ticket", "0"))
                         .param("questId", viewModel.getQuestId().getValue())
                         .param("language", preferences.getString("language", "en"))
